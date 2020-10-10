@@ -13,6 +13,7 @@ const {
   addUserDetails,
   getAuthenticatedUser,
   getUserDetails,
+  uploadImage,
 } = require("./handlers/users");
 
 const port = process.env.PORT || 8888;
@@ -42,6 +43,7 @@ app.get("/", home);
 app.post("/signup", signUp);
 app.post("/signin", signIn);
 app.post("/user", verifyToken, addUserDetails);
+app.post("/user", verifyToken, uploadImage);
 app.get("/user", verifyToken, getAuthenticatedUser);
 app.get("/user/:handle", getUserDetails);
 
