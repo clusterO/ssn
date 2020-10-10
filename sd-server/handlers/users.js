@@ -1,7 +1,8 @@
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const db = require("../models");
+const config = require("../utils/config");
 const {
   validateSignUpData,
   validateLoginData,
@@ -42,6 +43,46 @@ exports.signUp = (req, res) => {
     User.create(newUser, (err, data) => {
       if (err) res.status(500).send(err);
       else res.status(201).send(data);
+    });
+  });
+};
+
+exports.signIn = (req, res) => {
+  const user = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  const { valid, errors } = validateLoginData(user);
+  if (!valid) return res.status(400).json(errors);
+
+  User.findOne({
+    email: user.email,
+  }).exec((err, user) => {
+    if (err) return es.status(500).send({ message: err });
+
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!passwordIsValid)
+      return res.status(401).send({
+        accessToken: null,
+        message: "User not found",
+      });
+
+    const token = jwt.sign({ id: user._id }, config.secret, {
+      expiresIn: 86400,
+    });
+
+    res.status(200).send({
+      id: user._id,
+      handle: user.handle,
+      email: user.email,
+      accessToken: token,
     });
   });
 };

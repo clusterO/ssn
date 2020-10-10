@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
 const config = require("./utils/config");
-const { signUp, home } = require("./handlers/users");
+const verifyToken = require("./utils/verifyToken");
+const { signUp, signIn, home } = require("./handlers/users");
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -33,5 +34,7 @@ db.mongoose
 
 app.get("/", home);
 app.post("/signup", signUp);
+app.post("/signin", signIn);
+// app.post("/auth", verifyToken, (req, res) => {});
 
 app.listen(port, console.log(`Listening on port ${port}`));
