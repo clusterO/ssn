@@ -105,8 +105,19 @@ exports.addUserDetails = (req, res) => {
 };
 
 exports.getAuthenticatedUser = (req, res) => {
-  User.findOneAndUpdate({
+  User.findOne({
     handle: req.body.handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    return res.status(200).send(user);
+  });
+};
+
+exports.getUserDetails = (req, res) => {
+  User.findOne({
+    handle: req.params.handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(404).send({ message: "User not found" });

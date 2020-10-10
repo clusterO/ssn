@@ -1,4 +1,4 @@
-const express = require("express");
+const app = require("express")();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -7,14 +7,14 @@ const dbInit = require("./utils/dbInit");
 const config = require("./utils/config");
 const verifyToken = require("./utils/verifyToken");
 const {
+  home,
   signUp,
   signIn,
   addUserDetails,
   getAuthenticatedUser,
-  home,
+  getUserDetails,
 } = require("./handlers/users");
 
-const app = express();
 const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
 
@@ -43,5 +43,6 @@ app.post("/signup", signUp);
 app.post("/signin", signIn);
 app.post("/user", verifyToken, addUserDetails);
 app.get("/user", verifyToken, getAuthenticatedUser);
+app.get("/user/:handle", getUserDetails);
 
 app.listen(port, console.log(`Listening on port ${port}`));
