@@ -6,7 +6,13 @@ const db = require("./models");
 const dbInit = require("./utils/dbInit");
 const config = require("./utils/config");
 const verifyToken = require("./utils/verifyToken");
-const { signUp, signIn, addUserDetails, home } = require("./handlers/users");
+const {
+  signUp,
+  signIn,
+  addUserDetails,
+  getAuthenticatedUser,
+  home,
+} = require("./handlers/users");
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -35,7 +41,7 @@ db.mongoose
 app.get("/", home);
 app.post("/signup", signUp);
 app.post("/signin", signIn);
-app.post("/user", addUserDetails);
-// app.post("/auth", verifyToken, (req, res) => {});
+app.post("/user", verifyToken, addUserDetails);
+app.get("/user", verifyToken, getAuthenticatedUser);
 
 app.listen(port, console.log(`Listening on port ${port}`));
