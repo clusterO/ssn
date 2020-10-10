@@ -28,15 +28,12 @@ exports.signUp = (req, res) => {
   User.findOne({
     handle: newUser.handle,
   }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+    if (err) return res.status(500).send({ message: err });
 
-    if (user) {
-      res.status(400).send({ message: "Failed! Handle is already in use!" });
-      return;
-    }
+    if (user)
+      return res
+        .status(400)
+        .send({ message: "Failed! Handle is already in use!" });
 
     newUser.password = bcrypt.hashSync(req.body.password, 8);
 
@@ -83,6 +80,26 @@ exports.signIn = (req, res) => {
       handle: user.handle,
       email: user.email,
       accessToken: token,
+    });
+  });
+};
+
+exports.addUserDetails = (req, res) => {
+  const userDetails = {
+    bio: req.body.bio,
+    location: req.body.location,
+    website: req.body.website,
+  };
+
+  User.findOneAndUpdate({
+    handle: req.body.handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+
+    user.update(userDetails, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+      user.save();
+      return res.status(200).send(data);
     });
   });
 };

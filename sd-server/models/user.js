@@ -10,6 +10,9 @@ const User = mongoose.model(
     handle: String,
     email: String,
     password: String,
+    bio: String,
+    location: String,
+    website: String,
   })
 );
 
