@@ -2,4 +2,6 @@ module.exports = {
   connectionString:
     "mongodb+srv://cluster0:AJNaqQiSdkupsGKF@cluster0.zfs3r.gcp.mongodb.net/spotidate?retryWrites=true&w=majority",
   secret: "spotidate-secret-key",
+  clientId: "5f7334fd880e40378d3f74d778c23d22",
+  clientSecret: "431d0ac5f3674258ab5fc78658a6da20",
 };

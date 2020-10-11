@@ -1,6 +1,7 @@
-const app = require("express")();
+const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
@@ -15,13 +16,19 @@ const {
   getUserDetails,
   uploadImage,
 } = require("./handlers/users");
+const {
+  login,
+  callback,
+  refresh_token,
+  getUserTops,
+  getAlbums,
+  getSavedTracks,
+  getUser,
+} = require("./handlers/spotify");
 
+const app = express();
 const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 db.mongoose
   .connect(dbURL, {
@@ -39,12 +46,24 @@ db.mongoose
     process.exit();
   });
 
-app.get("/", home);
-app.post("/signup", signUp);
-app.post("/signin", signIn);
-app.post("/user", verifyToken, addUserDetails);
-app.post("/user", verifyToken, uploadImage);
-app.get("/user", verifyToken, getAuthenticatedUser);
-app.get("/user/:handle", getUserDetails);
-
-app.listen(port, console.log(`Listening on port ${port}`));
+app
+  .use(cors())
+  .use(express.static(__dirname + "/public"))
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(cookieParser())
+  .get("/", home)
+  .post("/signup", signUp)
+  .post("/signin", signIn)
+  .post("/user", verifyToken, addUserDetails)
+  .post("/user", verifyToken, uploadImage)
+  .get("/user", verifyToken, getAuthenticatedUser)
+  .get("/user/:handle", getUserDetails)
+  .get("/login", login)
+  .get("/callback", callback)
+  .get("/refresh", refresh_token)
+  .get("/artist", getUser)
+  .get("/tracks", getSavedTracks)
+  .get("/albums", getAlbums)
+  .get("/tops", getUserTops)
+  .listen(port, console.log(`Listening on port ${port}`));
