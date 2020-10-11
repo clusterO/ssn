@@ -1,6 +1,7 @@
 const request = require("request");
 const querystring = require("querystring");
 const config = require("../utils/config");
+const { resolve } = require("path");
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
@@ -12,7 +13,7 @@ exports.login = (req, res) => {
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  const scope = "user-read-private user-read-email";
+  const scope = "user-read-private user-read-email user-library-read";
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -115,24 +116,38 @@ exports.refresh_token = (req, res) => {
   });
 };
 
-exports.getUser = (token, user) => {
+exports.getUser = (req, res) => {
+  const token = req.headers.authorization;
+  const user = req.headers.user;
   const url = `https://api.spotify.com/v1/users/${user}`;
-  callSpotify(token, url);
+  callSpotify(token, url).then(body => {
+    res.status(200).send(body);
+  });
 };
 
-exports.getSavedTracks = token => {
+exports.getSavedTracks = (req, res) => {
+  const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/tracks";
-  callSpotify(token, url);
+  callSpotify(token, url).then(body => {
+    res.status(200).send(body);
+  });
 };
 
-exports.getAlbums = token => {
+exports.getAlbums = (req, res) => {
+  const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/albums";
-  callSpotify(token, url);
+  callSpotify(token, url).then(body => {
+    res.status(200).send(body);
+  });
 };
 
-exports.getUserTops = (token, type) => {
+exports.getUserTops = (req, res) => {
+  const token = req.headers.authorization;
+  const type = req.headers.type;
   const url = `https://api.spotify.com/v1/me/top/${type}`;
-  callSpotify(token, url);
+  callSpotify(token, url).then(body => {
+    res.status(200).send(body);
+  });
 };
 
 const callSpotify = (token, url) => {
@@ -143,8 +158,11 @@ const callSpotify = (token, url) => {
     },
     json: true,
   };
-  request.get(options, (error, response, body) => {
-    console.log(body);
+
+  return new Promise(resolve => {
+    request.get(options, (error, response, body) => {
+      resolve(body);
+    });
   });
 };
 
