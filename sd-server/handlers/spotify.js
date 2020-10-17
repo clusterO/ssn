@@ -336,11 +336,24 @@ generateDataForMatch = async (token, handle) => {
   });
 };
 
-getUsersMatchData = () => {
+exports.getCurrentUserMatch = handle => {
+  User.findOne({
+    handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    return user.match;
+  });
+};
+
+exports.getUsersMatchData = () => {
   let matchData = [];
   User.find((err, users) => {
+    if (err) return console.error(err);
+
     users.forEach(user => {
       matchData.push(user.match);
     });
+
+    return matchData;
   });
 };

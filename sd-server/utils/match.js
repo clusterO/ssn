@@ -1,9 +1,14 @@
-"use strict";
+const {
+  getUsersMatchData,
+  getCurrentUserMatch,
+} = require("../handlers/spotify");
 
-let users = [];
-let currentUser = {};
+const config = require("../utils/config");
 
-let types = ["tracks", "albums", "artists", "recent", "genres"];
+let users = getUsersMatchData();
+let currentUser = getCurrentUserMatch(handle);
+
+let types = config.types;
 let usersLibraries = [];
 
 const getLibrary = (type, handle) => {

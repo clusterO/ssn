@@ -4,4 +4,5 @@ module.exports = {
   secret: "spotidate-secret-key",
   clientId: "5f7334fd880e40378d3f74d778c23d22",
   clientSecret: "431d0ac5f3674258ab5fc78658a6da20",
+  types: ["tracks", "albums", "artists", "recent", "genres"],
 };
