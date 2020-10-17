@@ -1,110 +1,106 @@
-const {
-  getUsersMatchData,
-  getCurrentUserMatch,
-} = require("../handlers/spotify");
-
 const config = require("../utils/config");
 
-let users = getUsersMatchData();
-let currentUser = getCurrentUserMatch(handle);
-
-let types = config.types;
-let usersLibraries = [];
-
-const getLibrary = (type, handle) => {
-  return new Promise(resolve => {
-    users.forEach(user => {
-      if (user.handle === handle) resolve({ elements: user[type], handle });
-    });
-  });
-};
-
-const goThroughUsers = (someusers, type) => {
-  const user = someusers.shift();
-
-  if (user.handle !== currentUser.handle) {
-    getLibrary(type, user.handle).then(library => {
-      usersLibraries.push(library);
-    });
-  }
-
-  if (someusers.length) goThroughUsers(someusers, type);
-};
-
-const getUsersLibraryByType = type => {
-  let someusers = [];
-
-  users.map(user => {
-    someusers.push(user);
-  });
-
-  goThroughUsers(someusers, type);
-};
-
-const startScoringRoutine = () => {
-  const type = types.shift();
-
-  getUsersLibraryByType(type);
-
-  getLibrary(type, currentUser.handle).then(library => {
-    match(type, library, usersLibraries);
+class match {
+  constructor(users, currentUser) {
+    users = users;
+    currentUser = currentUser;
+    types = config.types;
     usersLibraries = [];
-  });
-
-  if (types.length) startScoringRoutine(types);
-};
-
-const match = (type, library, users) => {
-  library.elements.forEach(element => {
-    users.forEach(user => {
-      findMatch(type, element, user);
-    });
-  });
-};
-
-const findMatch = (type, elm, userElements) => {
-  userElements.elements.forEach(element => {
-    if (element === elm) scorePoints(type, userElements.handle);
-  });
-};
-
-const scorePoints = (type, handle) => {
-  switch (type) {
-    case "tracks":
-      currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 5)
-        : (currentUser.matchs[handle] = 5);
-      break;
-    case "albums":
-      currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 2)
-        : (currentUser.matchs[handle] = 2);
-      break;
-    case "artists":
-      currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 2)
-        : (currentUser.matchs[handle] = 2);
-      break;
-    case "recent":
-      currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 3)
-        : (currentUser.matchs[handle] = 3);
-    case "genres":
-      currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 3)
-        : (currentUser.matchs[handle] = 3);
-      break;
   }
 
-  sort(currentUser.matchs);
-};
+  getLibrary = (type, handle) => {
+    return new Promise(resolve => {
+      this.users.forEach(user => {
+        if (user.handle === handle) resolve({ elements: user[type], handle });
+      });
+    });
+  };
 
-const sort = matchs => {
-  let sorted = Object.keys(matchs).sort((a, b) => matchs[b] - matchs[a]);
-  console.log(sorted);
-};
+  goThroughUsers = (someusers, type) => {
+    const user = someusers.shift();
 
-startScoringRoutine();
+    if (user.handle !== this.currentUser.handle) {
+      getLibrary(type, user.handle).then(library => {
+        this.usersLibraries.push(library);
+      });
+    }
+
+    if (someusers.length) goThroughUsers(someusers, type);
+  };
+
+  getUsersLibraryByType = type => {
+    let someusers = [];
+
+    this.users.map(user => {
+      someusers.push(user);
+    });
+
+    goThroughUsers(someusers, type);
+  };
+
+  startScoringRoutine = () => {
+    const type = this.types.shift();
+
+    getUsersLibraryByType(type);
+
+    getLibrary(type, this.currentUser.handle).then(library => {
+      match(type, library, this.usersLibraries);
+      this.usersLibraries = [];
+    });
+
+    if (this.types.length) startScoringRoutine(this.types);
+  };
+
+  match = (type, library, users) => {
+    library.elements.forEach(element => {
+      users.forEach(user => {
+        findMatch(type, element, user);
+      });
+    });
+  };
+
+  findMatch = (type, elm, userElements) => {
+    userElements.elements.forEach(element => {
+      if (element === elm) scorePoints(type, userElements.handle);
+    });
+  };
+
+  scorePoints = (type, handle) => {
+    switch (type) {
+      case "tracks":
+        this.currentUser.matchs[handle]
+          ? (this.currentUser.matchs[handle] += 5)
+          : (this.currentUser.matchs[handle] = 5);
+        break;
+      case "albums":
+        this.currentUser.matchs[handle]
+          ? (this.currentUser.matchs[handle] += 2)
+          : (this.currentUser.matchs[handle] = 2);
+        break;
+      case "artists":
+        this.currentUser.matchs[handle]
+          ? (this.currentUser.matchs[handle] += 2)
+          : (this.currentUser.matchs[handle] = 2);
+        break;
+      case "recent":
+        this.currentUser.matchs[handle]
+          ? (this.currentUser.matchs[handle] += 3)
+          : (this.currentUser.matchs[handle] = 3);
+      case "genres":
+        this.currentUser.matchs[handle]
+          ? (this.currentUser.matchs[handle] += 3)
+          : (this.currentUser.matchs[handle] = 3);
+        break;
+    }
+
+    sort(this.currentUser.matchs);
+  };
+
+  sort = matchs => {
+    let sorted = Object.keys(matchs).sort((a, b) => matchs[b] - matchs[a]);
+    console.log(sorted);
+  };
+}
 
 /**
   ## CPU intence process for array

@@ -2,7 +2,6 @@ const request = require("request");
 const querystring = require("querystring");
 const config = require("../utils/config");
 const db = require("../models");
-const { user } = require("../models");
 
 const User = db.user;
 
@@ -92,12 +91,10 @@ exports.callback = (req, res) => {
           }).exec((err, user) => {
             if (err) return res.status(500).send({ message: err });
             if (user) generateDataForMatch(access_token, handle);
-            else {
+            else
               request.post(userOptions, () => {
                 generateDataForMatch(access_token, handle);
-                console.log("User Generated");
               });
-            }
           });
         });
 
@@ -356,13 +353,12 @@ exports.getCurrentUserMatch = handle => {
 
 exports.getUsersMatchData = () => {
   let matchData = [];
-  User.find((err, users) => {
+
+  User.find().exec((err, users) => {
     if (err) return console.error(err);
 
     users.forEach(user => {
       matchData.push(user.match);
     });
-
-    return matchData;
   });
 };
