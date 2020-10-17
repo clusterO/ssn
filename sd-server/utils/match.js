@@ -20,12 +20,12 @@ class match {
     const user = someusers.shift();
 
     if (user.handle !== this.currentUser.handle) {
-      getLibrary(type, user.handle).then(library => {
+      this.getLibrary(type, user.handle).then(library => {
         this.usersLibraries.push(library);
       });
     }
 
-    if (someusers.length) goThroughUsers(someusers, type);
+    if (someusers.length) this.goThroughUsers(someusers, type);
   };
 
   getUsersLibraryByType = type => {
@@ -35,26 +35,26 @@ class match {
       someusers.push(user);
     });
 
-    goThroughUsers(someusers, type);
+    this.goThroughUsers(someusers, type);
   };
 
   startScoringRoutine = () => {
     const type = this.types.shift();
 
-    getUsersLibraryByType(type);
+    this.getUsersLibraryByType(type);
 
-    getLibrary(type, this.currentUser.handle).then(library => {
-      match(type, library, this.usersLibraries);
+    this.getLibrary(type, this.currentUser.handle).then(library => {
+      this.match(type, library, this.usersLibraries);
       this.usersLibraries = [];
     });
 
-    if (this.types.length) startScoringRoutine(this.types);
+    if (this.types.length) this.startScoringRoutine(this.types);
   };
 
   match = (type, library, users) => {
     library.elements.forEach(element => {
       users.forEach(user => {
-        findMatch(type, element, user);
+        this.findMatch(type, element, user);
       });
     });
   };
