@@ -1,31 +1,6 @@
 "use strict";
 
-let users = [
-  {
-    handle: "user1",
-    tracks: ["x1", "x2", "i5", "x4", "x5"],
-    albums: ["m4", "t2", "t3", "t4", "t5"],
-    top: ["ta1", "ta2", "ta3", "ta4", "ta5"],
-    artists: ["a1", "a2", "a3", "a4", "a5"],
-    matchs: {},
-  },
-  {
-    handle: "user2",
-    tracks: ["x3", "i2", "i3", "x1", "i5"],
-    albums: ["o1", "m3", "o3", "o4", "o5"],
-    top: ["ia1", "ta2", "ia3", "ia4", "ia5"],
-    artists: ["p1", "p2", "p3", "p4", "p5"],
-    matchs: {},
-  },
-  {
-    handle: "user3",
-    tracks: ["n1", "n2", "n3", "n4", "n5"],
-    albums: ["m1", "m2", "m3", "m4", "m5"],
-    top: ["ta2", "na2", "ta5", "na4", "na5"],
-    artists: ["l1", "l2", "l3", "l4", "l5"],
-    matchs: {},
-  },
-];
+let users = generateDataForMatch();
 
 let currentUser = users[0];
 let types = ["tracks", "albums", "top", "artists"];
@@ -121,3 +96,19 @@ const sort = matchs => {
 };
 
 startScoringRoutine();
+
+/**
+  ## CPU intence process for array
+
+  processArray = (items, process) {
+    let todo = tiems.concat()
+    setTimeout(() => {
+      process(todo.shift())
+      if(todo.length) setTimeout(arguments.callee, 25)
+    }, 25)
+  }
+
+  processArray([...], func)
+
+  ## async.forEachOf 
+ */
