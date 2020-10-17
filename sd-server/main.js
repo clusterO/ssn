@@ -20,14 +20,8 @@ const {
   login,
   callback,
   refresh_token,
-  getUserTops,
-  getAlbums,
-  getSavedTracks,
   getUser,
-  getFollowedArtists,
-  getRecentlyPlayed,
   getCurrentlyPlaying,
-  getPlaylists,
 } = require("./handlers/spotify");
 
 const app = express();
@@ -67,11 +61,5 @@ app
   .get("/callback", callback)
   .get("/refresh", refresh_token)
   .get("/artist", getUser)
-  .get("/tracks", getSavedTracks)
-  .get("/albums", getAlbums)
-  .get("/artists", getFollowedArtists)
-  .get("/recent", getRecentlyPlayed)
-  .get("/tops", getUserTops)
   .get("/current", getCurrentlyPlaying)
-  .get("/playlists", getPlaylists)
   .listen(port, console.log(`Listening on port ${port}`));

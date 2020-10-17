@@ -1,6 +1,9 @@
 const request = require("request");
 const querystring = require("querystring");
 const config = require("../utils/config");
+const db = require("../models");
+
+const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
@@ -62,13 +65,30 @@ exports.callback = (req, res) => {
           refresh_token = body.refresh_token;
 
         const options = {
-          url: "https://api.spotify.com/v1/me",
+          url: `${window.location.host}/signup`,
           headers: { Authorization: "Bearer " + access_token },
           json: true,
         };
 
-        request.get(options, (error, response, body) => {
-          console.log(body);
+        const email = body.email;
+        const handle = email.split("@")[0];
+        const data = {
+          email,
+          password: body.id,
+          confirmPassword: body.id,
+          handle,
+        };
+
+        User.findOne({
+          handle,
+        }).exec((err, user) => {
+          if (err) return res.status(500).send({ message: err });
+          if (user) generateMatchData(access_token, handle);
+          else
+            request.get(options, (error, response, data) => {
+              generateMatchData(access_token, handle);
+              console.log("User Generated");
+            });
         });
 
         res.redirect(
@@ -125,62 +145,66 @@ exports.getUser = (req, res) => {
   });
 };
 
-exports.getSavedTracks = (req, res) => {
-  const token = req.headers.authorization;
+getSavedTracks = token => {
   const url = "https://api.spotify.com/v1/me/tracks?limit=50";
-  callSpotify(token, url).then(body => {
-    let tracks = [];
-    body.items.map(item => {
-      tracks.push(item.track.id);
-    });
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let tracks = [];
+      body.items.map(item => {
+        tracks.push(item.track.id);
+      });
 
-    res.status(200).send(tracks);
+      resolve(tracks);
+    });
   });
 };
 
-exports.getAlbums = (req, res) => {
-  const token = req.headers.authorization;
+getAlbums = token => {
   const url = "https://api.spotify.com/v1/me/albums";
-  callSpotify(token, url).then(body => {
-    let albums = [];
-    let genres = [];
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let albums = [];
+      let genres = [];
 
-    body.items.map(item => {
-      albums.push(item.album.id);
-      genres.push(item.album.genres);
+      body.items.map(item => {
+        albums.push(item.album.id);
+        genres.push(item.album.genres);
+      });
+
+      resolve({ albums, genres });
     });
-
-    res.status(200).send({ albums, genres });
   });
 };
 
-exports.getFollowedArtists = (req, res) => {
-  const token = req.headers.authorization;
+getFollowedArtists = token => {
   const url = "https://api.spotify.com/v1/me/following?type=artist";
-  callSpotify(token, url).then(body => {
-    let artists = [];
-    let genres = [];
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let artists = [];
+      let genres = [];
 
-    body.artists.items.map(item => {
-      artists.push(item.id);
-      genres.push(item.genres);
+      body.artists.items.map(item => {
+        artists.push(item.id);
+        genres.push(item.genres);
+      });
+
+      resolve({ artists, genres });
     });
-
-    res.status(200).send({ artists, genres });
   });
 };
 
-exports.getRecentlyPlayed = (req, res) => {
-  const token = req.headers.authorization;
+getRecentlyPlayed = token => {
   const url = "https://api.spotify.com/v1/me/player/recently-played";
-  callSpotify(token, url).then(body => {
-    let tracks = [];
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let tracks = [];
 
-    body.items.map(item => {
-      tracks.push(item.track.id);
+      body.items.map(item => {
+        tracks.push(item.track.id);
+      });
+
+      resolve(tracks);
     });
-
-    res.status(200).send(tracks);
   });
 };
 
@@ -208,17 +232,18 @@ exports.getCurrentlyPlaying = (req, res) => {
   });
 };
 
-exports.getPlaylists = (req, res) => {
-  const token = req.headers.authorization;
+getPlaylists = token => {
   const url = "https://api.spotify.com/v1/me/playlists";
-  callSpotify(token, url).then(body => {
-    let playlists = [];
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let playlists = [];
 
-    body.items.map(item => {
-      playlists.push(item.id);
+      body.items.map(item => {
+        playlists.push(item.id);
+      });
+
+      resolve(playlists);
     });
-
-    res.status(200).send(playlists);
   });
 };
 
@@ -237,18 +262,18 @@ exports.getUserPlaylists = (req, res) => {
   });
 };
 
-exports.getUserTops = (req, res) => {
-  const token = req.headers.authorization;
-  const type = req.headers.type;
+getUserTops = (token, type) => {
   const url = `https://api.spotify.com/v1/me/top/${type}`;
-  callSpotify(token, url).then(body => {
-    let tops = [];
+  return new Promise(resolve => {
+    callSpotify(token, url).then(body => {
+      let tops = [];
 
-    body.items.map(item => {
-      tops.push(item.id);
+      body.items.map(item => {
+        tops.push(item.id);
+      });
+
+      resolve(tops);
     });
-
-    res.status(200).send(tops);
   });
 };
 
@@ -279,4 +304,33 @@ const generateRandomString = length => {
   return text;
 };
 
-const generateDataForMatch = () => {};
+generateDataForMatch = async (token, handle) => {
+  let tracks = await getSavedTracks(token);
+  let albums = await getAlbums(token);
+  let artists = await getFollowedArtists(token);
+  let recent = await getRecentlyPlayed(token);
+  let genres = [].concat(...albums.genres).concat(...artists.genres);
+
+  User.findOne({
+    handle: handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(404).send({ message: "Handle incorrect" });
+
+    const matchData = {
+      handle: handle,
+      tracks,
+      albums: albums.albums,
+      artists: artists.artists,
+      recent,
+      genres: [...new Set(genres)],
+      matchs: {},
+    };
+
+    user.update({ match: matchData }, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+      user.save();
+      return res.status(200).send(data);
+    });
+  });
+};

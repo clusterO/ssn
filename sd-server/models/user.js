@@ -13,6 +13,7 @@ const User = mongoose.model(
     bio: String,
     location: String,
     website: String,
+    match: Object,
   })
 );
 
