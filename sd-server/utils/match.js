@@ -1,9 +1,9 @@
 "use strict";
 
-let users = generateDataForMatch();
+let users = [];
+let currentUser = {};
 
-let currentUser = users[0];
-let types = ["tracks", "albums", "top", "artists"];
+let types = ["tracks", "albums", "artists", "recent", "genres"];
 let usersLibraries = [];
 
 const getLibrary = (type, handle) => {
@@ -67,8 +67,8 @@ const scorePoints = (type, handle) => {
   switch (type) {
     case "tracks":
       currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 1)
-        : (currentUser.matchs[handle] = 1);
+        ? (currentUser.matchs[handle] += 5)
+        : (currentUser.matchs[handle] = 5);
       break;
     case "albums":
       currentUser.matchs[handle]
@@ -77,13 +77,17 @@ const scorePoints = (type, handle) => {
       break;
     case "artists":
       currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 5)
-        : (currentUser.matchs[handle] = 5);
+        ? (currentUser.matchs[handle] += 2)
+        : (currentUser.matchs[handle] = 2);
       break;
-    case "top":
+    case "recent":
       currentUser.matchs[handle]
-        ? (currentUser.matchs[handle] += 5)
-        : (currentUser.matchs[handle] = 5);
+        ? (currentUser.matchs[handle] += 3)
+        : (currentUser.matchs[handle] = 3);
+    case "genres":
+      currentUser.matchs[handle]
+        ? (currentUser.matchs[handle] += 3)
+        : (currentUser.matchs[handle] = 3);
       break;
   }
 

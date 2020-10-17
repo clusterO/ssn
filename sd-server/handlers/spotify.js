@@ -2,6 +2,7 @@ const request = require("request");
 const querystring = require("querystring");
 const config = require("../utils/config");
 const db = require("../models");
+const { user } = require("../models");
 
 const User = db.user;
 
@@ -331,6 +332,15 @@ generateDataForMatch = async (token, handle) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
       return res.status(200).send(data);
+    });
+  });
+};
+
+getUsersMatchData = () => {
+  let matchData = [];
+  User.find((err, users) => {
+    users.forEach(user => {
+      matchData.push(user.match);
     });
   });
 };
