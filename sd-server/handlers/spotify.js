@@ -44,7 +44,6 @@ exports.callback = (req, res) => {
     );
   } else {
     res.clearCookie(stateKey);
-    console.log(code);
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
       form: {
@@ -66,30 +65,40 @@ exports.callback = (req, res) => {
           refresh_token = body.refresh_token;
 
         const options = {
-          url: `${window.location.host}/signup`,
+          url: "https://api.spotify.com/v1/me",
           headers: { Authorization: "Bearer " + access_token },
           json: true,
         };
 
-        const email = body.email;
-        const handle = email.split("@")[0];
-        const data = {
-          email,
-          password: body.id,
-          confirmPassword: body.id,
-          handle,
-        };
+        request.get(options, (error, response, body) => {
+          const email = body.email;
+          const handle = email.split("@")[0];
+          const data = {
+            email,
+            password: body.id,
+            confirmPassword: body.id,
+            handle,
+          };
 
-        User.findOne({
-          handle,
-        }).exec((err, user) => {
-          if (err) return res.status(500).send({ message: err });
-          if (user) generateMatchData(access_token, handle);
-          else
-            request.get(options, (error, response, data) => {
-              generateMatchData(access_token, handle);
-              console.log("User Generated");
-            });
+          const userOptions = {
+            url: `http://${req.headers.host}/signup`,
+            headers: { Authorization: "Bearer " + access_token },
+            json: true,
+            body: data,
+          };
+
+          User.findOne({
+            handle,
+          }).exec((err, user) => {
+            if (err) return res.status(500).send({ message: err });
+            if (user) generateDataForMatch(access_token, handle);
+            else {
+              request.post(userOptions, () => {
+                generateDataForMatch(access_token, handle);
+                console.log("User Generated");
+              });
+            }
+          });
         });
 
         res.redirect(
@@ -315,8 +324,8 @@ generateDataForMatch = async (token, handle) => {
   User.findOne({
     handle: handle,
   }).exec((err, user) => {
-    if (err) return res.status(500).send({ message: err });
-    if (!user) return res.status(404).send({ message: "Handle incorrect" });
+    if (err) return { message: err };
+    if (!user) return { message: "Handle incorrect" };
 
     const matchData = {
       handle: handle,
@@ -328,10 +337,10 @@ generateDataForMatch = async (token, handle) => {
       matchs: {},
     };
 
-    user.update({ match: matchData }, (err, data) => {
+    user.updateOne({ match: matchData }, (err, data) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
-      return res.status(200).send(data);
+      return data;
     });
   });
 };
