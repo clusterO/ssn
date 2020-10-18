@@ -7,7 +7,7 @@ const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
-const redirect_uri = "http://localhost:8888/callback";
+const redirect_uri = "http://localhost:3000/callback";
 
 const stateKey = "spotify_auth_state";
 
@@ -17,6 +17,7 @@ exports.login = (req, res) => {
 
   const scope =
     "user-read-private user-read-email user-library-read user-follow-read user-read-recently-played user-read-currently-playing user-read-playback-state user-top-read";
+
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -30,6 +31,8 @@ exports.login = (req, res) => {
 };
 
 exports.callback = (req, res) => {
+  console.log("callback");
+
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;

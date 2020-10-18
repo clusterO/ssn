@@ -1,7 +1,7 @@
 const express = require("express");
-const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
@@ -46,7 +46,6 @@ db.mongoose
 
 app
   .use(cors())
-  .use(express.static(__dirname + "/public"))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
