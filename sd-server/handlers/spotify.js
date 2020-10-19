@@ -7,7 +7,7 @@ const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
-const redirect_uri = "http://localhost:3000/callback";
+const redirect_uri = "http://localhost:8888/callback";
 
 const stateKey = "spotify_auth_state";
 
@@ -31,8 +31,6 @@ exports.login = (req, res) => {
 };
 
 exports.callback = (req, res) => {
-  console.log("callback");
-
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -102,7 +100,7 @@ exports.callback = (req, res) => {
         });
 
         res.redirect(
-          "/#" +
+          "http://localhost:3000/profile#" +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token,
@@ -110,7 +108,7 @@ exports.callback = (req, res) => {
         );
       } else {
         res.redirect(
-          "/#" +
+          "http://localhost:3000/#" +
             querystring.stringify({
               error: "invalid_token",
             })

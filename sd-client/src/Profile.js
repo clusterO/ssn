@@ -1,45 +1,56 @@
 import React, { Component } from "react";
+import SpotifyWebApi from "spotify-web-api-js";
+import axios from "axios";
+
+const spotifyApi = new SpotifyWebApi();
 
 export class Profile extends Component {
+  constructor() {
+    super();
+    this.params = this.getHashParams();
+    this.token = this.params.access_token;
+    this.refresh_token = this.params.refresh_token;
+    this.state = {
+      loggedIn: this.token ? true : false,
+      nowPlaying: { name: "Not Checked", albumArt: "" },
+    };
+  }
+
+  getHashParams = () => {
+    let hashParams = {};
+    let e,
+      r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+    while ((e = r.exec(q))) {
+      hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+
+    return hashParams;
+  };
+
+  getProfile = () => {
+    if (this.token) {
+      spotifyApi.setAccessToken(this.token);
+
+      spotifyApi.getMe().then(me => {
+        console.log(me);
+      });
+    }
+  };
+
+  refreshToken = () => {
+    axios
+      .get(`/refresh`, { data: { refresh_token: this.refresh_token } })
+      .then(data => {
+        this.access_token = data.access_token;
+      });
+  };
+
   render() {
-    const { display_name, id, email, href, country, url, spotify } = this.props;
+    // const { display_name, id, email, href, country, url, spotify } = this.data;
     return (
       <>
-        <h1>Logged in as {{ display_name }}</h1>
-        <div class="media">
-          <div class="pull-left">
-            <img
-              class="media-object"
-              width="150"
-              alt="profile"
-              src="{{images.0.url}}"
-            />
-          </div>
-          <div class="media-body">
-            <dl class="dl-horizontal">
-              <dt>Display name</dt>
-              <dd class="clearfix">{{ display_name }}</dd>
-              <dt>Id</dt>
-              <dd>{{ id }}</dd>
-              <dt>Email</dt>
-              <dd>{{ email }}</dd>
-              <dt>Spotify URI</dt>
-              <dd>
-                <a href="{{external_urls.spotify}}">{{ spotify }}</a>
-              </dd>
-              <dt>Link</dt>
-              <dd>
-                <a href="{{href}}">{{ href }}</a>
-              </dd>
-              <dt>Profile Image</dt>
-              <dd class="clearfix">
-                <a href="{{images.0.url}}">{{ url }}</a>
-              </dd>
-              <dt>Country</dt>
-              <dd>{{ country }}</dd>
-            </dl>
-          </div>
-        </div>
+        <button onClick={this.getProfile}>Hello</button>
       </>
     );
   }

@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import axios from "axios";
 import Login from "./Login";
 import Profile from "./Profile";
 import Navbar from "./Navbar";
-
-axios.defaults.baseURL = "http://localhost:8888/";
 
 export class App extends Component {
   render() {

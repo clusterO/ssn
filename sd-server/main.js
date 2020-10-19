@@ -44,8 +44,13 @@ db.mongoose
     process.exit();
   });
 
+let corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
 app
-  .use(cors())
+  .use(cors(corsOptions))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
