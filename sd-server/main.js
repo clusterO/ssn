@@ -22,6 +22,7 @@ const {
   refresh_token,
   getUser,
   getCurrentlyPlaying,
+  getMe,
 } = require("./handlers/spotify");
 
 const app = express();
@@ -65,5 +66,6 @@ app
   .get("/callback", callback)
   .get("/refresh", refresh_token)
   .get("/artist", getUser)
+  .post("/me", getMe)
   .get("/current", getCurrentlyPlaying)
   .listen(port, console.log(`Listening on port ${port}`));

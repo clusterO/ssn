@@ -118,6 +118,18 @@ exports.callback = (req, res) => {
   }
 };
 
+exports.getMe = (req, res) => {
+  const options = {
+    url: "https://api.spotify.com/v1/me",
+    headers: { Authorization: "Bearer " + req.body.token },
+    json: true,
+  };
+
+  request.get(options, (error, response, body) => {
+    res.send(body);
+  });
+};
+
 exports.refresh_token = (req, res) => {
   const refresh_token = req.query.refresh_token;
   const authOptions = {
