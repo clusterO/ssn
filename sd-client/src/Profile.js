@@ -1,8 +1,38 @@
 import React, { Component } from "react";
-import SpotifyWebApi from "spotify-web-api-js";
+import {
+  withStyles,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+} from "@material-ui/core";
+import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import axios from "axios";
 
-const spotifyApi = new SpotifyWebApi();
+const styles = theme => ({
+  root: {
+    width: "40%",
+    margin: "auto auto",
+    marginTop: "20%",
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+  },
+});
 
 export class Profile extends Component {
   constructor() {
@@ -12,7 +42,16 @@ export class Profile extends Component {
     this.refresh_token = this.params.refresh_token;
     this.state = {
       loggedIn: this.token ? true : false,
-      nowPlaying: { name: "Not Checked", albumArt: "" },
+      data: {
+        display_name: "",
+        id: "",
+        email: "",
+        href: "",
+        country: "",
+        images: [],
+        external_urls: { spotify: "" },
+        followers: { total: null },
+      },
     };
   }
 
@@ -29,14 +68,15 @@ export class Profile extends Component {
   };
 
   getProfile = () => {
-    if (this.token) {
-      spotifyApi.setAccessToken(this.token);
-
-      spotifyApi.getMe().then(me => {
-        console.log(me);
-      });
-    }
+    axios.post("http://localhost:8888/me", { token: this.token }).then(body => {
+      this.setState({ data: { ...body.data } });
+      console.log(this.state.data);
+    });
   };
+
+  componentDidMount() {
+    this.getProfile();
+  }
 
   refreshToken = () => {
     axios
@@ -47,13 +87,69 @@ export class Profile extends Component {
   };
 
   render() {
-    // const { display_name, id, email, href, country, url, spotify } = this.data;
+    const { classes } = this.props;
+    const {
+      display_name,
+      id,
+      email,
+      href,
+      country,
+      images,
+      spotify,
+      followers,
+    } = this.state.data;
+
     return (
       <>
-        <button onClick={this.getProfile}>Hello</button>
+        <Card className={classes.root} variant="outlined">
+          <CardContent>
+            <div>
+              <CardMedia
+                className={classes.media}
+                image={images[0]}
+                title="Profile picture"
+              />
+              <Typography variant="h5" component="h2">
+                {display_name}
+              </Typography>
+              <Typography className={classes.pos} color="textSecondary">
+                {id}
+              </Typography>
+              <Typography variant="body2" component="p">
+                {email}
+              </Typography>
+              <Typography variant="body2" component="p">
+                {href}
+              </Typography>
+            </div>
+            <div>
+              <PersonPinCircleIcon />
+              <Typography variant="body2" component="p">
+                {country}
+              </Typography>
+              <FilterListIcon />
+              <Typography variant="body2" component="p">
+                {spotify}
+              </Typography>
+              <DirectionsRunIcon />
+              <Typography variant="body2" component="p">
+                {followers.total}
+              </Typography>
+            </div>
+          </CardContent>
+        </Card>
+
+        <h4>{display_name}</h4>
+        <h4>{id}</h4>
+        <h4>{email}</h4>
+        <h4>{href}</h4>
+        <h4>{country}</h4>
+        <h4>{spotify}</h4>
+        <h4>{images}</h4>
+        <h4>{followers.total}</h4>
       </>
     );
   }
 }
 
-export default Profile;
+export default withStyles(styles)(Profile);
