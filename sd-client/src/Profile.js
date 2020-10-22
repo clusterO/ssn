@@ -5,6 +5,8 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  FormHelperText,
+  Paper,
 } from "@material-ui/core";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 import FilterListIcon from "@material-ui/icons/FilterList";
@@ -16,6 +18,14 @@ const styles = theme => ({
     width: "40%",
     margin: "auto auto",
     marginTop: "20%",
+  },
+  details: {
+    display: "flex",
+  },
+  infos: {
+    display: "flex",
+    width: "40%",
+    justifyContent: "space-between",
   },
   bullet: {
     display: "inline-block",
@@ -29,7 +39,8 @@ const styles = theme => ({
     marginBottom: 12,
   },
   media: {
-    height: 0,
+    width: "50%",
+    height: "200px",
     paddingTop: "56.25%", // 16:9
   },
 });
@@ -48,7 +59,7 @@ export class Profile extends Component {
         email: "",
         href: "",
         country: "",
-        images: [],
+        images: [{ url: "" }],
         external_urls: { spotify: "" },
         followers: { total: null },
       },
@@ -103,50 +114,49 @@ export class Profile extends Component {
       <>
         <Card className={classes.root} variant="outlined">
           <CardContent>
-            <div>
+            <div className={classes.details}>
               <CardMedia
                 className={classes.media}
-                image={images[0]}
+                image={images[0].url}
                 title="Profile picture"
               />
-              <Typography variant="h5" component="h2">
-                {display_name}
-              </Typography>
-              <Typography className={classes.pos} color="textSecondary">
-                {id}
-              </Typography>
-              <Typography variant="body2" component="p">
-                {email}
-              </Typography>
-              <Typography variant="body2" component="p">
-                {href}
-              </Typography>
+              <div>
+                <Typography variant="h5" component="h2">
+                  {display_name}
+                </Typography>
+                <Typography className={classes.pos} color="textSecondary">
+                  {id}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {email}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {href}
+                </Typography>
+              </div>
             </div>
-            <div>
-              <PersonPinCircleIcon />
-              <Typography variant="body2" component="p">
-                {country}
-              </Typography>
-              <FilterListIcon />
-              <Typography variant="body2" component="p">
-                {spotify}
-              </Typography>
-              <DirectionsRunIcon />
-              <Typography variant="body2" component="p">
-                {followers.total}
-              </Typography>
+            <div className={classes.infos}>
+              <span>
+                <PersonPinCircleIcon />
+                <Typography variant="body2" component="p">
+                  {country}
+                </Typography>
+              </span>
+              <span>
+                <FilterListIcon />
+                <Typography variant="body2" component="p">
+                  {spotify}
+                </Typography>
+              </span>
+              <span>
+                <DirectionsRunIcon />
+                <Typography variant="body2" component="p">
+                  {followers.total}
+                </Typography>
+              </span>
             </div>
           </CardContent>
         </Card>
-
-        <h4>{display_name}</h4>
-        <h4>{id}</h4>
-        <h4>{email}</h4>
-        <h4>{href}</h4>
-        <h4>{country}</h4>
-        <h4>{spotify}</h4>
-        <h4>{images}</h4>
-        <h4>{followers.total}</h4>
       </>
     );
   }
