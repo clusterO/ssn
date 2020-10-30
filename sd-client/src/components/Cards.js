@@ -38,18 +38,19 @@ export class Cards extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
       <div>
-        <div className="cardContainer">
+        <div className={classes.cardContainer}>
           {people.map(person => (
             <TinderCard
-              className="swipe"
+              className={classes.swipe}
               key={person.name}
               preventSwipe={["up", "down"]}
             >
               <div
                 style={{ backgroundImage: `url(${person.url})` }}
-                className="card"
+                className={classes.card}
               >
                 <h3>{person.name}</h3>
               </div>

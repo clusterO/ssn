@@ -1,39 +1,38 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import axios from "axios";
-import {
-  Paper,
-  withStyles,
-  Grid,
-  TextField,
-  Button,
-  FormControlLabel,
-  Checkbox,
-  Tabs,
-  Tab,
-} from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
+import Header from "./Header";
+import Chats from "./Chats";
+import ChatScreen from "./Chat";
+import TinderCards from "./Cards";
+import SwipeButtons from "./Swipe";
 
-const styles = theme => ({
-  form: {
-    margin: theme.spacing(2),
-  },
-  paper: {
-    padding: theme.spacing.unit,
-    marginTop: "1px",
-  },
-  container: {
-    margin: "10% auto 0 auto",
-    width: "40%",
-  },
-  spotifyButton: {
-    margin: "auto auto",
-    backgroundColor: "#1EDE62",
-    color: "#000000",
-  },
-});
+const styles = theme => ({});
 
 class Explore extends Component {
   render() {
-    return <div>Hello</div>;
+    return (
+      <div className="explore">
+        <Router>
+          <Switch>
+            <Route path="/chat/:person">
+              <Header backButton="/chat" />
+              <Chat />
+            </Route>
+            <Route path="/chat">
+              <Header backButton="/" />
+              <Chats />
+            </Route>
+            <Route path="/">
+              <Header />
+              <Cards />
+              <Swipe />
+            </Route>
+          </Switch>
+        </Router>
+      </div>
+    );
   }
 }
 
