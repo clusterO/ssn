@@ -33,8 +33,8 @@ const styles = theme => ({
 
 class Explore extends Component {
   render() {
-    return <div></div>;
+    return <div>Hello</div>;
   }
 }
 
-export default withStyle(styles)(Explore);
+export default withStyles(styles)(Explore);
