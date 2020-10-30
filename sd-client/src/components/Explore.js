@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import axios from "axios";
 import { withStyles } from "@material-ui/core";
 import Header from "./Header";
-import Chats from "./Chats";
-import ChatScreen from "./Chat";
-import TinderCards from "./Cards";
-import SwipeButtons from "./Swipe";
+import Contacts from "./Contacts";
+import Chat from "./Chat";
+import Cards from "./Cards";
+import Swipe from "./Swipe";
 
 const styles = theme => ({});
 
@@ -22,7 +21,7 @@ class Explore extends Component {
             </Route>
             <Route path="/chat">
               <Header backButton="/" />
-              <Chats />
+              <Contacts />
             </Route>
             <Route path="/">
               <Header />
