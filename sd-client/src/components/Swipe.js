@@ -1,13 +1,7 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import {
-  ReplayIcon,
-  CloseIcon,
-  StarRateIcon,
-  FavoriteIcon,
-  FlashOnIcon,
-} from "@material-ui/icons";
+import { Replay, Close, StarRate, Favorite, FlashOn } from "@material-ui/icons";
 
 const styles = theme => ({
   swipeButtons: {
@@ -49,19 +43,19 @@ export class Swipe extends Component {
     return (
       <div className={classes.swipeButtons}>
         <IconButton className={classes.swipeButtons_repeat}>
-          <ReplayIcon fontSize="large" />
+          <Replay fontSize="large" />
         </IconButton>
         <IconButton className={classes.swipeButtons_left}>
-          <CloseIcon fontSize="large" />
+          <Close fontSize="large" />
         </IconButton>
         <IconButton className={classes.swipeButtons_star}>
-          <StarRateIcon fontSize="large" />
+          <StarRate fontSize="large" />
         </IconButton>
         <IconButton className={classes.swipeButtons_right}>
-          <FavoriteIcon fontSize="large" />
+          <Favorite fontSize="large" />
         </IconButton>
         <IconButton className={classes.swipeButtons_lightning}>
-          <FlashOnIcon fontSize="large" />
+          <FlashOn fontSize="large" />
         </IconButton>
       </div>
     );

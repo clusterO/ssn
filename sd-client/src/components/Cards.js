@@ -32,9 +32,9 @@ const styles = theme => ({
 export class Cards extends Component {
   constructor(props) {
     super(props);
-    state: {
-      people: [];
-    }
+    this.state = {
+      people: [],
+    };
   }
 
   render() {
@@ -42,7 +42,7 @@ export class Cards extends Component {
     return (
       <div>
         <div className={classes.cardContainer}>
-          {people.map(person => (
+          {this.state.people.map(person => (
             <TinderCard
               className={classes.swipe}
               key={person.name}

@@ -5,12 +5,8 @@ import {
   CardMedia,
   CardContent,
   Typography,
-  FormHelperText,
-  Paper,
 } from "@material-ui/core";
-import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
+import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
 import axios from "axios";
 
 const styles = theme => ({
@@ -137,19 +133,19 @@ export class Profile extends Component {
             </div>
             <div className={classes.infos}>
               <span>
-                <PersonPinCircleIcon />
+                <PersonPinCircle />
                 <Typography variant="body2" component="p">
                   {country}
                 </Typography>
               </span>
               <span>
-                <FilterListIcon />
+                <FilterList />
                 <Typography variant="body2" component="p">
                   {spotify}
                 </Typography>
               </span>
               <span>
-                <DirectionsRunIcon />
+                <DirectionsRun />
                 <Typography variant="body2" component="p">
                   {followers.total}
                 </Typography>

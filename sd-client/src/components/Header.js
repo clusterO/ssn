@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withStyles, IconButton } from "@material-ui/core";
-import { PersonIcon, ForumIcon, ArrowBackIosIcon } from "@material-ui/icons";
+import { Person, Forum, ArrowBackIos } from "@material-ui/icons";
 
 const styles = theme => ({
   header: {
@@ -10,15 +10,11 @@ const styles = theme => ({
     borderBottom: "1px solid #f9f9f9",
     alignItems: "center",
   },
-
   header_logo: {
     height: "40px",
     objectFit: "contain",
   },
-
-  header_icon: {
-    padding: "20px",
-  },
+  header_icon: {},
 });
 
 export class Header extends Component {
@@ -28,14 +24,11 @@ export class Header extends Component {
       <div className={classes.header}>
         {backButton ? (
           <IconButton onClick={() => history.replace(backButton)}>
-            <ArrowBackIosIcon
-              className={classes.header_icon}
-              fontSize="large"
-            />
+            <ArrowBackIos className={classes.header_icon} fontSize="large" />
           </IconButton>
         ) : (
           <IconButton>
-            <PersonIcon className={classes.header_icon} fontSize="large" />
+            <Person className={classes.header_icon} fontSize="large" />
           </IconButton>
         )}
 
@@ -48,7 +41,7 @@ export class Header extends Component {
         </Link>
         <Link to="/chat">
           <IconButton>
-            <ForumIcon className={classes.header_icon} fontSize="large" />
+            <Forum className={classes.header_icon} fontSize="large" />
           </IconButton>
         </Link>
       </div>

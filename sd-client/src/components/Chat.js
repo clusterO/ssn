@@ -50,17 +50,24 @@ const styles = theme => ({
 export class Chat extends Component {
   constructor(props) {
     super(props);
-    state: {
-      input: "";
-      messages: [];
-    }
+    this.state = {
+      input: "",
+      messages: [],
+    };
   }
 
   handleSend = e => {
     e.preventDefault();
-    if (input) this.setState({ messages: [...messages, { message: input }] });
+    if (this.state.input)
+      this.setState({
+        messages: [...this.state.messages, { message: this.state.input }],
+      });
 
     this.setState({ input: "" });
+  };
+
+  handleChange = e => {
+    this.setState({ input: e.target.value });
   };
 
   render() {
@@ -71,7 +78,7 @@ export class Chat extends Component {
         <p className={classes.chatScreen_timestamp}>
           YOU MATCHED WITH ELLEN ON 10/08/20
         </p>
-        {messages.map(message =>
+        {this.state.messages.map(message =>
           message.name ? (
             <div className={classes.chatScreen_message}>
               <Avatar
@@ -89,14 +96,14 @@ export class Chat extends Component {
         )}
         <form className={classes.chatScreen_input}>
           <input
-            valeu={input}
-            onChange={e => setInput(e.target.value)}
+            valeu={this.state.input}
+            onChange={this.handleChange}
             className={classes.chatScreen_inputField}
             type="text"
             placeholder="Type a message..."
           />
           <button
-            onClick={handleSend}
+            onClick={this.handleSend}
             type="submit"
             className={classes.chatScreen_inputButton}
           >
