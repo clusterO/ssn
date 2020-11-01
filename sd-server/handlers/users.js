@@ -110,7 +110,6 @@ exports.getAuthenticatedUser = (req, res) => {
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(404).send({ message: "User not found" });
-    console.log(user);
 
     return res.status(200).json(user);
   });
@@ -156,4 +155,17 @@ exports.uploadImage = (req, res) => {
 
   busboy.on("finish", () => {});
   busboy.end(request.rawBody);
+};
+
+exports.addRequest = (req, res) => {
+  console.log(req.body.handle);
+  const filter = { handle: req.body.handle };
+  const update = { notify: [{ handle: req.body.handle, date: Date.now() }] };
+
+  User.findOneAndUpdate(filter, update, (err, doc) => {
+    if (err) return res.status(500).send({ message: err });
+
+    doc.save();
+    return res.status(200).send(doc);
+  });
 };

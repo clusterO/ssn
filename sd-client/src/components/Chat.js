@@ -52,7 +52,23 @@ export class Chat extends Component {
     super(props);
     this.state = {
       input: "",
-      messages: [],
+      messages: [
+        {
+          name: "Ellen",
+          image:
+            "https://profile-images.xing.com/images/8a5c3a56f55741fabf8911d38469b737-5/nicole-distler.1024x1024.jpg",
+          message: "Whats up 💌",
+        },
+        {
+          name: "Ellen",
+          image:
+            "https://profile-images.xing.com/images/8a5c3a56f55741fabf8911d38469b737-5/nicole-distler.1024x1024.jpg",
+          message: "Hows it going!",
+        },
+        {
+          message: "Hi! How are you Nicole!",
+        },
+      ],
     };
   }
 

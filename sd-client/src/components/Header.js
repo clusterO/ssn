@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { withStyles, IconButton } from "@material-ui/core";
-import { Person, Forum, ArrowBackIos } from "@material-ui/icons";
+import {
+  PermIdentity,
+  NotificationsNone,
+  ArrowBackIos,
+} from "@material-ui/icons";
 
 const styles = theme => ({
   header: {
@@ -30,7 +34,7 @@ export class Header extends Component {
         ) : (
           <Link to="/profile">
             <IconButton>
-              <Person className={classes.header_icon} fontSize="large" />
+              <PermIdentity className={classes.header_icon} fontSize="large" />
             </IconButton>
           </Link>
         )}
@@ -42,11 +46,9 @@ export class Header extends Component {
             alt="tinderify logo"
           />
         </Link>
-        <Link to="/chat">
-          <IconButton>
-            <Forum className={classes.header_icon} fontSize="large" />
-          </IconButton>
-        </Link>
+        <IconButton>
+          <NotificationsNone className={classes.header_icon} fontSize="large" />
+        </IconButton>
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core";
 import Header from "./Header";
@@ -10,7 +10,14 @@ import Swipe from "./Swipe";
 const styles = theme => ({});
 
 class Explore extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      handle: "",
+    };
+  }
   render() {
+    const handle = this.state.handle;
     return (
       <div className="explore">
         <Router>
@@ -25,8 +32,8 @@ class Explore extends Component {
             </Route>
             <Route path="/">
               <Header />
-              <Cards />
-              <Swipe />
+              <Cards handle={handle} />
+              <Swipe handle={handle} />
             </Route>
           </Switch>
         </Router>

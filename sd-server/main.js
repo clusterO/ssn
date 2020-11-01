@@ -15,6 +15,7 @@ const {
   getAuthenticatedUser,
   getUserDetails,
   uploadImage,
+  addRequest,
 } = require("./handlers/users");
 const {
   login,
@@ -61,6 +62,7 @@ app
   .post("/user", verifyToken, addUserDetails)
   .post("/user", verifyToken, uploadImage)
   .post("/profile", getAuthenticatedUser)
+  .post("/list", addRequest)
   .get("/user/:handle", getUserDetails)
   .get("/login", login)
   .get("/callback", callback)

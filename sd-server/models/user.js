@@ -14,6 +14,7 @@ const User = mongoose.model(
     location: String,
     website: String,
     match: Object,
+    notify: Array,
   })
 );
 
