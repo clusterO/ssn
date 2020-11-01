@@ -10,6 +10,7 @@ const styles = theme => ({
     width: "100%",
     display: "flex",
     justifyContent: "space-evenly",
+    margin: "auto auto",
   },
   MuiIconButton_root: {
     backgroundColor: "white",

@@ -60,7 +60,7 @@ app
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)
   .post("/user", verifyToken, uploadImage)
-  .get("/user", verifyToken, getAuthenticatedUser)
+  .post("/profile", getAuthenticatedUser)
   .get("/user/:handle", getUserDetails)
   .get("/login", login)
   .get("/callback", callback)

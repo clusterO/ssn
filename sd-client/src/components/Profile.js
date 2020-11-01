@@ -6,12 +6,12 @@ import {
   CardContent,
   Typography,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
 import axios from "axios";
 
 const styles = theme => ({
   root: {
-    width: "40%",
     margin: "auto auto",
     marginTop: "20%",
   },
@@ -20,8 +20,8 @@ const styles = theme => ({
   },
   infos: {
     display: "flex",
-    width: "40%",
-    justifyContent: "space-between",
+    width: "30%",
+    justifyContent: "space-evenly",
   },
   bullet: {
     display: "inline-block",
@@ -35,8 +35,7 @@ const styles = theme => ({
     marginBottom: 12,
   },
   media: {
-    width: "50%",
-    height: "200px",
+    width: "100px",
     paddingTop: "56.25%", // 16:9
   },
 });
@@ -126,9 +125,11 @@ export class Profile extends Component {
                 <Typography variant="body2" component="p">
                   {email}
                 </Typography>
-                <Typography variant="body2" component="p">
-                  {href}
-                </Typography>
+                <Link to={href}>
+                  <Typography variant="body2" component="p">
+                    Spotify
+                  </Typography>
+                </Link>
               </div>
             </div>
             <div className={classes.infos}>

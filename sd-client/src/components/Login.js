@@ -25,7 +25,7 @@ const styles = theme => ({
   },
   container: {
     margin: "10% auto 0 auto",
-    width: "40%",
+    width: "70%",
   },
   spotifyButton: {
     margin: "auto auto",

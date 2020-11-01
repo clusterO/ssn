@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { withStyles, IconButton } from "@material-ui/core";
 import { Person, Forum, ArrowBackIos } from "@material-ui/icons";
 
@@ -20,6 +20,7 @@ const styles = theme => ({
 export class Header extends Component {
   render() {
     const { backButton, history, classes } = this.props;
+
     return (
       <div className={classes.header}>
         {backButton ? (
@@ -27,16 +28,18 @@ export class Header extends Component {
             <ArrowBackIos className={classes.header_icon} fontSize="large" />
           </IconButton>
         ) : (
-          <IconButton>
-            <Person className={classes.header_icon} fontSize="large" />
-          </IconButton>
+          <Link to="/profile">
+            <IconButton>
+              <Person className={classes.header_icon} fontSize="large" />
+            </IconButton>
+          </Link>
         )}
 
         <Link to="/">
           <img
             className={classes.header_logo}
-            src="https://1000logos.net/wp-content/uploads/2018/07/tinder-logo.png"
-            alt="tinder logo"
+            src="/tinderify.png"
+            alt="tinderify logo"
           />
         </Link>
         <Link to="/chat">
@@ -49,4 +52,4 @@ export class Header extends Component {
   }
 }
 
-export default withStyles(styles)(Header);
+export default withRouter(withStyles(styles)(Header));

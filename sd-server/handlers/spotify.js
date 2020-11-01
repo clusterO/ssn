@@ -61,8 +61,8 @@ exports.callback = (req, res) => {
 
     request.post(authOptions, (error, response, body) => {
       if (!error && response.statusCode === 200) {
-        const access_token = body.access_token,
-          refresh_token = body.refresh_token;
+        const access_token = body.access_token;
+        const refresh_token = body.refresh_token;
 
         const options = {
           url: "https://api.spotify.com/v1/me",
