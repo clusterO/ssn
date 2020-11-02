@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { setHandle } from "./redux/actions/dataActions";
-import { CURRENT_SWITE_HANDLE } from "./redux/types";
 
 import Login from "./components/Login";
 import Profile from "./components/Profile";

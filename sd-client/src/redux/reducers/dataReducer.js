@@ -1,14 +1,16 @@
-import { CURRENT_SWITE_HANDLE } from "../types";
+import { CURRENT_SWIPE_HANDLE } from "../types";
 
 const initialState = {
+  handle: "",
   loading: false,
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case CURRENT_SWITE_HANDLE:
+    case CURRENT_SWIPE_HANDLE:
       return {
         ...state,
+        handle: action.handle,
         loading: true,
       };
     default:

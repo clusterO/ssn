@@ -1,20 +1,5 @@
-import { CURRENT_SWITE_HANDLE } from "../types";
-import axios from "axios";
+import { CURRENT_SWIPE_HANDLE } from "../types";
 
 export const setHandle = () => dispatch => {
-  dispatch({ type: CURRENT_SWITE_HANDLE });
-  axios
-    .get("/")
-    .then(result => {
-      dispatch({
-        type: SET_TROLLS,
-        payload: result.data,
-      });
-    })
-    .catch(err => {
-      dispatch({
-        type: SET_TROLLS,
-        payload: [],
-      });
-    });
+  dispatch({ type: CURRENT_SWIPE_HANDLE });
 };

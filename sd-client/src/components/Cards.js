@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import TinderCard from "react-tinder-card";
 import { withStyles } from "@material-ui/core";
+import { setHandle } from "../redux/actions/dataActions";
+import { connect } from "react-redux";
 import axios from "axios";
 
 const styles = theme => ({
@@ -69,14 +71,21 @@ export class Cards extends Component {
     this.getUserDetails();
   }
 
+  onCardLeftScreen = identifier => {
+    this.props.setHandle();
+    console.log(identifier + " left the screen");
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, data } = this.props;
+    console.log(data);
 
     return (
       <div>
         <div className={classes.cardContainer}>
           {this.state.profiles.map(profile => (
             <TinderCard
+              onCardLeftScreen={() => this.onCardLeftScreen(profile.name)}
               className={classes.swipe}
               key={profile.name}
               preventSwipe={["up", "down"]}
@@ -95,4 +104,15 @@ export class Cards extends Component {
   }
 }
 
-export default withStyles(styles)(Cards);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+const mapDispatchToProps = {
+  setHandle,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Cards));
