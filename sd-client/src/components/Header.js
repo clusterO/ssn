@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { withStyles, IconButton } from "@material-ui/core";
+import { withStyles, IconButton, Badge } from "@material-ui/core";
 import {
   PermIdentity,
   NotificationsNone,
   ArrowBackIos,
 } from "@material-ui/icons";
+import axios from "axios";
+import { connect } from "react-redux";
 
 const styles = theme => ({
   header: {
@@ -22,8 +24,24 @@ const styles = theme => ({
 });
 
 export class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notifications: 0,
+    };
+  }
+
+  checkNotification = () => {
+    axios
+      .post("http://localhost:8888/notify", { handle: this.props.data.user })
+      .then(response => {
+        console.log(response.data.length);
+      });
+  };
+
   render() {
     const { backButton, history, classes } = this.props;
+    this.checkNotification();
 
     return (
       <div className={classes.header}>
@@ -47,11 +65,20 @@ export class Header extends Component {
           />
         </Link>
         <IconButton>
-          <NotificationsNone className={classes.header_icon} fontSize="large" />
+          <Badge badgeContent={this.state.notifications} color="secondary">
+            <NotificationsNone
+              className={classes.header_icon}
+              fontSize="large"
+            />
+          </Badge>
         </IconButton>
       </div>
     );
   }
 }
 
-export default withRouter(withStyles(styles)(Header));
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withRouter(withStyles(styles)(Header)));

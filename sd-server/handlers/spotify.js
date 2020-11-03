@@ -91,8 +91,10 @@ exports.callback = (req, res) => {
             handle,
           }).exec((err, user) => {
             if (err) return res.status(500).send({ message: err });
-            if (user) generateDataForMatch(access_token, handle);
-            else
+            if (user) {
+              generateDataForMatch(access_token, handle);
+              updateConnectionTime(handle);
+            } else
               request.post(userOptions, () => {
                 generateDataForMatch(access_token, handle);
               });
@@ -104,6 +106,7 @@ exports.callback = (req, res) => {
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token,
+              user: handle,
             })
         );
       } else {
@@ -355,6 +358,21 @@ generateDataForMatch = async (token, handle) => {
   });
 };
 
+updateConnectionTime = handle => {
+  User.findOne({
+    handle: handle,
+  }).exec((err, user) => {
+    if (err) return { message: err };
+    if (!user) return { message: "Handle incorrect" };
+
+    user.updateOne({ lastconnection: Date.now() }, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+      user.save();
+      return data;
+    });
+  });
+};
+
 exports.getCurrentUserMatch = handle => {
   User.findOne({
     handle,
@@ -373,5 +391,19 @@ exports.getUsersMatchData = () => {
     users.forEach(user => {
       matchData.push(user.match);
     });
+  });
+};
+
+exports.notify = (req, res) => {
+  const handle = req.body.handle;
+
+  User.findOneAndUpdate({
+    handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+
+    res.status(200).send({ length: user.notifications.length });
+    user.notifications = [];
+    return user.save();
   });
 };

@@ -1,6 +1,7 @@
-import { CURRENT_SWIPE_HANDLE } from "../types";
+import { CURRENT_SWIPE_HANDLE, CURRENT_USER } from "../types";
 
 const initialState = {
+  user: "",
   handle: "",
   loading: false,
 };
@@ -11,7 +12,11 @@ export default function (state = initialState, action) {
       return {
         ...state,
         handle: action.handle,
-        loading: true,
+      };
+    case CURRENT_USER:
+      return {
+        ...state,
+        user: action.user,
       };
     default:
       return state;

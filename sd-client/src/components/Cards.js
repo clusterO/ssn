@@ -72,14 +72,11 @@ export class Cards extends Component {
   }
 
   onCardLeftScreen = identifier => {
-    this.props.setHandle();
-    console.log(identifier + " left the screen");
+    this.props.setHandle(identifier);
   };
 
   render() {
-    const { classes, data } = this.props;
-    console.log(data);
-
+    const { classes } = this.props;
     return (
       <div>
         <div className={classes.cardContainer}>

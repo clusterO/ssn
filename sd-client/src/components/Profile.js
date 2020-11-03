@@ -9,6 +9,8 @@ import {
 import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
 import axios from "axios";
+import { CURRENT_USER } from "../redux/types";
+import store from "../redux/store";
 
 const styles = theme => ({
   root: {
@@ -36,7 +38,7 @@ const styles = theme => ({
   },
   media: {
     width: "100px",
-    paddingTop: "56.25%", // 16:9
+    paddingTop: "56.25%",
   },
 });
 
@@ -59,6 +61,7 @@ export class Profile extends Component {
         followers: { total: null },
       },
     };
+    store.dispatch({ type: CURRENT_USER, user: this.params.user });
   }
 
   getHashParams = () => {

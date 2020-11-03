@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withStyles, IconButton } from "@material-ui/core";
 import { Replay, Close, StarRate, Favorite, Forum } from "@material-ui/icons";
+import { connect } from "react-redux";
 import axios from "axios";
 
 const styles = theme => ({
@@ -40,13 +41,13 @@ const styles = theme => ({
 });
 
 export class Swipe extends Component {
-  match = () => {
+  match = handle => {
     const body = { handle: "jane.m" };
     axios.post("http://localhost:8888/list", body).then(data => {});
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, data } = this.props;
     return (
       <div className={classes.swipeButtons}>
         <IconButton className={classes.swipeButtons_repeat}>
@@ -55,7 +56,10 @@ export class Swipe extends Component {
         <IconButton className={classes.swipeButtons_left}>
           <Close fontSize="large" />
         </IconButton>
-        <IconButton onClick={this.match} className={classes.swipeButtons_right}>
+        <IconButton
+          onClick={() => this.match(data.handle)}
+          className={classes.swipeButtons_right}
+        >
           <Favorite fontSize="large" />
         </IconButton>
         <IconButton className={classes.swipeButtons_star}>
@@ -71,4 +75,8 @@ export class Swipe extends Component {
   }
 }
 
-export default withStyles(styles)(Swipe);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Swipe));

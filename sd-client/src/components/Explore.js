@@ -6,6 +6,10 @@ import Contacts from "./Contacts";
 import Chat from "./Chat";
 import Cards from "./Cards";
 import Swipe from "./Swipe";
+import { urlBase64ToUint8Array } from "../utils/converter";
+
+const publicVapidKey =
+  "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
 const styles = theme => ({});
 
@@ -16,8 +20,23 @@ class Explore extends Component {
       handle: "",
     };
   }
+
+  sendPushNotification = async () => {
+    const subscription = await navigator.register.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+    });
+
+    await fetch("/list", {
+      method: "POST",
+      body: JSON.stringify(subscription),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  };
+
   render() {
-    const handle = this.state.handle;
     return (
       <div className="explore">
         <Router>
@@ -32,8 +51,8 @@ class Explore extends Component {
             </Route>
             <Route path="/">
               <Header />
-              <Cards handle={handle} />
-              <Swipe handle={handle} />
+              <Cards />
+              <Swipe />
             </Route>
           </Switch>
         </Router>

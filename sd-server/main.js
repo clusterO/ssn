@@ -24,6 +24,7 @@ const {
   getUser,
   getCurrentlyPlaying,
   getMe,
+  notify,
 } = require("./handlers/spotify");
 
 const app = express();
@@ -57,17 +58,18 @@ app
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
   .get("/", home)
+  .get("/user/:handle", getUserDetails)
+  .get("/login", login)
+  .get("/callback", callback)
+  .get("/refresh", refresh_token)
+  .get("/artist", getUser)
+  .get("/current", getCurrentlyPlaying)
+  .post("/notify", notify)
   .post("/signup", signUp)
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)
   .post("/user", verifyToken, uploadImage)
   .post("/profile", getAuthenticatedUser)
   .post("/list", addRequest)
-  .get("/user/:handle", getUserDetails)
-  .get("/login", login)
-  .get("/callback", callback)
-  .get("/refresh", refresh_token)
-  .get("/artist", getUser)
   .post("/me", getMe)
-  .get("/current", getCurrentlyPlaying)
   .listen(port, console.log(`Listening on port ${port}`));

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const webpush = require("web-push");
 const db = require("../models");
 const config = require("../utils/config");
 const {
@@ -9,6 +9,12 @@ const {
 } = require("../utils/validators");
 
 const User = db.user;
+
+const PublicVapidKey =
+  "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
+const PrivateVapidKey = "LDuSAcGDAlct5RDyGr8Rq5MPF-_A3ozFEWtkD2hUzOQ";
+
+webpush.setVapidDetails("mailto:me@gmail.com", PublicVapidKey, PrivateVapidKey);
 
 exports.home = (req, res) => {
   res.status(200).send("SpotiDate");
@@ -158,14 +164,22 @@ exports.uploadImage = (req, res) => {
 };
 
 exports.addRequest = (req, res) => {
-  console.log(req.body.handle);
   const filter = { handle: req.body.handle };
-  const update = { notify: [{ handle: req.body.handle, date: Date.now() }] };
+  const update = {
+    notifications: [{ handle: req.body.handle, date: Date.now() }],
+  };
 
   User.findOneAndUpdate(filter, update, (err, doc) => {
     if (err) return res.status(500).send({ message: err });
 
     doc.save();
-    return res.status(200).send(doc);
+    res.status(200).send(doc);
+
+    const payload = JSON.stringify({ title: "Push" });
+    webpush
+      .sendNotification(req.body, payload)
+      .catch(err => console.error(err));
+
+    return;
   });
 };
