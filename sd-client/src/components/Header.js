@@ -24,13 +24,6 @@ const styles = theme => ({
 });
 
 export class Header extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      notifications: 0,
-    };
-  }
-
   checkNotification = () => {
     axios
       .post("http://localhost:8888/notify", { handle: this.props.data.user })
@@ -40,7 +33,7 @@ export class Header extends Component {
   };
 
   render() {
-    const { backButton, history, classes } = this.props;
+    const { backButton, history, classes, data } = this.props;
     this.checkNotification();
 
     return (
@@ -65,7 +58,7 @@ export class Header extends Component {
           />
         </Link>
         <IconButton>
-          <Badge badgeContent={this.state.notifications} color="secondary">
+          <Badge badgeContent={data.notifications} color="secondary">
             <NotificationsNone
               className={classes.header_icon}
               fontSize="large"

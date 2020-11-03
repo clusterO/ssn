@@ -401,8 +401,8 @@ exports.notify = (req, res) => {
     handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
-
-    res.status(200).send({ length: user.notifications.length });
+    //user.notifications.length
+    res.status(200).send({ length: 1 });
     user.notifications = [];
     return user.save();
   });

@@ -7,8 +7,28 @@ const {
   validateSignUpData,
   validateLoginData,
 } = require("../utils/validators");
+const io = require("socket.io")();
 
 const User = db.user;
+const filter = [
+  {
+    $match: {
+      $and: [
+        { "updateDescription.updatedFields.notifications": { $exists: true } },
+        { operationType: "update" },
+      ],
+    },
+  },
+];
+const options = { fullDocument: "updateLookup" };
+
+User.watch(filter, options).on("change", data => {
+  io.on("connection", function (socket) {
+    socket.compress(true).emit("notificationStream", data);
+  });
+
+  io.listen(8888);
+});
 
 const PublicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
@@ -173,13 +193,29 @@ exports.addRequest = (req, res) => {
     if (err) return res.status(500).send({ message: err });
 
     doc.save();
-    res.status(200).send(doc);
-
-    const payload = JSON.stringify({ title: "Push" });
-    webpush
-      .sendNotification(req.body, payload)
-      .catch(err => console.error(err));
-
-    return;
+    return res.status(200).send(doc);
   });
+};
+
+subscription = (req, res) => {
+  //Push notification with SW
+  const payload = JSON.stringify({ title: "Push" });
+  webpush.sendNotification(req.body, payload).catch(err => console.error(err));
+};
+
+pusher = () => {
+  let Pusher = require("pusher");
+  let pusher = new Pusher({
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.PUSHER_APP_KEY,
+    secret: process.env.PUSHER_APP_SECRET,
+    cluster: process.env.PUSHER_APP_CLUSTER,
+  });
+
+  pusher.trigger(
+    "notifications",
+    "someone_interested",
+    post,
+    req.headers["x-socket-id"]
+  );
 };

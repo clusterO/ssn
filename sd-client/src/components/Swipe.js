@@ -42,6 +42,7 @@ const styles = theme => ({
 
 export class Swipe extends Component {
   match = handle => {
+    this.props.streamChange();
     const body = { handle: "jane.m" };
     axios.post("http://localhost:8888/list", body).then(data => {});
   };

@@ -7,6 +7,12 @@ import Chat from "./Chat";
 import Cards from "./Cards";
 import Swipe from "./Swipe";
 import { urlBase64ToUint8Array } from "../utils/converter";
+import axios from "axios";
+import Pusher from "pusher-js";
+import store from "../redux/store";
+import { ADD_NOTIFICATION } from "../redux/types";
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://localhost:8888";
 
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
@@ -27,12 +33,33 @@ class Explore extends Component {
       applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
     });
 
-    await fetch("/list", {
+    await fetch("/subscribe", {
       method: "POST",
       body: JSON.stringify(subscription),
       headers: {
         "content-type": "application/json",
       },
+    });
+  };
+
+  componentDidMount() {
+    //Realtime stream using Pusher
+    let pusher = new Pusher("5e53d307e778b90b4668", { cluster: "eu" });
+
+    pusher.connection.bind("connected", function () {
+      axios.defaults.headers.common["X-Socket-Id"] =
+        pusher.connection.socket_id;
+    });
+
+    pusher.subscribe("notifications").bind("someone_interested", () => {
+      store.dispatch({ type: ADD_NOTIFICATION });
+    });
+  }
+
+  streamChange = () => {
+    const socket = socketIOClient(ENDPOINT);
+    socket.on("notificationStream", data => {
+      console.log(data);
     });
   };
 
@@ -52,7 +79,7 @@ class Explore extends Component {
             <Route path="/">
               <Header />
               <Cards />
-              <Swipe />
+              <Swipe streamChange={this.streamChange} />
             </Route>
           </Switch>
         </Router>
