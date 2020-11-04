@@ -7,9 +7,10 @@ const {
   validateSignUpData,
   validateLoginData,
 } = require("../utils/validators");
-const io = require("socket.io")();
 
 const User = db.user;
+
+// Dead : SocketIo with MongoDb stream Change
 const filter = [
   {
     $match: {
@@ -23,12 +24,9 @@ const filter = [
 const options = { fullDocument: "updateLookup" };
 
 User.watch(filter, options).on("change", data => {
-  io.on("connection", function (socket) {
-    socket.compress(true).emit("notificationStream", data);
-  });
-
-  io.listen(8888);
+  socket.compress(true).emit("notificationStream", data);
 });
+// Dead
 
 const PublicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
@@ -197,8 +195,8 @@ exports.addRequest = (req, res) => {
   });
 };
 
-subscription = (req, res) => {
-  //Push notification with SW
+//Push notification with SW
+exports.subscription = (req, res) => {
   const payload = JSON.stringify({ title: "Push" });
   webpush.sendNotification(req.body, payload).catch(err => console.error(err));
 };

@@ -27,13 +27,15 @@ class Explore extends Component {
     };
   }
 
+  // Push Notification With SW
   sendPushNotification = async () => {
-    const subscription = await navigator.register.pushManager.subscribe({
+    const register = await navigator.serviceWorker.register("/sw.js");
+    const subscription = await register.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
     });
 
-    await fetch("/subscribe", {
+    await fetch("http://localhost:8888/subscribe", {
       method: "POST",
       body: JSON.stringify(subscription),
       headers: {
@@ -56,6 +58,7 @@ class Explore extends Component {
     });
   }
 
+  // SocketIo with MongoDb stream Change : Dead
   streamChange = () => {
     const socket = socketIOClient(ENDPOINT);
     socket.on("notificationStream", data => {
@@ -79,7 +82,7 @@ class Explore extends Component {
             <Route path="/">
               <Header />
               <Cards />
-              <Swipe streamChange={this.streamChange} />
+              <Swipe sendPushNotification={this.sendPushNotification} />
             </Route>
           </Switch>
         </Router>

@@ -18,6 +18,7 @@ const {
   getUserDetails,
   uploadImage,
   addRequest,
+  subscription,
 } = require("./handlers/users");
 const {
   login,
@@ -74,4 +75,5 @@ app
   .post("/profile", getAuthenticatedUser)
   .post("/list", addRequest)
   .post("/me", getMe)
+  .post("/subscribe", subscription)
   .listen(port, console.log(`Listening on port ${port}`));

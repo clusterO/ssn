@@ -42,7 +42,6 @@ const styles = theme => ({
 
 export class Swipe extends Component {
   match = handle => {
-    this.props.streamChange();
     const body = { handle: "jane.m" };
     axios.post("http://localhost:8888/list", body).then(data => {});
   };
@@ -63,7 +62,10 @@ export class Swipe extends Component {
         >
           <Favorite fontSize="large" />
         </IconButton>
-        <IconButton className={classes.swipeButtons_star}>
+        <IconButton
+          onClick={this.props.sendPushNotification}
+          className={classes.swipeButtons_star}
+        >
           <StarRate fontSize="large" />
         </IconButton>
         <Link to="/chat">
