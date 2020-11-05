@@ -251,3 +251,18 @@ exports.sendMessage = (req, res) => {
     return res.status(200).send(doc);
   });
 };
+
+exports.getMessages = (req, res) => {
+  let messages = [];
+
+  User.findOne({
+    handle: req.params.handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    messages = user.messages.filter(msg => msg.from === req.params.from);
+    // Set read to true
+    return res.status(200).json(messages);
+  });
+};
