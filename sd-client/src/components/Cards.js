@@ -54,7 +54,7 @@ export class Cards extends Component {
   getUserDetails = () => {
     let body = { handle: "fourmou.m" };
 
-    axios.post("http://localhost:8888/profile", body).then(body => {
+    axios.post("/profile", body).then(body => {
       const profiles = [];
       if (body.data.match?.matchs)
         body.data.match.matchs.forEach(match => {

@@ -16,6 +16,8 @@ const User = mongoose.model(
     match: Object,
     notifications: Array,
     lastconnection: Date,
+    friends: Array,
+    messages: Object,
   })
 );
 

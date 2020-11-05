@@ -19,6 +19,9 @@ const {
   uploadImage,
   addRequest,
   subscription,
+  friends,
+  sendMessage,
+  getMessages,
 } = require("./handlers/users");
 const {
   login,
@@ -67,13 +70,16 @@ app
   .get("/refresh", refresh_token)
   .get("/artist", getUser)
   .get("/current", getCurrentlyPlaying)
-  .post("/notify", notify)
+  .get("/friends", friends)
+  .get("/list", addRequest)
+  .get("/notify", notify)
+  .get("/me", getMe)
+  .get("/chat", getMessages)
   .post("/signup", signUp)
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)
   .post("/user", verifyToken, uploadImage)
   .post("/profile", getAuthenticatedUser)
-  .post("/list", addRequest)
-  .post("/me", getMe)
   .post("/subscribe", subscription)
+  .post("/send", sendMessage)
   .listen(port, console.log(`Listening on port ${port}`));

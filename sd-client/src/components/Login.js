@@ -71,7 +71,7 @@ export class Login extends Component {
   mailSign = () => {
     if (this.state.submit === "Login")
       axios
-        .post("http://localhost:8888/signin", {
+        .post("/signin", {
           email: this.state.email,
           password: this.state.password,
         })
@@ -81,7 +81,7 @@ export class Login extends Component {
         .catch(err => console.error(err));
     else
       axios
-        .post("http://localhost:8888/signup", {
+        .post("/signup", {
           email: this.state.email,
           password: this.state.password,
           confirmPassword: this.state.confirmPassword,

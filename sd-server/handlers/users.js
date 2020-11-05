@@ -7,6 +7,7 @@ const {
   validateSignUpData,
   validateLoginData,
 } = require("../utils/validators");
+const io = require("socket.io")(3001);
 
 const User = db.user;
 
@@ -24,7 +25,7 @@ const filter = [
 const options = { fullDocument: "updateLookup" };
 
 User.watch(filter, options).on("change", data => {
-  socket.compress(true).emit("notificationStream", data);
+  io.compress(true).emit("notificationStream", data);
 });
 // Dead
 
@@ -182,9 +183,9 @@ exports.uploadImage = (req, res) => {
 };
 
 exports.addRequest = (req, res) => {
-  const filter = { handle: req.body.handle };
+  const filter = { handle: req.params.handle };
   const update = {
-    notifications: [{ handle: req.body.handle, date: Date.now() }],
+    notifications: [{ user: req.params.handle, date: Date.now() }],
   };
 
   User.findOneAndUpdate(filter, update, (err, doc) => {
@@ -198,9 +199,12 @@ exports.addRequest = (req, res) => {
 //Push notification with SW
 exports.subscription = (req, res) => {
   const payload = JSON.stringify({ title: "Push" });
-  webpush.sendNotification(req.body, payload).catch(err => console.error(err));
+  webpush
+    .sendNotification(req.params, payload)
+    .catch(err => console.error(err));
 };
 
+// Dead : Pusher beams
 pusher = () => {
   let Pusher = require("pusher");
   let pusher = new Pusher({
@@ -213,7 +217,19 @@ pusher = () => {
   pusher.trigger(
     "notifications",
     "someone_interested",
-    post,
+    { data: "any" },
     req.headers["x-socket-id"]
   );
+};
+// Dead
+
+exports.friends = (req, res) => {
+  User.findOne({
+    handle: req.params.handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    return res.status(200).json(user.friends);
+  });
 };

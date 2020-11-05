@@ -77,7 +77,7 @@ export class Profile extends Component {
   };
 
   getProfile = () => {
-    axios.post("http://localhost:8888/me", { token: this.token }).then(body => {
+    axios.get("/me", { params: { token: this.token } }).then(body => {
       this.setState({ data: { ...body.data } });
       console.log(this.state.data);
     });

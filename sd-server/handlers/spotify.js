@@ -395,14 +395,14 @@ exports.getUsersMatchData = () => {
 };
 
 exports.notify = (req, res) => {
-  const handle = req.body.handle;
+  const handle = req.params.handle;
 
-  User.findOneAndUpdate({
+  User.findOne({
     handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
-    //user.notifications.length
-    res.status(200).send({ length: 1 });
+
+    res.status(200).send({ length: user.notifications.length });
     user.notifications = [];
     return user.save();
   });

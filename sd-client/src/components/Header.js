@@ -8,6 +8,8 @@ import {
 } from "@material-ui/icons";
 import axios from "axios";
 import { connect } from "react-redux";
+import store from "../redux/store";
+import { ADD_NOTIFICATION } from "../redux/types";
 
 const styles = theme => ({
   header: {
@@ -26,15 +28,21 @@ const styles = theme => ({
 export class Header extends Component {
   checkNotification = () => {
     axios
-      .post("http://localhost:8888/notify", { handle: this.props.data.user })
+      .get("/notify", {
+        params: { handle: this.props.data.user },
+      })
       .then(response => {
-        console.log(response.data.length);
+        // Add number of notifications from response
+        store.dispatch({ type: ADD_NOTIFICATION });
       });
   };
 
+  componentDidMount() {
+    // this.checkNotification();
+  }
+
   render() {
     const { backButton, history, classes, data } = this.props;
-    this.checkNotification();
 
     return (
       <div className={classes.header}>
