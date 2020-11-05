@@ -31,13 +31,13 @@ const styles = theme => ({
 
 export class Message extends Component {
   render() {
-    const { classes, name, message, profilePic, timestamp } = this.props;
+    const { classes, handle, message, image, timestamp } = this.props;
     return (
-      <Link to={`/chat/${name}`}>
+      <Link to={`/chat/${handle}`}>
         <div className={classes.chat}>
-          <Avatar className={classes.chat_image} alt={name} src={profilePic} />
+          <Avatar className={classes.chat_image} alt={handle} src={image} />
           <div className={classes.chat_details}>
-            <h2>{name}</h2>
+            <h2>{handle}</h2>
             <p>{message}</p>
           </div>
           <p className={classes.chat_timestamp}>{timestamp}</p>

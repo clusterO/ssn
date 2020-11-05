@@ -33,10 +33,10 @@ export class Contacts extends Component {
         {this.state.friends.forEach(friend => {
           return (
             <Message
-              name={friend.name}
+              handle={friend.handle}
               message={friend.message}
               timestamp={friend.timestamp}
-              profilePic={friend.image}
+              image={friend.image}
             />
           );
         })}

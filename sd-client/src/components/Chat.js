@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Avatar } from "@material-ui/core";
+import axios from "axios";
+import { connect } from "react-redux";
 
 const styles = theme => ({
   chatScreen_message: {
@@ -52,32 +54,42 @@ export class Chat extends Component {
     super(props);
     this.state = {
       input: "",
-      messages: [
-        {
-          name: "Ellen",
-          image:
-            "https://profile-images.xing.com/images/8a5c3a56f55741fabf8911d38469b737-5/nicole-distler.1024x1024.jpg",
-          message: "Whats up 💌",
-        },
-        {
-          name: "Ellen",
-          image:
-            "https://profile-images.xing.com/images/8a5c3a56f55741fabf8911d38469b737-5/nicole-distler.1024x1024.jpg",
-          message: "Hows it going!",
-        },
-        {
-          message: "Hi! How are you Nicole!",
-        },
-      ],
+      messages: [],
     };
   }
 
+  componentDidMount() {
+    this.getMessages();
+  }
+
+  getMessages = () => {
+    axios.get(
+      "/chat",
+      {
+        params: {
+          handle: this.props.data.user,
+          from: this.props.match.params.person,
+        },
+      },
+      data => {
+        this.setState({ messages: data.messages });
+      }
+    );
+  };
+
   handleSend = e => {
     e.preventDefault();
-    if (this.state.input)
+    if (this.state.input) {
       this.setState({
         messages: [...this.state.messages, { message: this.state.input }],
       });
+
+      axios.post("/send", {
+        content: this.state.input,
+        from: this.props.data.user,
+        to: this.props.match.params.person,
+      });
+    }
 
     this.setState({ input: "" });
   };
@@ -92,7 +104,7 @@ export class Chat extends Component {
     return (
       <div className={classes.chatScreen}>
         <p className={classes.chatScreen_timestamp}>
-          YOU MATCHED WITH ELLEN ON 10/08/20
+          YOU MATCHED WITH ELLEN ON _
         </p>
         {this.state.messages.map(message =>
           message.name ? (
@@ -131,4 +143,8 @@ export class Chat extends Component {
   }
 }
 
-export default withStyles(styles)(Chat);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Chat));
