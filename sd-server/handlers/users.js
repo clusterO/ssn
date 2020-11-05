@@ -233,3 +233,21 @@ exports.friends = (req, res) => {
     return res.status(200).json(user.friends);
   });
 };
+
+exports.sendMessage = (req, res) => {
+  let content = req.body.content;
+  let to = req.body.to;
+  let from = req.body.handle;
+
+  const filter = { handle: to };
+  const update = {
+    messages: [{ content, from, date: Date.now(), read: false }],
+  };
+
+  User.findOneAndUpdate(filter, update, (err, doc) => {
+    if (err) return res.status(500).send({ message: err });
+
+    doc.save();
+    return res.status(200).send(doc);
+  });
+};
