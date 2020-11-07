@@ -14,6 +14,8 @@ import {
 import { Face, Fingerprint } from "@material-ui/icons";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
+import store from "../redux/store";
+import { CURRENT_USER } from "../redux/types";
 
 const styles = theme => ({
   form: {
@@ -76,7 +78,7 @@ export class Login extends Component {
           password: this.state.password,
         })
         .then(body => {
-          // Set Token
+          store.dispatch({ type: CURRENT_USER, user: body.data.handle });
         })
         .catch(err => console.error(err));
     else
@@ -88,7 +90,7 @@ export class Login extends Component {
           handle: this.state.handle,
         })
         .then(body => {
-          // Set Token
+          store.dispatch({ type: CURRENT_USER, user: body.data.handle });
         })
         .catch(err => console.error(err));
   };

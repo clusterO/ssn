@@ -99,16 +99,16 @@ exports.callback = (req, res) => {
                 generateDataForMatch(access_token, handle);
               });
           });
-        });
 
-        res.redirect(
-          "http://localhost:3000/profile#" +
-            querystring.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token,
-              user: handle,
-            })
-        );
+          res.redirect(
+            "http://localhost:3000/profile#" +
+              querystring.stringify({
+                access_token: access_token,
+                refresh_token: refresh_token,
+                user: handle,
+              })
+          );
+        });
       } else {
         res.redirect(
           "http://localhost:3000/#" +

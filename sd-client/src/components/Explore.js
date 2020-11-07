@@ -84,7 +84,7 @@ class Explore extends Component {
               <Chat />
             </Route>
             <Route path="/chat">
-              <Header backButton="/" />
+              <Header backButton="/explore" />
               <Contacts />
             </Route>
             <Route path="/">

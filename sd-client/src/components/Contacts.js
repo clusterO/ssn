@@ -19,27 +19,25 @@ export class Contacts extends Component {
   }
 
   getFriendsList = () => {
-    axios
-      .get("/friends", { params: { handle: this.props.data.user } })
-      .then(body => {
-        this.setState({ friends: body });
-      });
+    //replace handle this.props.data.user
+    axios.get("/friends", { params: { handle: "jane.m" } }).then(body => {
+      this.setState({ friends: body.data });
+    });
   };
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.chats}>
-        {this.state.friends.forEach(friend => {
-          return (
-            <Message
-              handle={friend.handle}
-              message={friend.message}
-              timestamp={friend.timestamp}
-              image={friend.image}
-            />
-          );
-        })}
+        {this.state.friends.map((friend, i) => (
+          <Message
+            key={i}
+            handle={friend.handle}
+            message={friend.message}
+            timestamp={friend.timestamp}
+            image={friend.image}
+          />
+        ))}
       </div>
     );
   }

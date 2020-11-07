@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Avatar } from "@material-ui/core";
 import axios from "axios";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 const styles = theme => ({
@@ -52,6 +53,7 @@ const styles = theme => ({
 export class Chat extends Component {
   constructor(props) {
     super(props);
+    this.contact = this.props.match.params.person;
     this.state = {
       input: "",
       messages: [],
@@ -63,18 +65,17 @@ export class Chat extends Component {
   }
 
   getMessages = () => {
-    axios.get(
-      "/chat",
-      {
+    axios
+      .get("/chat", {
         params: {
-          handle: this.props.data.user,
-          from: this.props.match.params.person,
+          //replace handle with this.props.data.user
+          handle: "jane.m",
+          from: this.contact,
         },
-      },
-      data => {
-        this.setState({ messages: data.messages });
-      }
-    );
+      })
+      .then(body => {
+        this.setState({ messages: body.data });
+      });
   };
 
   handleSend = e => {
@@ -82,12 +83,13 @@ export class Chat extends Component {
     if (this.state.input) {
       this.setState({
         messages: [...this.state.messages, { message: this.state.input }],
+        input: "",
       });
 
       axios.post("/send", {
         content: this.state.input,
         from: this.props.data.user,
-        to: this.props.match.params.person,
+        to: this.contact,
       });
     }
 
@@ -100,18 +102,17 @@ export class Chat extends Component {
 
   render() {
     const { classes } = this.props;
-
     return (
       <div className={classes.chatScreen}>
         <p className={classes.chatScreen_timestamp}>
-          YOU MATCHED WITH ELLEN ON _
+          YOU MATCHED WITH {this.contact} ON _
         </p>
         {this.state.messages.map(message =>
-          message.name ? (
+          message.from ? (
             <div className={classes.chatScreen_message}>
               <Avatar
                 className={classes.chatScreen_image}
-                alt={message.name}
+                alt={message.from}
                 src={message.image}
               />
               <p className={classes.chatScreen_text}>{message.message}</p>
@@ -147,4 +148,4 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(Chat));
+export default connect(mapStateToProps)(withRouter(withStyles(styles)(Chat)));

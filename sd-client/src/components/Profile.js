@@ -22,8 +22,9 @@ const styles = theme => ({
   },
   infos: {
     display: "flex",
-    width: "30%",
+    width: "15%",
     justifyContent: "space-evenly",
+    marginTop: "10px",
   },
   bullet: {
     display: "inline-block",
@@ -37,8 +38,9 @@ const styles = theme => ({
     marginBottom: 12,
   },
   media: {
-    width: "100px",
-    paddingTop: "56.25%",
+    width: "200px",
+    height: "200px",
+    borderRadius: "50%",
   },
 });
 
@@ -61,6 +63,7 @@ export class Profile extends Component {
         followers: { total: null },
       },
     };
+
     store.dispatch({ type: CURRENT_USER, user: this.params.user });
   }
 
@@ -115,7 +118,11 @@ export class Profile extends Component {
             <div className={classes.details}>
               <CardMedia
                 className={classes.media}
-                image={images[0].url}
+                image={
+                  images
+                    ? images[0].url
+                    : "https://avatarfiles.alphacoders.com/191/191556.jpg"
+                }
                 title="Profile picture"
               />
               <div>
@@ -151,7 +158,7 @@ export class Profile extends Component {
               <span>
                 <DirectionsRun />
                 <Typography variant="body2" component="p">
-                  {followers.total}
+                  {followers ? followers.total : null}
                 </Typography>
               </span>
             </div>
