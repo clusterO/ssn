@@ -178,7 +178,9 @@ export class Chat extends Component {
   };
 
   handleListening = () => {
-    console.log("Listen");
+    axios.get("/current").then(body => {
+      axios.post("/play", { song: body.song });
+    });
   };
 
   render() {

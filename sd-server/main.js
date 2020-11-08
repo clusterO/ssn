@@ -33,6 +33,7 @@ const {
   getCurrentlyPlaying,
   getMe,
   notify,
+  play
 } = require("./handlers/spotify");
 
 const port = process.env.PORT || 8888;
@@ -92,5 +93,6 @@ app
   .post("/profile", getAuthenticatedUser)
   .post("/subscribe", subscription)
   .post("/send", sendMessage);
+  .post("/play", play);
 
 http.listen(port, console.log(`Listening on port ${port}`));
