@@ -5,6 +5,7 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  Container,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
@@ -115,7 +116,7 @@ export class Profile extends Component {
       <>
         <Card className={classes.root} variant="outlined">
           <CardContent>
-            <div className={classes.details}>
+            <Container className={classes.details}>
               <CardMedia
                 className={classes.media}
                 image={
@@ -125,7 +126,7 @@ export class Profile extends Component {
                 }
                 title="Profile picture"
               />
-              <div>
+              <Container>
                 <Typography variant="h5" component="h2">
                   {display_name}
                 </Typography>
@@ -140,9 +141,9 @@ export class Profile extends Component {
                     Spotify
                   </Typography>
                 </Link>
-              </div>
-            </div>
-            <div className={classes.infos}>
+              </Container>
+            </Container>
+            <Container className={classes.infos}>
               <span>
                 <PersonPinCircle />
                 <Typography variant="body2" component="p">
@@ -161,7 +162,7 @@ export class Profile extends Component {
                   {followers ? followers.total : null}
                 </Typography>
               </span>
-            </div>
+            </Container>
           </CardContent>
         </Card>
       </>

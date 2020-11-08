@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { withStyles, IconButton, Badge } from "@material-ui/core";
+import {
+  Container,
+  withStyles,
+  IconButton,
+  Badge,
+  CardMedia,
+} from "@material-ui/core";
 import {
   PermIdentity,
   NotificationsNone,
@@ -45,7 +51,7 @@ export class Header extends Component {
     const { backButton, history, classes, data } = this.props;
 
     return (
-      <div className={classes.header}>
+      <Container className={classes.header}>
         {backButton ? (
           <IconButton onClick={() => history.replace(backButton)}>
             <ArrowBackIos className={classes.header_icon} fontSize="large" />
@@ -59,10 +65,10 @@ export class Header extends Component {
         )}
 
         <Link to="/">
-          <img
+          <CardMedia
             className={classes.header_logo}
-            src="/tinderify.png"
-            alt="tinderify logo"
+            image="/tinderify.png"
+            title="logo"
           />
         </Link>
         <IconButton>
@@ -73,7 +79,7 @@ export class Header extends Component {
             />
           </Badge>
         </IconButton>
-      </div>
+      </Container>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { withStyles } from "@material-ui/core";
+import { Container, withStyles } from "@material-ui/core";
 import Header from "./Header";
 import Contacts from "./Contacts";
 import Chat from "./Chat";
@@ -16,7 +16,11 @@ import * as io from "socket.io-client";
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
-const styles = theme => ({});
+const styles = theme => ({
+  explore: {
+    alignItems: "center",
+  },
+});
 
 class Explore extends Component {
   constructor(props) {
@@ -49,8 +53,8 @@ class Explore extends Component {
 
   // SocketIo with MongoDb stream Change
   changeStream = () => {
-    const url = "http://localhost:3001";
-    const socket = io(url);
+    const url = "ws://localhost:8888";
+    const socket = io(url, { query: `handle=${"_"}` });
 
     socket.on("notificationStream", data => {
       store.dispatch({ type: ADD_NOTIFICATION });
@@ -75,8 +79,9 @@ class Explore extends Component {
   // Dead
 
   render() {
+    const { classes } = this.props;
     return (
-      <div className="explore">
+      <Container className={classes.explore}>
         <Router>
           <Switch>
             <Route path="/chat/:person">
@@ -94,7 +99,7 @@ class Explore extends Component {
             </Route>
           </Switch>
         </Router>
-      </div>
+      </Container>
     );
   }
 }

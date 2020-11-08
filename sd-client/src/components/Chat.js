@@ -1,8 +1,19 @@
 import React, { Component } from "react";
-import { withStyles, Avatar } from "@material-ui/core";
+import {
+  withStyles,
+  Avatar,
+  IconButton,
+  Popover,
+  Button,
+  Container,
+  Typography,
+  Input,
+} from "@material-ui/core";
+import { InsertEmoticon } from "@material-ui/icons";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import * as io from "socket.io-client";
 
 const styles = theme => ({
   chatScreen_message: {
@@ -12,7 +23,7 @@ const styles = theme => ({
   },
   chatScreen_text: {
     marginLeft: "10px",
-    backgroundColor: "lightgray",
+    backgroundColor: "#f887ff",
     padding: "15px",
     borderRadius: "20px",
   },
@@ -23,7 +34,7 @@ const styles = theme => ({
   },
   chatScreen_textUser: {
     marginLeft: "auto",
-    backgroundColor: "#29b3cd",
+    backgroundColor: "#321450",
     padding: "15px",
     borderRadius: "20px",
     color: "white",
@@ -48,6 +59,22 @@ const styles = theme => ({
     fontWeight: "bolder",
     color: "#fe3d71",
   },
+  popover: {
+    pointerEvents: "none",
+  },
+  paper: {
+    padding: theme.spacing(1),
+    borderRadius: "20px",
+  },
+  reaction: {
+    padding: "0 0.15rem 0 0.15rem",
+    fontSize: "1rem",
+    transition: "O.25s",
+    "&:hover": {
+      textDecoration: "none",
+      fontSize: "1.5rem",
+    },
+  },
 });
 
 export class Chat extends Component {
@@ -55,9 +82,20 @@ export class Chat extends Component {
     super(props);
     this.contact = this.props.match.params.person;
     this.state = {
+      anchorEl: null,
       input: "",
       messages: [],
     };
+
+    //Listen to incoming messages
+    const url = "ws://localhost:8888";
+    const socket = io(url, { query: `handle=${"_"}` });
+
+    socket.on("newMessage", data => {
+      this.setState({
+        messages: [...this.state.messages, { message: data.message }],
+      });
+    });
   }
 
   componentDidMount() {
@@ -80,7 +118,7 @@ export class Chat extends Component {
 
   handleSend = e => {
     e.preventDefault();
-    if (this.state.input) {
+    if (this.state.input && this.state.input.trim() !== "") {
       this.setState({
         messages: [...this.state.messages, { message: this.state.input }],
         input: "",
@@ -92,54 +130,117 @@ export class Chat extends Component {
         to: this.contact,
       });
     }
-
-    this.setState({ input: "" });
   };
 
   handleChange = e => {
     this.setState({ input: e.target.value });
   };
 
+  handlePopoverOpen = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handlePopoverClose = event => {
+    this.setState({ anchorEl: null });
+  };
+
+  react = reaction => {
+    console.log("Hello world");
+  };
+
   render() {
     const { classes } = this.props;
+    const reactions = ["💗", "👏", "🌷", "🌶️", "🥰"];
+    const open = Boolean(this.state.anchorEl);
+
     return (
-      <div className={classes.chatScreen}>
-        <p className={classes.chatScreen_timestamp}>
+      <Container
+        onClick={this.handlePopoverClose}
+        className={classes.chatScreen}
+      >
+        <Typography className={classes.chatScreen_timestamp}>
           YOU MATCHED WITH {this.contact} ON _
-        </p>
-        {this.state.messages.map(message =>
+        </Typography>
+        {this.state.messages.map((message, index) =>
           message.from ? (
-            <div className={classes.chatScreen_message}>
+            <Container key={index} className={classes.chatScreen_message}>
               <Avatar
                 className={classes.chatScreen_image}
                 alt={message.from}
-                src={message.image}
+                src={
+                  message.image ||
+                  "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+                }
               />
-              <p className={classes.chatScreen_text}>{message.message}</p>
-            </div>
+              <Typography className={classes.chatScreen_text}>
+                {message.message}
+              </Typography>
+              <Container>
+                <IconButton
+                  disableRipple
+                  variant="link"
+                  aria-owns={open ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  onMouseEnter={this.handlePopoverOpen}
+                >
+                  <InsertEmoticon />
+                </IconButton>
+                <Popover
+                  id="mouse-over-popover"
+                  className={classes.popover}
+                  classes={{
+                    paper: classes.paper,
+                  }}
+                  open={open}
+                  anchorEl={this.state.anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  onClose={this.handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  {reactions.map((reaction, index) => (
+                    <Button
+                      className={classes.reaction}
+                      key={index}
+                      onClick={() => this.react(reaction)}
+                    >
+                      {reaction}
+                    </Button>
+                  ))}
+                </Popover>
+              </Container>
+            </Container>
           ) : (
-            <div className={classes.chatScreen_message}>
-              <p className={classes.chatScreen_textUser}>{message.message}</p>
-            </div>
+            <Container key={index} className={classes.chatScreen_message}>
+              <Typography className={classes.chatScreen_textUser}>
+                {message.message}
+              </Typography>
+            </Container>
           )
         )}
-        <form className={classes.chatScreen_input}>
-          <input
-            valeu={this.state.input}
+        <Container className={classes.chatScreen_input}>
+          <Input
+            value={this.state.input}
             onChange={this.handleChange}
             className={classes.chatScreen_inputField}
             type="text"
             placeholder="Type a message..."
           />
-          <button
+          <Button
             onClick={this.handleSend}
             type="submit"
             className={classes.chatScreen_inputButton}
           >
             SEND
-          </button>
-        </form>
-      </div>
+          </Button>
+        </Container>
+      </Container>
     );
   }
 }

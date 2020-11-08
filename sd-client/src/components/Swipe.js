@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { withStyles, IconButton } from "@material-ui/core";
+import { withStyles, IconButton, Container } from "@material-ui/core";
 import { Replay, Close, StarRate, Favorite, Forum } from "@material-ui/icons";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -49,7 +49,7 @@ export class Swipe extends Component {
   render() {
     const { classes, data } = this.props;
     return (
-      <div className={classes.swipeButtons}>
+      <Container className={classes.swipeButtons}>
         <IconButton className={classes.swipeButtons_repeat}>
           <Replay fontSize="large" />
         </IconButton>
@@ -70,7 +70,7 @@ export class Swipe extends Component {
             <Forum fontSize="large" />
           </IconButton>
         </Link>
-      </div>
+      </Container>
     );
   }
 }

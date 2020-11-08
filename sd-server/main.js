@@ -1,9 +1,11 @@
 require("dotenv").config();
 
-const express = require("express");
+const app = require("express")();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
@@ -33,7 +35,6 @@ const {
   notify,
 } = require("./handlers/spotify");
 
-const app = express();
 const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
 
@@ -58,6 +59,15 @@ let corsOptions = {
   credentials: true,
 };
 
+io.on("connection", socket => {
+  //Attach user handle to socket ID
+  console.log(`${socket.request._query.handle} connected`);
+});
+
+io.on("disconnect", () => {
+  console.log("user disconnected");
+});
+
 app
   .use(cors(corsOptions))
   .use(bodyParser.json())
@@ -81,5 +91,6 @@ app
   .post("/user", verifyToken, uploadImage)
   .post("/profile", getAuthenticatedUser)
   .post("/subscribe", subscription)
-  .post("/send", sendMessage)
-  .listen(port, console.log(`Listening on port ${port}`));
+  .post("/send", sendMessage);
+
+http.listen(port, console.log(`Listening on port ${port}`));

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TinderCard from "react-tinder-card";
-import { withStyles } from "@material-ui/core";
+import { Container, Typography, withStyles } from "@material-ui/core";
 import { setHandle } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -78,25 +78,23 @@ export class Cards extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <div className={classes.cardContainer}>
-          {this.state.profiles.map(profile => (
-            <TinderCard
-              onCardLeftScreen={() => this.onCardLeftScreen(profile.name)}
-              className={classes.swipe}
-              key={profile.name}
-              preventSwipe={["up", "down"]}
+      <Container className={classes.cardContainer}>
+        {this.state.profiles.map(profile => (
+          <TinderCard
+            onCardLeftScreen={() => this.onCardLeftScreen(profile.name)}
+            className={classes.swipe}
+            key={profile.name}
+            preventSwipe={["up", "down"]}
+          >
+            <Container
+              style={{ backgroundImage: `url(${profile.url})` }}
+              className={classes.card}
             >
-              <div
-                style={{ backgroundImage: `url(${profile.url})` }}
-                className={classes.card}
-              >
-                <h3>{profile.name}</h3>
-              </div>
-            </TinderCard>
-          ))}
-        </div>
-      </div>
+              <Typography>{profile.name}</Typography>
+            </Container>
+          </TinderCard>
+        ))}
+      </Container>
     );
   }
 }

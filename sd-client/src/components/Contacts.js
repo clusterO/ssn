@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
+import { Container, withStyles } from "@material-ui/core";
 import Message from "./Message";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -28,17 +28,17 @@ export class Contacts extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.chats}>
-        {this.state.friends.map((friend, i) => (
+      <Container className={classes.chats}>
+        {this.state.friends.map((friend, index) => (
           <Message
-            key={i}
+            key={index}
             handle={friend.handle}
             message={friend.message}
             timestamp={friend.timestamp}
             image={friend.image}
           />
         ))}
-      </div>
+      </Container>
     );
   }
 }

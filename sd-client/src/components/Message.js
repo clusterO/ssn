@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { withStyles, Avatar } from "@material-ui/core";
+import { Container, withStyles, Avatar, Typography } from "@material-ui/core";
 
 const styles = theme => ({
   chat: {
@@ -11,15 +11,20 @@ const styles = theme => ({
     height: "70px",
     borderBottom: "1px solid #fafafa",
   },
-  a: {
+  link: {
     textDecoration: "none",
-    color: "initial",
+    color: "blue",
+    "&:hover": {
+      textDecoration: "none",
+      color: "purple",
+    },
   },
   chat_details: {
     flex: 1,
   },
-  p: {
-    color: "gray",
+  message: {
+    color: "black",
+    fontWeight: "bold",
   },
   chat_timestamp: {
     color: "lightgray",
@@ -33,15 +38,17 @@ export class Message extends Component {
   render() {
     const { classes, handle, message, image, timestamp } = this.props;
     return (
-      <Link to={`/chat/${handle}`}>
-        <div className={classes.chat}>
+      <Link to={`/chat/${handle}`} className={classes.link}>
+        <Container className={classes.chat}>
           <Avatar className={classes.chat_image} alt={handle} src={image} />
-          <div className={classes.chat_details}>
-            <h2>{handle}</h2>
-            <p>{message}</p>
-          </div>
-          <p className={classes.chat_timestamp}>{timestamp}</p>
-        </div>
+          <Container className={classes.chat_details}>
+            <Typography>{handle}</Typography>
+            <Typography className={classes.message}>{message}</Typography>
+          </Container>
+          <Typography className={classes.chat_timestamp}>
+            {timestamp}
+          </Typography>
+        </Container>
       </Link>
     );
   }

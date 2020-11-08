@@ -10,6 +10,7 @@ import {
   Checkbox,
   Tabs,
   Tab,
+  Container,
 } from "@material-ui/core";
 import { Face, Fingerprint } from "@material-ui/icons";
 import FilterListIcon from "@material-ui/icons/FilterList";
@@ -98,7 +99,7 @@ export class Login extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.container}>
+      <Container className={classes.container}>
         <Paper square>
           <Tabs
             value={this.state.value}
@@ -114,7 +115,7 @@ export class Login extends Component {
         </Paper>
         <Paper className={classes.paper}>
           {this.state.value === 1 ? (
-            <div className={classes.form}>
+            <Container className={classes.form}>
               {this.state.signup ? (
                 <Grid container spacing={5} alignItems="flex-end">
                   <Grid item>
@@ -214,7 +215,7 @@ export class Login extends Component {
                   {this.state.submit}
                 </Button>
               </Grid>
-            </div>
+            </Container>
           ) : (
             <Grid container justify="center">
               <Button
@@ -230,7 +231,7 @@ export class Login extends Component {
             </Grid>
           )}
         </Paper>
-      </div>
+      </Container>
     );
   }
 }

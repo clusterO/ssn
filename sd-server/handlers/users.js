@@ -7,12 +7,12 @@ const {
   validateSignUpData,
   validateLoginData,
 } = require("../utils/validators");
-const io = require("socket.io")(3001);
+const io = require("socket.io");
 
 const User = db.user;
 
-// Dead : SocketIo with MongoDb stream Change
-const filter = [
+// SocketIo with MongoDb stream Change realtime notifications
+const notificationFilter = [
   {
     $match: {
       $and: [
@@ -24,10 +24,26 @@ const filter = [
 ];
 const options = { fullDocument: "updateLookup" };
 
-User.watch(filter, options).on("change", data => {
+User.watch(notificationFilter, options).on("change", data => {
   io.compress(true).emit("notificationStream", data);
 });
-// Dead
+
+// SocketIo with MongoDb stream Change IM chat
+const chatFilter = [
+  {
+    $match: {
+      $and: [
+        { "updateDescription.updatedFields.messages": { $exists: true } },
+        { operationType: "update" },
+      ],
+    },
+  },
+];
+
+User.watch(chatFilter, options).on("change", data => {
+  //Search user socket id and send to specific socket
+  io.compress(true).emit("newMessage", data);
+});
 
 const PublicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
