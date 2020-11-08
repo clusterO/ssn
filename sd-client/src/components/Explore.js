@@ -17,9 +17,7 @@ const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
 const styles = theme => ({
-  explore: {
-    alignItems: "center",
-  },
+  explore: {},
 });
 
 class Explore extends Component {
