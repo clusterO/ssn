@@ -6,43 +6,17 @@ import {
   CardContent,
   Typography,
   Container,
+  Box,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
 import axios from "axios";
 import { CURRENT_USER } from "../redux/types";
 import store from "../redux/store";
+import styles from "../styles";
 
-const styles = theme => ({
-  root: {
-    margin: "auto auto",
-    marginTop: "20%",
-  },
-  details: {
-    display: "flex",
-  },
-  infos: {
-    display: "flex",
-    width: "15%",
-    justifyContent: "space-evenly",
-    marginTop: "10px",
-  },
-  bullet: {
-    display: "inline-block",
-    margin: "0 2px",
-    transform: "scale(0.8)",
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  media: {
-    width: "200px",
-    height: "200px",
-    borderRadius: "50%",
-  },
+const profileStyles = theme => ({
+  ...styles.profileStyles,
 });
 
 export class Profile extends Component {
@@ -144,24 +118,24 @@ export class Profile extends Component {
               </Container>
             </Container>
             <Container className={classes.infos}>
-              <span>
+              <Box>
                 <PersonPinCircle />
                 <Typography variant="body2" component="p">
                   {country}
                 </Typography>
-              </span>
-              <span>
+              </Box>
+              <Box>
                 <FilterList />
                 <Typography variant="body2" component="p">
                   {spotify}
                 </Typography>
-              </span>
-              <span>
+              </Box>
+              <Box>
                 <DirectionsRun />
                 <Typography variant="body2" component="p">
                   {followers ? followers.total : null}
                 </Typography>
-              </span>
+              </Box>
             </Container>
           </CardContent>
         </Card>
@@ -170,4 +144,4 @@ export class Profile extends Component {
   }
 }
 
-export default withStyles(styles)(Profile);
+export default withStyles(profileStyles)(Profile);

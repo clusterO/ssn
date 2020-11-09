@@ -10,31 +10,26 @@ const io = require("socket.io")(http);
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
 const config = require("./utils/config");
-const verifyToken = require("./utils/verifyToken");
+const { verifyToken } = require("./utils/util");
 const {
-  home,
   signUp,
   signIn,
   addUserDetails,
   getAuthenticatedUser,
   getUserDetails,
-  uploadImage,
-  addRequest,
-  subscription,
-  friends,
-  sendMessage,
-  getMessages,
+  uploadProfileImage,
 } = require("./handlers/users");
 const {
   login,
   callback,
-  refresh_token,
+  refreshToken,
   getUser,
   getCurrentlyPlaying,
   getMe,
-  notify,
-  play
+  play,
 } = require("./handlers/spotify");
+const { matchRequest, notify, subscription } = require("./handlers/matchs");
+const { friends, sendMessage, getMessages } = require("./handlers/chat");
 
 const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
@@ -47,7 +42,7 @@ db.mongoose
     useCreateIndex: true,
   })
   .then(() => {
-    console.log("DB ==> OK");
+    console.log("DB CONNECTED");
     dbInit();
   })
   .catch(err => {
@@ -69,6 +64,10 @@ io.on("disconnect", () => {
   console.log("user disconnected");
 });
 
+home = (req, res) => {
+  res.status(200).send("SpotiDate");
+};
+
 app
   .use(cors(corsOptions))
   .use(bodyParser.json())
@@ -78,21 +77,21 @@ app
   .get("/user/:handle", getUserDetails)
   .get("/login", login)
   .get("/callback", callback)
-  .get("/refresh", refresh_token)
+  .get("/refresh", refreshToken)
   .get("/artist", getUser)
   .get("/current", getCurrentlyPlaying)
   .get("/friends", friends)
-  .get("/list", addRequest)
+  .get("/match", matchRequest)
   .get("/notify", notify)
   .get("/me", getMe)
   .get("/chat", getMessages)
   .post("/signup", signUp)
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)
-  .post("/user", verifyToken, uploadImage)
+  .post("/user", verifyToken, uploadProfileImage)
   .post("/profile", getAuthenticatedUser)
   .post("/subscribe", subscription)
-  .post("/send", sendMessage);
+  .post("/send", sendMessage)
   .post("/play", play);
 
 http.listen(port, console.log(`Listening on port ${port}`));

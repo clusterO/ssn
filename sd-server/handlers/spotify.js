@@ -2,6 +2,7 @@ const request = require("request");
 const querystring = require("querystring");
 const config = require("../utils/config");
 const db = require("../models");
+const { generateRandomString } = require("../utils/util");
 
 const User = db.user;
 
@@ -133,7 +134,7 @@ exports.getMe = (req, res) => {
   });
 };
 
-exports.refresh_token = (req, res) => {
+exports.refreshToken = (req, res) => {
   const refresh_token = req.query.refresh_token;
   const authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -316,15 +317,19 @@ const callSpotify = (token, url) => {
   });
 };
 
-const generateRandomString = length => {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+updateConnectionTime = handle => {
+  User.findOne({
+    handle: handle,
+  }).exec((err, user) => {
+    if (err) return { message: err };
+    if (!user) return { message: "Handle incorrect" };
 
-  for (let i = 0; i < length; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
+    user.updateOne({ lastconnection: Date.now() }, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+      user.save();
+      return data;
+    });
+  });
 };
 
 generateDataForMatch = async (token, handle) => {
@@ -355,55 +360,5 @@ generateDataForMatch = async (token, handle) => {
       user.save();
       return data;
     });
-  });
-};
-
-updateConnectionTime = handle => {
-  User.findOne({
-    handle: handle,
-  }).exec((err, user) => {
-    if (err) return { message: err };
-    if (!user) return { message: "Handle incorrect" };
-
-    user.updateOne({ lastconnection: Date.now() }, (err, data) => {
-      if (err) return res.status(500).send({ message: err });
-      user.save();
-      return data;
-    });
-  });
-};
-
-exports.getCurrentUserMatch = handle => {
-  User.findOne({
-    handle,
-  }).exec((err, user) => {
-    if (err) return res.status(500).send({ message: err });
-    return user.match;
-  });
-};
-
-exports.getUsersMatchData = () => {
-  let matchData = [];
-
-  User.find().exec((err, users) => {
-    if (err) return console.error(err);
-
-    users.forEach(user => {
-      matchData.push(user.match);
-    });
-  });
-};
-
-exports.notify = (req, res) => {
-  const handle = req.params.handle;
-
-  User.findOne({
-    handle,
-  }).exec((err, user) => {
-    if (err) return res.status(500).send({ message: err });
-
-    res.status(200).send({ length: user.notifications.length });
-    user.notifications = [];
-    return user.save();
   });
 };

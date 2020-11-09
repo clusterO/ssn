@@ -4,7 +4,7 @@ import Message from "./Message";
 import { connect } from "react-redux";
 import axios from "axios";
 
-const styles = theme => ({});
+const contactStyles = theme => ({});
 
 export class Contacts extends Component {
   constructor(props) {
@@ -47,4 +47,4 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(Contacts));
+export default connect(mapStateToProps)(withStyles(contactStyles)(Contacts));

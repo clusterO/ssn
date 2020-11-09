@@ -16,7 +16,7 @@ import * as io from "socket.io-client";
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
-const styles = theme => ({
+const exploreStyles = theme => ({
   explore: {},
 });
 
@@ -102,4 +102,4 @@ class Explore extends Component {
   }
 }
 
-export default withStyles(styles)(Explore);
+export default withStyles(exploreStyles)(Explore);

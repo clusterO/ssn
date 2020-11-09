@@ -4,7 +4,6 @@ import {
   Avatar,
   IconButton,
   Popover,
-  Button,
   Container,
   Typography,
   TextField,
@@ -15,82 +14,10 @@ import axios from "axios";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import * as io from "socket.io-client";
+import styles from "../styles";
 
-const styles = theme => ({
-  chatScreenMessage: {
-    display: "flex",
-    alignItems: "center",
-    padding: "20px",
-  },
-  chatScreenText: {
-    marginLeft: "10px",
-    backgroundColor: "#f887ff",
-    padding: "15px",
-    borderRadius: "20px",
-  },
-  chatScreenTimestamp: {
-    textAlign: "center",
-    color: "grey",
-    padding: "20px",
-  },
-  chatScreenTextUser: {
-    marginLeft: "auto",
-    backgroundColor: "#321450",
-    padding: "15px",
-    borderRadius: "20px",
-    color: "white",
-  },
-  chatScreenInput: {
-    display: "flex",
-    padding: "5px",
-    position: "fixed",
-    bottom: 0,
-    width: "80%",
-    marginBottom: "10px",
-  },
-  chatScreenInputField: {
-    flex: 1,
-    padding: "10px",
-    border: "none",
-  },
-  chatScreenInputButton: {
-    border: "none",
-    marginRight: "5px",
-    backgroundColor: "white",
-    fontWeight: "bolder",
-    color: "#fe3d71",
-  },
-  chatScreenShare: {
-    border: "none",
-    marginRight: "5px",
-    backgroundColor: "white",
-    fontWeight: "bolder",
-    color: "#1afe49",
-  },
-  chatScreenListen: {
-    border: "none",
-    marginRight: "5px",
-    backgroundColor: "white",
-    fontWeight: "bolder",
-    color: "#ff6e27",
-  },
-  popover: {
-    pointerEvents: "none",
-  },
-  paper: {
-    padding: theme.spacing(1),
-    borderRadius: "20px",
-  },
-  smile: {},
-  reaction: {
-    padding: "0 0.25rem 0 0.25rem",
-    fontSize: "1rem",
-    transition: "O.25s",
-    "&:hover": {
-      textDecoration: "none",
-      fontSize: "1.5rem",
-    },
-  },
+const chatStyles = theme => ({
+  ...styles.chatStyles,
 });
 
 export class Chat extends Component {
@@ -303,4 +230,6 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withRouter(withStyles(styles)(Chat)));
+export default connect(mapStateToProps)(
+  withRouter(withStyles(chatStyles)(Chat))
+);

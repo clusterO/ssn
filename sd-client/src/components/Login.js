@@ -17,24 +17,10 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import store from "../redux/store";
 import { CURRENT_USER } from "../redux/types";
+import styles from "../styles";
 
-const styles = theme => ({
-  form: {
-    margin: theme.spacing(2),
-  },
-  paper: {
-    padding: theme.spacing.unit,
-    marginTop: "1px",
-  },
-  container: {
-    margin: "10% auto 0 auto",
-    width: "70%",
-  },
-  spotifyButton: {
-    margin: "auto auto",
-    backgroundColor: "#1EDE62",
-    color: "#000000",
-  },
+const loginStyles = theme => ({
+  ...styles.loginStyles,
 });
 
 export class Login extends Component {
@@ -236,4 +222,4 @@ export class Login extends Component {
   }
 }
 
-export default withStyles(styles)(Login);
+export default withStyles(loginStyles)(Login);

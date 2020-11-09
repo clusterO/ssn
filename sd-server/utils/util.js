@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("./config");
 
-verifyToken = (req, res, next) => {
+exports.verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) return res.status(403).send({ message: "No token provided!" });
@@ -14,4 +14,13 @@ verifyToken = (req, res, next) => {
   });
 };
 
-module.exports = verifyToken;
+exports.generateRandomString = length => {
+  let text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};

@@ -4,65 +4,35 @@ import { withStyles, IconButton, Container } from "@material-ui/core";
 import { Replay, Close, StarRate, Favorite, Forum } from "@material-ui/icons";
 import { connect } from "react-redux";
 import axios from "axios";
+import styles from "../styles";
 
-const styles = theme => ({
-  swipeButtons: {
-    position: "fixed",
-    bottom: "10vh",
-    width: "100%",
-    display: "flex",
-    justifyContent: "space-evenly",
-    margin: "auto auto",
-  },
-  MuiIconButton_root: {
-    backgroundColor: "white",
-    boxShadow: "0px 10px 53px 0px rgba(0, 0, 0, 0.3) !important",
-  },
-  swipeButtons_repeat: {
-    padding: "3vw !important",
-    color: "#f5b748 !important",
-  },
-  swipeButtons_left: {
-    padding: "3vw !important",
-    color: "#ec5e6f !important",
-  },
-  swipeButtons_star: {
-    padding: "3vw !important",
-    color: "#62b4f9 !important",
-  },
-  swipeButtons_right: {
-    padding: "3vw !important",
-    color: "#76e2b3 !important",
-  },
-  messages: {
-    padding: "3vw !important",
-    color: "#915dd1 !important",
-  },
+const swipeStyles = theme => ({
+  ...styles.swipeStyles,
 });
 
 export class Swipe extends Component {
   match = handle => {
     const body = { handle: "jane.m" };
-    axios.get("/list", { params: body }).then(data => {});
+    axios.get("/match", { params: body }).then(data => {});
   };
 
   render() {
     const { classes, data } = this.props;
     return (
       <Container className={classes.swipeButtons}>
-        <IconButton className={classes.swipeButtons_repeat}>
+        <IconButton className={classes.swipeButtonsRepeat}>
           <Replay fontSize="large" />
         </IconButton>
-        <IconButton className={classes.swipeButtons_left}>
+        <IconButton className={classes.swipeButtonsLeft}>
           <Close fontSize="large" />
         </IconButton>
         <IconButton
           onClick={() => this.match(data.handle)}
-          className={classes.swipeButtons_right}
+          className={classes.swipeButtonsRight}
         >
           <Favorite fontSize="large" />
         </IconButton>
-        <IconButton className={classes.swipeButtons_star}>
+        <IconButton className={classes.swipeButtonsStar}>
           <StarRate fontSize="large" />
         </IconButton>
         <Link to="/chat">
@@ -79,4 +49,4 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(Swipe));
+export default connect(mapStateToProps)(withStyles(swipeStyles)(Swipe));

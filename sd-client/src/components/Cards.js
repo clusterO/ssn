@@ -4,32 +4,10 @@ import { Container, Typography, withStyles } from "@material-ui/core";
 import { setHandle } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 import axios from "axios";
+import styles from "../styles";
 
-const styles = theme => ({
-  card: {
-    position: "relative",
-    width: "600px",
-    height: "50vh",
-    padding: "20px",
-    maxWidth: "85vw",
-    borderRadius: "20px",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    boxShadow: "0px 18px 53px 0px rgba(0, 0, 0, 0.3)",
-  },
-  h3: {
-    position: "absolute",
-    bottom: "10px",
-    color: "white",
-  },
-  cardContainer: {
-    display: "flex",
-    justifyContent: "center",
-    marginTop: "10vh",
-  },
-  swipe: {
-    position: "absolute",
-  },
+const cardStyles = () => ({
+  ...styles.cardStyles,
 });
 
 export class Cards extends Component {
@@ -110,4 +88,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Cards));
+)(withStyles(cardStyles)(Cards));

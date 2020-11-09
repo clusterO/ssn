@@ -16,19 +16,10 @@ import axios from "axios";
 import { connect } from "react-redux";
 import store from "../redux/store";
 import { ADD_NOTIFICATION } from "../redux/types";
+import styles from "../styles";
 
-const styles = theme => ({
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    borderBottom: "1px solid #f9f9f9",
-    alignItems: "center",
-  },
-  header_logo: {
-    height: "40px",
-    objectFit: "contain",
-  },
-  header_icon: {},
+const headerStyles = theme => ({
+  ...styles.headerStyles,
 });
 
 export class Header extends Component {
@@ -54,19 +45,19 @@ export class Header extends Component {
       <Container className={classes.header}>
         {backButton ? (
           <IconButton onClick={() => history.replace(backButton)}>
-            <ArrowBackIos className={classes.header_icon} fontSize="large" />
+            <ArrowBackIos className={classes.headerIcon} fontSize="large" />
           </IconButton>
         ) : (
           <Link to="/profile">
             <IconButton>
-              <PermIdentity className={classes.header_icon} fontSize="large" />
+              <PermIdentity className={classes.headerIcon} fontSize="large" />
             </IconButton>
           </Link>
         )}
 
         <Link to="/">
           <CardMedia
-            className={classes.header_logo}
+            className={classes.headerLogo}
             image="/tinderify.png"
             title="logo"
           />
@@ -74,7 +65,7 @@ export class Header extends Component {
         <IconButton>
           <Badge badgeContent={data.notifications} color="secondary">
             <NotificationsNone
-              className={classes.header_icon}
+              className={classes.headerIcon}
               fontSize="large"
             />
           </Badge>
@@ -88,4 +79,6 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withRouter(withStyles(styles)(Header)));
+export default connect(mapStateToProps)(
+  withRouter(withStyles(headerStyles)(Header))
+);
