@@ -3,6 +3,7 @@ import { Container, withStyles } from "@material-ui/core";
 import Message from "./Message";
 import { connect } from "react-redux";
 import axios from "axios";
+import Header from "./Header";
 
 const contactStyles = theme => ({});
 
@@ -28,17 +29,20 @@ export class Contacts extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Container className={classes.chats}>
-        {this.state.friends.map((friend, index) => (
-          <Message
-            key={index}
-            handle={friend.handle}
-            message={friend.message}
-            timestamp={friend.timestamp}
-            image={friend.image}
-          />
-        ))}
-      </Container>
+      <>
+        <Header backButton="/explore" />
+        <Container className={classes.chats}>
+          {this.state.friends.map((friend, index) => (
+            <Message
+              key={index}
+              handle={friend.handle}
+              message={friend.message}
+              timestamp={friend.timestamp}
+              image={friend.image}
+            />
+          ))}
+        </Container>
+      </>
     );
   }
 }

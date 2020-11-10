@@ -18,6 +18,8 @@ import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import store from "../redux/store";
 import { CURRENT_USER } from "../redux/types";
 import styles from "../styles";
+import { connect } from "react-redux";
+import Profile from "./Profile";
 
 const loginStyles = theme => ({
   ...styles.loginStyles,
@@ -83,143 +85,157 @@ export class Login extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, data } = this.props;
     return (
-      <Container className={classes.container}>
-        <Paper square>
-          <Tabs
-            value={this.state.value}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={this.handleChange}
-            aria-label="disabled tabs example"
-            variant="fullWidth"
-          >
-            <Tab label="Spotify" />
-            <Tab label="Email" />
-          </Tabs>
-        </Paper>
-        <Paper className={classes.paper}>
-          {this.state.value === 1 ? (
-            <Container className={classes.form}>
-              {this.state.signup ? (
-                <Grid container spacing={5} alignItems="flex-end">
-                  <Grid item>
-                    <Face />
+      <>
+        {data.loggedIn ? (
+          <Profile />
+        ) : (
+          <Container className={classes.container}>
+            <Paper square>
+              <Tabs
+                value={this.state.value}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={this.handleChange}
+                aria-label="disabled tabs example"
+                variant="fullWidth"
+              >
+                <Tab label="Spotify" />
+                <Tab label="Email" />
+              </Tabs>
+            </Paper>
+            <Paper className={classes.paper}>
+              {this.state.value === 1 ? (
+                <Container className={classes.form}>
+                  {this.state.signup ? (
+                    <Grid container spacing={5} alignItems="flex-end">
+                      <Grid item>
+                        <Face />
+                      </Grid>
+                      <Grid item md={true} sm={true} xs={true}>
+                        <TextField
+                          id="handle"
+                          name="handle"
+                          label="Handle"
+                          type="handle"
+                          fullWidth
+                          required
+                          onChange={this.handleInput}
+                        />
+                      </Grid>
+                    </Grid>
+                  ) : null}
+                  <Grid container spacing={5} alignItems="flex-end">
+                    <Grid item>
+                      <AlternateEmailIcon />
+                    </Grid>
+                    <Grid item md={true} sm={true} xs={true}>
+                      <TextField
+                        id="email"
+                        name="email"
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        autoFocus
+                        required
+                        onChange={this.handleInput}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item md={true} sm={true} xs={true}>
-                    <TextField
-                      id="handle"
-                      name="handle"
-                      label="Handle"
-                      type="handle"
-                      fullWidth
-                      required
-                      onChange={this.handleInput}
-                    />
+                  <Grid container spacing={5} alignItems="flex-end">
+                    <Grid item>
+                      <Fingerprint />
+                    </Grid>
+                    <Grid item md={true} sm={true} xs={true}>
+                      <TextField
+                        id="password"
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        required
+                        onChange={this.handleInput}
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-              ) : null}
-              <Grid container spacing={5} alignItems="flex-end">
-                <Grid item>
-                  <AlternateEmailIcon />
-                </Grid>
-                <Grid item md={true} sm={true} xs={true}>
-                  <TextField
-                    id="email"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    autoFocus
-                    required
-                    onChange={this.handleInput}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={5} alignItems="flex-end">
-                <Grid item>
-                  <Fingerprint />
-                </Grid>
-                <Grid item md={true} sm={true} xs={true}>
-                  <TextField
-                    id="password"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    required
-                    onChange={this.handleInput}
-                  />
-                </Grid>
-              </Grid>
-              {this.state.signup ? (
-                <Grid container spacing={5} alignItems="flex-end">
-                  <Grid item>
-                    <Fingerprint />
+                  {this.state.signup ? (
+                    <Grid container spacing={5} alignItems="flex-end">
+                      <Grid item>
+                        <Fingerprint />
+                      </Grid>
+                      <Grid item md={true} sm={true} xs={true}>
+                        <TextField
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          label="Confirm Password"
+                          type="confirmPassword"
+                          fullWidth
+                          required
+                          onChange={this.handleInput}
+                        />
+                      </Grid>
+                    </Grid>
+                  ) : null}
+                  <Grid container alignItems="center" justify="space-between">
+                    <Grid item>
+                      <FormControlLabel
+                        control={<Checkbox color="primary" />}
+                        label="Remember me"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        disableFocusRipple
+                        disableRipple
+                        style={{ textTransform: "none" }}
+                        variant="text"
+                        color="primary"
+                        onClick={this.signup}
+                      >
+                        {this.state.action}
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item md={true} sm={true} xs={true}>
-                    <TextField
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      label="Confirm Password"
-                      type="confirmPassword"
-                      fullWidth
-                      required
-                      onChange={this.handleInput}
-                    />
-                  </Grid>
-                </Grid>
-              ) : null}
-              <Grid container alignItems="center" justify="space-between">
-                <Grid item>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" />}
-                    label="Remember me"
-                  />
-                </Grid>
-                <Grid item>
-                  <Button
-                    disableFocusRipple
-                    disableRipple
-                    style={{ textTransform: "none" }}
-                    variant="text"
-                    color="primary"
-                    onClick={this.signup}
+                  <Grid
+                    container
+                    justify="center"
+                    style={{ marginTop: "10px" }}
                   >
-                    {this.state.action}
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ textTransform: "none" }}
+                      onClick={this.mailSign}
+                    >
+                      {this.state.submit}
+                    </Button>
+                  </Grid>
+                </Container>
+              ) : (
+                <Grid container justify="center">
+                  <Button
+                    className={classes.spotifyButton}
+                    variant="outlined"
+                    color="primary"
+                    style={{ textTransform: "none" }}
+                    onClick={this.login}
+                  >
+                    <FilterListIcon />
+                    Authorize Login
                   </Button>
                 </Grid>
-              </Grid>
-              <Grid container justify="center" style={{ marginTop: "10px" }}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  style={{ textTransform: "none" }}
-                  onClick={this.mailSign}
-                >
-                  {this.state.submit}
-                </Button>
-              </Grid>
-            </Container>
-          ) : (
-            <Grid container justify="center">
-              <Button
-                className={classes.spotifyButton}
-                variant="outlined"
-                color="primary"
-                style={{ textTransform: "none" }}
-                onClick={this.login}
-              >
-                <FilterListIcon />
-                Authorize Login
-              </Button>
-            </Grid>
-          )}
-        </Paper>
-      </Container>
+              )}
+            </Paper>
+          </Container>
+        )}
+      </>
     );
   }
 }
 
-export default withStyles(loginStyles)(Login);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withStyles(loginStyles)(Login));

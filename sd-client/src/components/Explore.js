@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container, withStyles } from "@material-ui/core";
 import Header from "./Header";
-import Contacts from "./Contacts";
-import Chat from "./Chat";
+
 import Cards from "./Cards";
-import Swipe from "./Swipe";
 import { urlBase64ToUint8Array } from "../utils/converter";
 import axios from "axios";
 import Pusher from "pusher-js";
@@ -21,13 +18,6 @@ const exploreStyles = theme => ({
 });
 
 class Explore extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      handle: "",
-    };
-  }
-
   // Push Notification With SW
   sendPushNotification = async () => {
     const register = await navigator.serviceWorker.register("/sw.js");
@@ -80,23 +70,8 @@ class Explore extends Component {
     const { classes } = this.props;
     return (
       <Container className={classes.explore}>
-        <Router>
-          <Switch>
-            <Route path="/chat/:person">
-              <Header backButton="/chat" />
-              <Chat />
-            </Route>
-            <Route path="/chat">
-              <Header backButton="/explore" />
-              <Contacts />
-            </Route>
-            <Route path="/">
-              <Header />
-              <Cards />
-              <Swipe />
-            </Route>
-          </Switch>
-        </Router>
+        <Header />
+        <Cards />
       </Container>
     );
   }

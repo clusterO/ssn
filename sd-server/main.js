@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
@@ -30,6 +29,7 @@ const {
 } = require("./handlers/spotify");
 const { matchRequest, notify, subscription } = require("./handlers/matchs");
 const { friends, sendMessage, getMessages } = require("./handlers/chat");
+const { createSocketConnection } = require("./utils/socket");
 
 const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
@@ -50,22 +50,15 @@ db.mongoose
     process.exit();
   });
 
+createSocketConnection(http);
+
 let corsOptions = {
   origin: "http://localhost:3000",
   credentials: true,
 };
 
-io.on("connection", socket => {
-  //Attach user handle to socket ID
-  console.log(`${socket.request._query.handle} connected`);
-});
-
-io.on("disconnect", () => {
-  console.log("user disconnected");
-});
-
 home = (req, res) => {
-  res.status(200).send("SpotiDate");
+  res.status(200).send("Tinderfy");
 };
 
 app

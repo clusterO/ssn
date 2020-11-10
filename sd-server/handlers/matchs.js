@@ -1,7 +1,7 @@
 const db = require("../models");
 const webpush = require("web-push");
-const io = require("socket.io");
 const config = require("../utils/config");
+const { emitNotification } = require("../utils/socket");
 
 const User = db.user;
 
@@ -19,7 +19,7 @@ const filter = [
 const options = { fullDocument: "updateLookup" };
 
 User.watch(filter, options).on("change", data => {
-  io.compress(true).emit("notificationStream", data);
+  emitNotification(data);
 });
 
 webpush.setVapidDetails(
@@ -29,13 +29,18 @@ webpush.setVapidDetails(
 );
 
 exports.matchRequest = (req, res) => {
-  const filter = { handle: req.params.handle };
+  const filter = { handle: req.query.handle };
   const update = {
-    notifications: [{ user: req.params.handle, date: Date.now() }],
+    notifications: [{ user: req.query.handle, date: Date.now() }],
   };
 
   User.findOneAndUpdate(filter, update, (err, doc) => {
     if (err) return res.status(500).send({ message: err });
+
+    if (!doc)
+      return res.status(401).send({
+        message: "User not found",
+      });
 
     doc.save();
     return res.status(200).send(doc);

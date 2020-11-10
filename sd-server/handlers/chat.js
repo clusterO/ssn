@@ -36,7 +36,7 @@ exports.friends = (req, res) => {
 exports.sendMessage = (req, res) => {
   let content = req.body.content;
   let to = req.body.to;
-  let from = req.body.handle;
+  let from = req.body.from;
 
   const filter = { handle: to };
   const update = {
@@ -45,6 +45,8 @@ exports.sendMessage = (req, res) => {
 
   User.findOneAndUpdate(filter, update, (err, doc) => {
     if (err) return res.status(500).send({ message: err });
+
+    if (!doc) return res.status(401).send({ message: "User not found" });
 
     doc.save();
     return res.status(200).send(doc);

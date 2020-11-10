@@ -114,7 +114,7 @@ exports.callback = (req, res) => {
         res.redirect(
           "http://localhost:3000/#" +
             querystring.stringify({
-              error: "invalid_token",
+              error: "Invalid token",
             })
         );
       }
@@ -125,7 +125,7 @@ exports.callback = (req, res) => {
 exports.getMe = (req, res) => {
   const options = {
     url: "https://api.spotify.com/v1/me",
-    headers: { Authorization: "Bearer " + req.body.token },
+    headers: { Authorization: "Bearer " + req.query.token },
     json: true,
   };
 

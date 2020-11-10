@@ -49,8 +49,23 @@ export class Cards extends Component {
     this.getUserDetails();
   }
 
-  onCardLeftScreen = identifier => {
+  onCardLeftScreen = direction => {
+    if (direction === "right") this.match(this.props.data.handle);
+  };
+
+  onSwipe = identifier => {
     this.props.setHandle(identifier);
+  };
+
+  match = handle => {
+    axios
+      .get("/match", { params: { handle } })
+      .then(data => {
+        // console.log(data);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   render() {
@@ -59,7 +74,8 @@ export class Cards extends Component {
       <Container className={classes.cardContainer}>
         {this.state.profiles.map(profile => (
           <TinderCard
-            onCardLeftScreen={() => this.onCardLeftScreen(profile.name)}
+            onSwipe={() => this.onSwipe(profile.name)}
+            onCardLeftScreen={this.onCardLeftScreen}
             className={classes.swipe}
             key={profile.name}
             preventSwipe={["up", "down"]}

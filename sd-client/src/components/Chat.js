@@ -8,6 +8,7 @@ import {
   Typography,
   TextField,
   Tooltip,
+  Box,
 } from "@material-ui/core";
 import { InsertEmoticon } from "@material-ui/icons";
 import axios from "axios";
@@ -15,6 +16,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import * as io from "socket.io-client";
 import styles from "../styles";
+import Header from "./Header";
 
 const chatStyles = theme => ({
   ...styles.chatStyles,
@@ -116,112 +118,115 @@ export class Chat extends Component {
     const open = Boolean(this.state.anchorEl);
 
     return (
-      <Container
-        onClick={this.handlePopoverClose}
-        className={classes.chatScreen}
-      >
-        <Typography className={classes.chatScreenTimestamp}>
-          YOU MATCHED WITH {this.contact} ON _
-        </Typography>
-        {this.state.messages.map((message, index) =>
-          message.from ? (
-            <Container key={index} className={classes.chatScreenMessage}>
-              <Avatar
-                className={classes.chatScreen_image}
-                alt={message.from}
-                src={
-                  message.image ||
-                  "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-                }
-              />
-              <Typography className={classes.chatScreenText}>
-                {message.message}
-              </Typography>
-              <Container>
-                <IconButton
-                  className={classes.smile}
-                  disableRipple
-                  variant="link"
-                  aria-owns={open ? "mouse-over-popover" : undefined}
-                  aria-haspopup="true"
-                  onMouseEnter={this.handlePopoverOpen}
-                >
-                  <InsertEmoticon />
-                </IconButton>
-                <Popover
-                  id="mouse-over-popover"
-                  className={classes.popover}
-                  classes={{
-                    paper: classes.paper,
-                  }}
-                  open={open}
-                  anchorEl={this.state.anchorEl}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  onClose={this.handlePopoverClose}
-                  disableRestoreFocus
-                >
-                  {reactions.map((reaction, index) => (
-                    <IconButton
-                      variant="link"
-                      className={classes.reaction}
-                      key={index}
-                      onClick={() => this.react(reaction)}
-                    >
-                      {reaction}
-                    </IconButton>
-                  ))}
-                </Popover>
+      <>
+        <Header backButton="/chat" />
+        <Container
+          onClick={this.handlePopoverClose}
+          className={classes.chatScreen}
+        >
+          <Typography className={classes.chatScreenTimestamp}>
+            YOU MATCHED WITH {this.contact} ON _
+          </Typography>
+          {this.state.messages.map((message, index) =>
+            message.from ? (
+              <Container key={index} className={classes.chatScreenMessage}>
+                <Avatar
+                  className={classes.chatScreen_image}
+                  alt={message.from}
+                  src={
+                    message.image ||
+                    "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+                  }
+                />
+                <Typography className={classes.chatScreenText}>
+                  {message.message}
+                </Typography>
+                <Container>
+                  <IconButton
+                    className={classes.smile}
+                    disableRipple
+                    variant="link"
+                    aria-owns={open ? "mouse-over-popover" : undefined}
+                    aria-haspopup="true"
+                    onMouseEnter={this.handlePopoverOpen}
+                  >
+                    <InsertEmoticon />
+                  </IconButton>
+                  <Popover
+                    id="mouse-over-popover"
+                    className={classes.popover}
+                    classes={{
+                      paper: classes.paper,
+                    }}
+                    open={open}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    onClose={this.handlePopoverClose}
+                    disableRestoreFocus
+                  >
+                    {reactions.map((reaction, index) => (
+                      <IconButton
+                        variant="link"
+                        className={classes.reaction}
+                        key={index}
+                        onClick={() => this.react(reaction)}
+                      >
+                        {reaction}
+                      </IconButton>
+                    ))}
+                  </Popover>
+                </Container>
               </Container>
-            </Container>
-          ) : (
-            <Container key={index} className={classes.chatScreenMessage}>
-              <Typography className={classes.chatScreenTextUser}>
-                {message.message}
-              </Typography>
-            </Container>
-          )
-        )}
-        <Container className={classes.chatScreenInput}>
-          <TextField
-            value={this.state.input}
-            onChange={this.handleChange}
-            className={classes.chatScreenInputField}
-            type="text"
-            placeholder="Type a message..."
-          />
-          <Tooltip title="Send" arrow>
-            <IconButton
-              onClick={this.handleSend}
-              className={classes.chatScreenInputButton}
-            >
-              <i class="fa fa-paper-plane" aria-hidden="true"></i>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Share currently playing" arrow>
-            <IconButton
-              onClick={this.handleShare}
-              className={classes.chatScreenShare}
-            >
-              <i class="fa fa-share" aria-hidden="true"></i>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Listen together" arrow>
-            <IconButton
-              onClick={this.handleListening}
-              className={classes.chatScreenListen}
-            >
-              <i class="fa fa-music" aria-hidden="true"></i>
-            </IconButton>
-          </Tooltip>
+            ) : (
+              <Container key={index} className={classes.chatScreenMessage}>
+                <Typography className={classes.chatScreenTextUser}>
+                  {message.message}
+                </Typography>
+              </Container>
+            )
+          )}
+          <Container className={classes.chatScreenInput}>
+            <TextField
+              value={this.state.input}
+              onChange={this.handleChange}
+              className={classes.chatScreenInputField}
+              type="text"
+              placeholder="Type a message..."
+            />
+            <Tooltip title="Send" arrow>
+              <IconButton
+                onClick={this.handleSend}
+                className={classes.chatScreenInputButton}
+              >
+                <Box className="fa fa-paper-plane" aria-hidden="true" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Share currently playing" arrow>
+              <IconButton
+                onClick={this.handleShare}
+                className={classes.chatScreenShare}
+              >
+                <Box className="fa fa-share" aria-hidden="true" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Listen together" arrow>
+              <IconButton
+                onClick={this.handleListening}
+                className={classes.chatScreenListen}
+              >
+                <Box className="fa fa-music" aria-hidden="true" />
+              </IconButton>
+            </Tooltip>
+          </Container>
         </Container>
-      </Container>
+      </>
     );
   }
 }

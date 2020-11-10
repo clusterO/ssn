@@ -166,7 +166,8 @@ export default {
   profileStyles: {
     root: {
       margin: "auto auto",
-      marginTop: "20%",
+      marginTop: "5%",
+      width: "80%",
     },
     details: {
       display: "flex",
@@ -189,19 +190,23 @@ export default {
       marginBottom: 12,
     },
     media: {
-      width: "200px",
-      height: "200px",
+      width: "150px",
+      height: "150px",
       borderRadius: "50%",
     },
   },
   swipeStyles: {
-    swipeButtons: {
-      position: "fixed",
-      bottom: "10vh",
+    swipeRoot: {
       width: "100%",
       display: "flex",
       justifyContent: "space-evenly",
-      margin: "auto auto",
+      marginTop: "20px",
+    },
+    swipeButtons: {
+      position: "fixed",
+      bottom: "10vh",
+      display: "flex",
+      justifyContent: "space-evenly",
     },
     MuiIconButtonRoot: {
       backgroundColor: "white",

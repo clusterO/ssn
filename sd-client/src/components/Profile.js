@@ -7,13 +7,17 @@ import {
   Typography,
   Container,
   Box,
+  CircularProgress,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
 import axios from "axios";
-import { CURRENT_USER } from "../redux/types";
+import { CURRENT_USER, SET_PROFILE } from "../redux/types";
 import store from "../redux/store";
 import styles from "../styles";
+import { getHashParams } from "../utils/hash";
+import { connect } from "react-redux";
+import Swipe from "./Swipe";
 
 const profileStyles = theme => ({
   ...styles.profileStyles,
@@ -22,47 +26,26 @@ const profileStyles = theme => ({
 export class Profile extends Component {
   constructor() {
     super();
-    this.params = this.getHashParams();
+    this.params = getHashParams();
     this.token = this.params.access_token;
     this.refresh_token = this.params.refresh_token;
-    this.state = {
-      loggedIn: this.token ? true : false,
-      data: {
-        display_name: "",
-        id: "",
-        email: "",
-        href: "",
-        country: "",
-        images: [{ url: "" }],
-        external_urls: { spotify: "" },
-        followers: { total: null },
-      },
-    };
-
-    store.dispatch({ type: CURRENT_USER, user: this.params.user });
   }
-
-  getHashParams = () => {
-    let hashParams = {};
-    let e,
-      r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-    while ((e = r.exec(q))) {
-      hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-
-    return hashParams;
-  };
 
   getProfile = () => {
     axios.get("/me", { params: { token: this.token } }).then(body => {
-      this.setState({ data: { ...body.data } });
-      console.log(this.state.data);
+      store.dispatch({
+        type: SET_PROFILE,
+        token: this.token,
+        data: { ...body.data },
+      });
     });
   };
 
   componentDidMount() {
-    this.getProfile();
+    if (!this.props.data.loggedIn) {
+      store.dispatch({ type: CURRENT_USER, user: this.params.user });
+      this.getProfile();
+    }
   }
 
   refreshToken = () => {
@@ -84,22 +67,26 @@ export class Profile extends Component {
       images,
       spotify,
       followers,
-    } = this.state.data;
+    } = this.props.data.profile;
 
     return (
       <>
         <Card className={classes.root} variant="outlined">
           <CardContent>
             <Container className={classes.details}>
-              <CardMedia
-                className={classes.media}
-                image={
-                  images
-                    ? images[0].url
-                    : "https://avatarfiles.alphacoders.com/191/191556.jpg"
-                }
-                title="Profile picture"
-              />
+              {images && images[0].url ? (
+                <CardMedia
+                  className={classes.media}
+                  image={
+                    images
+                      ? images[0].url
+                      : "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
+                  }
+                  title="Profile picture"
+                />
+              ) : (
+                <CircularProgress />
+              )}
               <Container>
                 <Typography variant="h5" component="h2">
                   {display_name}
@@ -139,9 +126,14 @@ export class Profile extends Component {
             </Container>
           </CardContent>
         </Card>
+        <Swipe />
       </>
     );
   }
 }
 
-export default withStyles(profileStyles)(Profile);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withStyles(profileStyles)(Profile));

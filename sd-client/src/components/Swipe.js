@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { withStyles, IconButton, Container } from "@material-ui/core";
-import { Replay, Close, StarRate, Favorite, Forum } from "@material-ui/icons";
+import { withStyles, IconButton, Container, Tooltip } from "@material-ui/core";
+import { Store, Waves, Mic, Explore, Forum } from "@material-ui/icons";
 import { connect } from "react-redux";
-import axios from "axios";
 import styles from "../styles";
 
 const swipeStyles = theme => ({
@@ -11,35 +10,48 @@ const swipeStyles = theme => ({
 });
 
 export class Swipe extends Component {
-  match = handle => {
-    const body = { handle: "jane.m" };
-    axios.get("/match", { params: body }).then(data => {});
-  };
-
   render() {
-    const { classes, data } = this.props;
+    const { classes } = this.props;
     return (
-      <Container className={classes.swipeButtons}>
-        <IconButton className={classes.swipeButtonsRepeat}>
-          <Replay fontSize="large" />
-        </IconButton>
-        <IconButton className={classes.swipeButtonsLeft}>
-          <Close fontSize="large" />
-        </IconButton>
-        <IconButton
-          onClick={() => this.match(data.handle)}
-          className={classes.swipeButtonsRight}
-        >
-          <Favorite fontSize="large" />
-        </IconButton>
-        <IconButton className={classes.swipeButtonsStar}>
-          <StarRate fontSize="large" />
-        </IconButton>
-        <Link to="/chat">
-          <IconButton className={classes.messages}>
-            <Forum fontSize="large" />
-          </IconButton>
-        </Link>
+      <Container className={classes.swipeRoot}>
+        <Tooltip title="Beats market" placement="top">
+          <Link to="/store">
+            <IconButton className={classes.swipeButtonsRepeat}>
+              <Store fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Song recognition" placement="top">
+          <Link to="/song">
+            <IconButton className={classes.swipeButtonsLeft}>
+              <Waves fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Explore" placement="top">
+          <Link to="/explore">
+            <IconButton
+              onClick={() => {}}
+              className={classes.swipeButtonsRight}
+            >
+              <Explore fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Karaoke" placement="top">
+          <Link to="/karaoke">
+            <IconButton className={classes.swipeButtonsStar}>
+              <Mic fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Messages" placement="top">
+          <Link to="/chat">
+            <IconButton className={classes.messages}>
+              <Forum fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
       </Container>
     );
   }
