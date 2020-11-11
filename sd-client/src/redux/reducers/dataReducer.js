@@ -8,6 +8,7 @@ import {
 const initialState = {
   user: "",
   handle: "",
+  token: "",
   notifications: 0,
   loading: false,
   loggedIn: false,
@@ -35,6 +36,7 @@ export default function (state = initialState, action) {
         ...state,
         user: action.user,
         loggedIn: true,
+        token: action.token,
       };
     case ADD_NOTIFICATION:
       return {

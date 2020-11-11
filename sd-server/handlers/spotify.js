@@ -252,7 +252,8 @@ exports.getCurrentlyPlaying = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/currently-playing";
   callSpotify(token, url).then(body => {
-    res.status(200).send(body.item.id);
+    console.log(body.item.name);
+    res.status(200).send({ song: body.item.name, uri: body.item.uri });
   });
 };
 

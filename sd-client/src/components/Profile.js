@@ -46,7 +46,11 @@ export class Profile extends Component {
 
   componentDidMount() {
     if (!this.props.data.loggedIn) {
-      store.dispatch({ type: CURRENT_USER, user: this.params.user });
+      store.dispatch({
+        type: CURRENT_USER,
+        user: this.params.user,
+        token: this.token,
+      });
       this.getProfile();
     }
   }

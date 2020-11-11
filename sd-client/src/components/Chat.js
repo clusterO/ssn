@@ -29,6 +29,7 @@ export class Chat extends Component {
     this.state = {
       anchorEl: null,
       input: "",
+      uri: "",
       messages: [],
     };
   }
@@ -39,7 +40,6 @@ export class Chat extends Component {
     const socket = io(url, { query: `handle=${"_"}` });
 
     socket.on("newMessage", data => {
-      console.log(data.fullDocument);
       this.setState({
         messages: [
           ...this.state.messages,
@@ -71,7 +71,10 @@ export class Chat extends Component {
     e.preventDefault();
     if (this.state.input && this.state.input.trim() !== "") {
       this.setState({
-        messages: [...this.state.messages, { content: this.state.input }],
+        messages: [
+          ...this.state.messages,
+          { content: this.state.input, uri: this.state.uri },
+        ],
         input: "",
       });
 
@@ -104,17 +107,18 @@ export class Chat extends Component {
   };
 
   handleShare = () => {
-    axios.get("/current").then(body => {
-      let message = Object.assign({}, this.state.messages[0]);
-      console.log(message);
-      message.content = `_ shares this song with you ${body.song} `;
+    axios
+      .get("/current", { headers: { authorization: this.props.data.token } })
+      .then(body => {
+        if (body.data) {
+          this.setState({
+            input: body.data.song,
+            uri: body.data.uri,
+          });
+        }
 
-      this.setState({
-        messages: [...this.state.messages, { message: message }],
+        this.handleSend();
       });
-
-      //Add message to the conversation
-    });
   };
 
   handleListening = () => {
@@ -153,6 +157,9 @@ export class Chat extends Component {
                   />
                   <Typography className={classes.chatScreenText}>
                     {message.content}
+                    {message.uri ? (
+                      <a href={message.uri}> 🎵 click to listen</a>
+                    ) : null}
                   </Typography>
                   <Container>
                     <IconButton
@@ -201,6 +208,9 @@ export class Chat extends Component {
                 <Container key={index} className={classes.chatScreenMessage}>
                   <Typography className={classes.chatScreenTextUser}>
                     {message.content}
+                    {message.uri ? (
+                      <a href={message.uri}> 🎵 click to listen</a>
+                    ) : null}
                   </Typography>
                 </Container>
               )
