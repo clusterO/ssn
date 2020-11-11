@@ -34,6 +34,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         user: action.user,
+        loggedIn: true,
       };
     case ADD_NOTIFICATION:
       return {

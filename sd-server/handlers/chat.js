@@ -50,9 +50,7 @@ exports.sendMessage = (req, res) => {
 
     user.updateOne(update, (err, data) => {
       if (err) return res.status(500).send({ message: err });
-
       user.save();
-      res.status(200).send(data);
     });
   });
 
@@ -74,24 +72,25 @@ exports.sendMessage = (req, res) => {
 
     user.updateOne(update, (err, data) => {
       if (err) return res.status(500).send({ message: err });
-
       user.save();
+      return res.status(200).send(data);
     });
   });
-
-  return;
 };
 
 exports.getMessages = (req, res) => {
+  let messages = [];
+
   User.findOne({
     handle: req.query.handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(404).send({ message: "User not found" });
 
-    let messages = user.messages.filter(
-      msg => msg.from === req.query.from || msg.to === req.query.from
-    );
+    if (user.messages)
+      messages = user.messages.filter(
+        msg => msg.from === req.query.from || msg.to === req.query.from
+      );
 
     // Set read to true
     res.status(200).send(messages);

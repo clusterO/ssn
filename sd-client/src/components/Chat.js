@@ -39,10 +39,14 @@ export class Chat extends Component {
     const socket = io(url, { query: `handle=${"_"}` });
 
     socket.on("newMessage", data => {
+      console.log(data.fullDocument);
       this.setState({
         messages: [
           ...this.state.messages,
-          { content: data.fullDocument.messages[0].content },
+          {
+            content: data.fullDocument.messages[0].content,
+            from: data.fullDocument.handle,
+          },
         ],
       });
     });
@@ -102,7 +106,8 @@ export class Chat extends Component {
   handleShare = () => {
     axios.get("/current").then(body => {
       let message = Object.assign({}, this.state.messages[0]);
-      message.message = `_ shares this song with you ${body.song} `;
+      console.log(message);
+      message.content = `_ shares this song with you ${body.song} `;
 
       this.setState({
         messages: [...this.state.messages, { message: message }],
@@ -133,71 +138,73 @@ export class Chat extends Component {
           <Typography className={classes.chatScreenTimestamp}>
             YOU MATCHED WITH {this.contact} ON _
           </Typography>
-          {this.state.messages.map((message, index) =>
-            message.from ? (
-              <Container key={index} className={classes.chatScreenMessage}>
-                <Avatar
-                  className={classes.chatScreen_image}
-                  alt={message.from}
-                  src={
-                    message.image ||
-                    "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-                  }
-                />
-                <Typography className={classes.chatScreenText}>
-                  {message.content}
-                </Typography>
-                <Container>
-                  <IconButton
-                    className={classes.smile}
-                    disableRipple
-                    variant="link"
-                    aria-owns={open ? "mouse-over-popover" : undefined}
-                    aria-haspopup="true"
-                    onMouseEnter={this.handlePopoverOpen}
-                  >
-                    <InsertEmoticon />
-                  </IconButton>
-                  <Popover
-                    id="mouse-over-popover"
-                    className={classes.popover}
-                    classes={{
-                      paper: classes.paper,
-                    }}
-                    open={open}
-                    anchorEl={this.state.anchorEl}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    onClose={this.handlePopoverClose}
-                    disableRestoreFocus
-                  >
-                    {reactions.map((reaction, index) => (
-                      <IconButton
-                        variant="link"
-                        className={classes.reaction}
-                        key={index}
-                        onClick={() => this.react(reaction)}
-                      >
-                        {reaction}
-                      </IconButton>
-                    ))}
-                  </Popover>
+          {this.state.messages
+            .sort((a, b) => a.date - b.date)
+            .map((message, index) =>
+              message.from ? (
+                <Container key={index} className={classes.chatScreenMessage}>
+                  <Avatar
+                    className={classes.chatScreen_image}
+                    alt={message.from}
+                    src={
+                      message.image ||
+                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+                    }
+                  />
+                  <Typography className={classes.chatScreenText}>
+                    {message.content}
+                  </Typography>
+                  <Container>
+                    <IconButton
+                      className={classes.smile}
+                      disableRipple
+                      variant="link"
+                      aria-owns={open ? "mouse-over-popover" : undefined}
+                      aria-haspopup="true"
+                      onMouseEnter={this.handlePopoverOpen}
+                    >
+                      <InsertEmoticon />
+                    </IconButton>
+                    <Popover
+                      id="mouse-over-popover"
+                      className={classes.popover}
+                      classes={{
+                        paper: classes.paper,
+                      }}
+                      open={open}
+                      anchorEl={this.state.anchorEl}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      onClose={this.handlePopoverClose}
+                      disableRestoreFocus
+                    >
+                      {reactions.map((reaction, index) => (
+                        <IconButton
+                          variant="link"
+                          className={classes.reaction}
+                          key={index}
+                          onClick={() => this.react(reaction)}
+                        >
+                          {reaction}
+                        </IconButton>
+                      ))}
+                    </Popover>
+                  </Container>
                 </Container>
-              </Container>
-            ) : (
-              <Container key={index} className={classes.chatScreenMessage}>
-                <Typography className={classes.chatScreenTextUser}>
-                  {message.content}
-                </Typography>
-              </Container>
-            )
-          )}
+              ) : (
+                <Container key={index} className={classes.chatScreenMessage}>
+                  <Typography className={classes.chatScreenTextUser}>
+                    {message.content}
+                  </Typography>
+                </Container>
+              )
+            )}
           <Container className={classes.chatScreenInput}>
             <TextField
               value={this.state.input}

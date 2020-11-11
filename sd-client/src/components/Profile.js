@@ -32,7 +32,6 @@ export class Profile extends Component {
     this.params = getHashParams();
     this.token = this.params.access_token;
     this.refresh_token = this.params.refresh_token;
-    console.log(this.token);
   }
 
   getProfile = () => {
