@@ -16,3 +16,8 @@ exports.createSocketConnection = http => {
 exports.emitNotification = data => {
   io.compress(true).emit("notificationStream", data);
 };
+
+exports.newMessage = data => {
+  //Search user socket id and send to specific socket
+  io.compress(true).emit("newMessage", data);
+};

@@ -31,19 +31,22 @@ export class Chat extends Component {
       input: "",
       messages: [],
     };
+  }
 
+  componentDidMount() {
     //Listen to incoming messages
     const url = "ws://localhost:8888";
     const socket = io(url, { query: `handle=${"_"}` });
 
     socket.on("newMessage", data => {
       this.setState({
-        messages: [...this.state.messages, { message: data.message }],
+        messages: [
+          ...this.state.messages,
+          { content: data.fullDocument.messages[0].content },
+        ],
       });
     });
-  }
 
-  componentDidMount() {
     this.getMessages();
   }
 
@@ -51,8 +54,7 @@ export class Chat extends Component {
     axios
       .get("/chat", {
         params: {
-          //replace handle with this.props.data.user
-          handle: "jane.m",
+          handle: this.props.data.user,
           from: this.contact,
         },
       })
@@ -65,7 +67,7 @@ export class Chat extends Component {
     e.preventDefault();
     if (this.state.input && this.state.input.trim() !== "") {
       this.setState({
-        messages: [...this.state.messages, { message: this.state.input }],
+        messages: [...this.state.messages, { content: this.state.input }],
         input: "",
       });
 
@@ -79,6 +81,10 @@ export class Chat extends Component {
 
   handleChange = e => {
     this.setState({ input: e.target.value });
+  };
+
+  onKeyPress = e => {
+    if (e.charCode === 13) this.handleSend();
   };
 
   handlePopoverOpen = event => {
@@ -139,7 +145,7 @@ export class Chat extends Component {
                   }
                 />
                 <Typography className={classes.chatScreenText}>
-                  {message.message}
+                  {message.content}
                 </Typography>
                 <Container>
                   <IconButton
@@ -187,7 +193,7 @@ export class Chat extends Component {
             ) : (
               <Container key={index} className={classes.chatScreenMessage}>
                 <Typography className={classes.chatScreenTextUser}>
-                  {message.message}
+                  {message.content}
                 </Typography>
               </Container>
             )
@@ -199,6 +205,7 @@ export class Chat extends Component {
               className={classes.chatScreenInputField}
               type="text"
               placeholder="Type a message..."
+              onKeyPress={this.onKeyPress}
             />
             <Tooltip title="Send" arrow>
               <IconButton

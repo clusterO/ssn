@@ -28,16 +28,18 @@ export class Swipe extends Component {
             </IconButton>
           </Link>
         </Tooltip>
-        <Tooltip title="Explore" placement="top">
-          <Link to="/explore">
-            <IconButton
-              onClick={() => {}}
-              className={classes.swipeButtonsRight}
-            >
-              <Explore fontSize="large" />
-            </IconButton>
-          </Link>
-        </Tooltip>
+        {this.props.token ? (
+          <Tooltip title="Explore" placement="top">
+            <Link to="/explore">
+              <IconButton
+                onClick={() => {}}
+                className={classes.swipeButtonsRight}
+              >
+                <Explore fontSize="large" />
+              </IconButton>
+            </Link>
+          </Tooltip>
+        ) : null}
         <Tooltip title="Karaoke" placement="top">
           <Link to="/karaoke">
             <IconButton className={classes.swipeButtonsStar}>

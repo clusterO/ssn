@@ -1,5 +1,5 @@
 const db = require("../models");
-const io = require("socket.io");
+const { newMessage } = require("../utils/socket");
 
 const User = db.user;
 
@@ -18,8 +18,7 @@ const filter = [
 const options = { fullDocument: "updateLookup" };
 
 User.watch(filter, options).on("change", data => {
-  //Search user socket id and send to specific socket
-  io.compress(true).emit("newMessage", data);
+  newMessage(data);
 });
 
 exports.friends = (req, res) => {
@@ -38,19 +37,49 @@ exports.sendMessage = (req, res) => {
   let to = req.body.to;
   let from = req.body.from;
 
-  const filter = { handle: to };
-  const update = {
-    messages: [{ content, from, date: Date.now(), read: false }],
-  };
-
-  User.findOneAndUpdate(filter, update, (err, doc) => {
+  User.findOne({ handle: to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
 
-    if (!doc) return res.status(401).send({ message: "User not found" });
+    const update = {
+      messages: [
+        { content, from, date: Date.now(), read: false },
+        ...user.messages,
+      ],
+    };
 
-    doc.save();
-    return res.status(200).send(doc);
+    user.updateOne(update, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+
+      user.save();
+      res.status(200).send(data);
+    });
   });
+
+  User.findOne({ handle: from }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
+
+    let index = user.friends.findIndex(friend => friend.handle === to);
+
+    if (index) user.friends[index].message = content;
+
+    const update = {
+      messages: [
+        { content, to, date: Date.now(), read: false },
+        ...user.messages,
+      ],
+      friends: [...user.friends],
+    };
+
+    user.updateOne(update, (err, data) => {
+      if (err) return res.status(500).send({ message: err });
+
+      user.save();
+    });
+  });
+
+  return;
 };
 
 exports.getMessages = (req, res) => {

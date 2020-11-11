@@ -8,6 +8,8 @@ import {
   Container,
   Box,
   CircularProgress,
+  Grid,
+  Button,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
@@ -20,15 +22,17 @@ import { connect } from "react-redux";
 import Swipe from "./Swipe";
 
 const profileStyles = theme => ({
+  ...styles.loginStyles,
   ...styles.profileStyles,
 });
 
 export class Profile extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.params = getHashParams();
     this.token = this.params.access_token;
     this.refresh_token = this.params.refresh_token;
+    console.log(this.token);
   }
 
   getProfile = () => {
@@ -56,6 +60,10 @@ export class Profile extends Component {
       });
   };
 
+  authorizeSpotify = () => {
+    window.location.href = "http://localhost:8888/login";
+  };
+
   render() {
     const { classes } = this.props;
     const {
@@ -71,62 +79,82 @@ export class Profile extends Component {
 
     return (
       <>
-        <Card className={classes.root} variant="outlined">
-          <CardContent>
-            <Container className={classes.details}>
-              {images && images[0].url ? (
-                <CardMedia
-                  className={classes.media}
-                  image={
-                    images
-                      ? images[0].url
-                      : "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
-                  }
-                  title="Profile picture"
-                />
-              ) : (
-                <CircularProgress />
-              )}
-              <Container>
-                <Typography variant="h5" component="h2">
-                  {display_name}
-                </Typography>
-                <Typography className={classes.pos} color="textSecondary">
-                  {id}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  {email}
-                </Typography>
-                <Link to={href}>
-                  <Typography variant="body2" component="p">
-                    Spotify
-                  </Typography>
-                </Link>
-              </Container>
-            </Container>
-            <Container className={classes.infos}>
-              <Box>
-                <PersonPinCircle />
-                <Typography variant="body2" component="p">
-                  {country}
-                </Typography>
-              </Box>
-              <Box>
+        {this.token ? (
+          <>
+            <Card className={classes.root} variant="outlined">
+              <CardContent>
+                <Container className={classes.details}>
+                  {images && images[0].url ? (
+                    <CardMedia
+                      className={classes.media}
+                      image={
+                        images
+                          ? images[0].url
+                          : "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
+                      }
+                      title="Profile picture"
+                    />
+                  ) : (
+                    <CircularProgress />
+                  )}
+                  <Container>
+                    <Typography variant="h5" component="h2">
+                      {display_name}
+                    </Typography>
+                    <Typography className={classes.pos} color="textSecondary">
+                      {id}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                      {email}
+                    </Typography>
+                    <Link to={href}>
+                      <Typography variant="body2" component="p">
+                        Spotify
+                      </Typography>
+                    </Link>
+                  </Container>
+                </Container>
+                <Container className={classes.infos}>
+                  <Box>
+                    <PersonPinCircle />
+                    <Typography variant="body2" component="p">
+                      {country}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <FilterList />
+                    <Typography variant="body2" component="p">
+                      {spotify}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <DirectionsRun />
+                    <Typography variant="body2" component="p">
+                      {followers ? followers.total : null}
+                    </Typography>
+                  </Box>
+                </Container>
+              </CardContent>
+            </Card>
+            <Swipe token={true} />
+          </>
+        ) : (
+          <>
+            <Swipe />
+            <Grid container justify="center">
+              <Button
+                className={classes.spotifyButton}
+                variant="outlined"
+                color="primary"
+                style={{ textTransform: "none" }}
+                onClick={this.authorizeSpotify}
+              >
                 <FilterList />
-                <Typography variant="body2" component="p">
-                  {spotify}
-                </Typography>
-              </Box>
-              <Box>
-                <DirectionsRun />
-                <Typography variant="body2" component="p">
-                  {followers ? followers.total : null}
-                </Typography>
-              </Box>
-            </Container>
-          </CardContent>
-        </Card>
-        <Swipe />
+                Authorize Login
+              </Button>
+            </Grid>
+          </>
+        )}
       </>
     );
   }

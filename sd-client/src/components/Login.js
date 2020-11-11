@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
   Paper,
@@ -68,6 +69,7 @@ export class Login extends Component {
         })
         .then(body => {
           store.dispatch({ type: CURRENT_USER, user: body.data.handle });
+          this.props.history.replace("/profile");
         })
         .catch(err => console.error(err));
     else
@@ -80,6 +82,7 @@ export class Login extends Component {
         })
         .then(body => {
           store.dispatch({ type: CURRENT_USER, user: body.data.handle });
+          this.signup();
         })
         .catch(err => console.error(err));
   };
@@ -169,7 +172,7 @@ export class Login extends Component {
                           id="confirmPassword"
                           name="confirmPassword"
                           label="Confirm Password"
-                          type="confirmPassword"
+                          type="password"
                           fullWidth
                           required
                           onChange={this.handleInput}
@@ -238,4 +241,6 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(loginStyles)(Login));
+export default connect(mapStateToProps)(
+  withRouter(withStyles(loginStyles)(Login))
+);

@@ -16,7 +16,7 @@ export class Cards extends Component {
     this.state = {
       profiles: [
         {
-          name: "John Doe",
+          name: "jane.m",
           url:
             "https://www.yourtango.com/sites/default/files/image_blog/types-guys-who-stay-single-men.jpg",
         },

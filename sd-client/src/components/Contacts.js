@@ -20,17 +20,18 @@ export class Contacts extends Component {
   }
 
   getFriendsList = () => {
-    //replace handle this.props.data.user
-    axios.get("/friends", { params: { handle: "jane.m" } }).then(body => {
-      this.setState({ friends: body.data });
-    });
+    axios
+      .get("/friends", { params: { handle: this.props.data.user } })
+      .then(body => {
+        this.setState({ friends: body.data });
+      });
   };
 
   render() {
     const { classes } = this.props;
     return (
       <>
-        <Header backButton="/explore" />
+        <Header backButton="/profile" />
         <Container className={classes.chats}>
           {this.state.friends.map((friend, index) => (
             <Message
