@@ -17,6 +17,7 @@ import { connect } from "react-redux";
 import * as io from "socket.io-client";
 import styles from "../styles";
 import Header from "./Header";
+import Reactions from "./Reactions";
 
 const chatStyles = theme => ({
   ...styles.chatStyles,
@@ -35,10 +36,10 @@ export class Chat extends Component {
   }
 
   componentDidMount() {
-    //Listen to incoming messages
     const url = "ws://localhost:8888";
     const socket = io(url, { query: `handle=${"_"}` });
 
+    // message should be received onetime (db watch messages change)
     socket.on("newMessage", data => {
       this.setState({
         messages: [
@@ -54,6 +55,7 @@ export class Chat extends Component {
     this.getMessages();
   }
 
+  // sender shouldn't receive message
   getMessages = () => {
     axios
       .get("/chat", {
@@ -91,6 +93,7 @@ export class Chat extends Component {
   };
 
   onKeyPress = e => {
+    // need event as argument
     if (e.charCode === 13) this.handleSend();
   };
 
@@ -100,10 +103,6 @@ export class Chat extends Component {
 
   handlePopoverClose = event => {
     this.setState({ anchorEl: null });
-  };
-
-  react = reaction => {
-    console.log("Hello world");
   };
 
   handleShare = () => {
@@ -117,19 +116,34 @@ export class Chat extends Component {
           });
         }
 
+        // need event as argument
         this.handleSend();
       });
   };
 
   handleListening = () => {
-    axios.get("/current").then(body => {
-      axios.post("/play", { song: body.song });
-    });
+    // send request to listen together
+    // ... call waiting response & cancel button
+    axios
+      .post(
+        "/play",
+        { song: "" },
+        { headers: { authorization: this.props.data.token } }
+      )
+      .then(body => {
+        if (
+          body.data &&
+          body.data.error &&
+          body.data.error.reason === "PREMIUM_REQUIRED"
+        )
+          console.log("PREMIUM_REQUIRED");
+
+        // send the song and play it in the other side
+      });
   };
 
   render() {
     const { classes } = this.props;
-    const reactions = ["💗", "👏", "🌷", "🌶️", "🥰"];
     const open = Boolean(this.state.anchorEl);
 
     return (
@@ -142,28 +156,34 @@ export class Chat extends Component {
           <Typography className={classes.chatScreenTimestamp}>
             YOU MATCHED WITH {this.contact} ON _
           </Typography>
-          {this.state.messages
-            .sort((a, b) => a.date - b.date)
-            .map((message, index) =>
-              message.from ? (
-                <Container key={index} className={classes.chatScreenMessage}>
-                  <Avatar
-                    className={classes.chatScreen_image}
-                    alt={message.from}
-                    src={
-                      message.image ||
-                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-                    }
-                  />
-                  <Typography className={classes.chatScreenText}>
-                    {message.content}
-                    {message.uri ? (
-                      <a href={message.uri}> 🎵 click to listen</a>
-                    ) : null}
-                  </Typography>
-                  <Container>
+          {
+            // automatically scroll
+            this.state.messages
+              .sort((a, b) => a.date - b.date)
+              .map((message, index) =>
+                message.from ? (
+                  <Container key={index} className={classes.chatScreenMessage}>
+                    <Avatar
+                      className={classes.chatScreen_image}
+                      alt={message.from}
+                      src={
+                        message.image ||
+                        "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+                      }
+                    />
+                    <Typography className={classes.chatScreenText}>
+                      {message.content}
+                      {message.uri ? (
+                        <a href={message.uri}>
+                          <span role="img" aria-label="musical note">
+                            {" "}
+                            🎵
+                          </span>{" "}
+                          click to listen
+                        </a>
+                      ) : null}
+                    </Typography>
                     <IconButton
-                      className={classes.smile}
                       disableRipple
                       variant="link"
                       aria-owns={open ? "mouse-over-popover" : undefined}
@@ -189,32 +209,32 @@ export class Chat extends Component {
                         horizontal: "right",
                       }}
                       onClose={this.handlePopoverClose}
-                      disableRestoreFocus
                     >
-                      {reactions.map((reaction, index) => (
-                        <IconButton
-                          variant="link"
-                          className={classes.reaction}
-                          key={index}
-                          onClick={() => this.react(reaction)}
-                        >
-                          {reaction}
-                        </IconButton>
-                      ))}
+                      <Reactions
+                        from={this.props.data.user}
+                        to={this.contact}
+                        messageId={message.id}
+                      />
                     </Popover>
                   </Container>
-                </Container>
-              ) : (
-                <Container key={index} className={classes.chatScreenMessage}>
-                  <Typography className={classes.chatScreenTextUser}>
-                    {message.content}
-                    {message.uri ? (
-                      <a href={message.uri}> 🎵 click to listen</a>
-                    ) : null}
-                  </Typography>
-                </Container>
+                ) : (
+                  <Container key={index} className={classes.chatScreenMessage}>
+                    <Typography className={classes.chatScreenTextUser}>
+                      {message.content}
+                      {message.uri ? (
+                        <a href={message.uri}>
+                          <span role="img" aria-label="musical note">
+                            {" "}
+                            🎵
+                          </span>{" "}
+                          click to listen
+                        </a>
+                      ) : null}
+                    </Typography>
+                  </Container>
+                )
               )
-            )}
+          }
           <Container className={classes.chatScreenInput}>
             <TextField
               value={this.state.input}

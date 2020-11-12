@@ -9,13 +9,12 @@ import Pusher from "pusher-js";
 import store from "../redux/store";
 import { ADD_NOTIFICATION } from "../redux/types";
 import * as io from "socket.io-client";
+import { connect } from "react-redux";
 
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
-const exploreStyles = theme => ({
-  explore: {},
-});
+const exploreStyles = theme => ({});
 
 class Explore extends Component {
   // Push Notification With SW
@@ -42,7 +41,7 @@ class Explore extends Component {
   // SocketIo with MongoDb stream Change
   changeStream = () => {
     const url = "ws://localhost:8888";
-    const socket = io(url, { query: `handle=${"_"}` });
+    const socket = io(url, { query: `handle=${this.props.data.user}` });
 
     socket.on("notificationStream", data => {
       store.dispatch({ type: ADD_NOTIFICATION });
@@ -67,9 +66,8 @@ class Explore extends Component {
   // Dead
 
   render() {
-    const { classes } = this.props;
     return (
-      <Container className={classes.explore}>
+      <Container>
         <Header />
         <Cards />
       </Container>
@@ -77,4 +75,8 @@ class Explore extends Component {
   }
 }
 
-export default withStyles(exploreStyles)(Explore);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+export default connect(mapStateToProps)(withStyles(exploreStyles)(Explore));

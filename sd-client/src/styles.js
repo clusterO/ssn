@@ -90,14 +90,15 @@ export default {
       padding: "10px",
       borderRadius: "20px",
     },
-    smile: {},
+  },
+  reactionStyles: {
     reaction: {
       padding: "0 0.25rem 0 0.25rem",
       fontSize: "1rem",
       transition: "O.25s",
       "&:hover": {
         textDecoration: "none",
-        fontSize: "1.5rem",
+        fontSize: "2rem",
       },
     },
   },

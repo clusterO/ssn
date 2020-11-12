@@ -30,18 +30,20 @@ export class Profile extends Component {
   constructor(props) {
     super(props);
     this.params = getHashParams();
-    this.token = this.params.access_token;
-    this.refresh_token = this.params.refresh_token;
+    localStorage.setItem("accessToken", this.params.access_token);
+    localStorage.setItem("refreshToken", this.params.access_token);
   }
 
   getProfile = () => {
-    axios.get("/me", { params: { token: this.token } }).then(body => {
-      store.dispatch({
-        type: SET_PROFILE,
-        token: this.token,
-        data: { ...body.data },
+    axios
+      .get("/me", { params: { token: localStorage.getItem("accessToken") } })
+      .then(body => {
+        store.dispatch({
+          type: SET_PROFILE,
+          token: localStorage.getItem("accessToken"),
+          data: { ...body.data },
+        });
       });
-    });
   };
 
   componentDidMount() {
@@ -49,7 +51,7 @@ export class Profile extends Component {
       store.dispatch({
         type: CURRENT_USER,
         user: this.params.user,
-        token: this.token,
+        token: localStorage.getItem("accessToken"),
       });
       this.getProfile();
     }
@@ -57,9 +59,11 @@ export class Profile extends Component {
 
   refreshToken = () => {
     axios
-      .get(`/refresh`, { data: { refresh_token: this.refresh_token } })
+      .get(`/refresh`, {
+        data: { refresh_token: localStorage.getItem("refreshToken") },
+      })
       .then(data => {
-        this.access_token = data.access_token;
+        localStorage.setItem("accessToken", data.access_token);
       });
   };
 
@@ -82,7 +86,7 @@ export class Profile extends Component {
 
     return (
       <>
-        {this.token ? (
+        {localStorage.getItem("accessToken") ? (
           <>
             <Card className={classes.root} variant="outlined">
               <CardContent>
