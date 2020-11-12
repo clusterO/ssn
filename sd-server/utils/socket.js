@@ -8,16 +8,16 @@ exports.createSocketConnection = http => {
     console.log(`${socket.request._query.handle} connected`);
   });
 
-  io.on("disconnect", () => {
-    console.log("user disconnected");
+  io.on("disconnect", socket => {
+    console.log(`${socket.request._query.handle} disconnected`);
   });
 };
 
+//Search user socket id and send to specific socket
 exports.emitNotification = data => {
   io.compress(true).emit("notificationStream", data);
 };
 
 exports.newMessage = data => {
-  //Search user socket id and send to specific socket
   io.compress(true).emit("newMessage", data);
 };

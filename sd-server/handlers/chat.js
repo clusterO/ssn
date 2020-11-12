@@ -1,5 +1,6 @@
 const db = require("../models");
 const { newMessage } = require("../utils/socket");
+const { v4: uuidv4 } = require("uuid");
 
 const User = db.user;
 
@@ -32,10 +33,36 @@ exports.friends = (req, res) => {
   });
 };
 
+exports.react = (req, res) => {
+  // Update
+  User.findOne({ handle: to }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
+
+    let index = user.messages.findIndex(message => message.id === req.body.id);
+
+    if (index) user.messages[index].reaction = req.body.reaction;
+    user.save();
+  });
+
+  User.findOne({ handle: from }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
+
+    let index = user.messages.findIndex(message => message.id === req.body.id);
+
+    if (index) user.messages[index].reaction = req.body.reaction;
+    user.save();
+  });
+
+  return res.status(200).send({ message: "reaction updated" });
+};
+
 exports.sendMessage = (req, res) => {
   let content = req.body.content;
   let to = req.body.to;
   let from = req.body.from;
+  let id = uuidv4();
 
   User.findOne({ handle: to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
@@ -43,7 +70,7 @@ exports.sendMessage = (req, res) => {
 
     const update = {
       messages: [
-        { content, from, date: Date.now(), read: false },
+        { id, content, from, date: Date.now(), read: false },
         ...user.messages,
       ],
     };
@@ -64,7 +91,7 @@ exports.sendMessage = (req, res) => {
 
     const update = {
       messages: [
-        { content, to, date: Date.now(), read: false },
+        { id, content, to, date: Date.now(), read: false },
         ...user.messages,
       ],
       friends: [...user.friends],

@@ -17,7 +17,7 @@ exports.login = (req, res) => {
   res.cookie(stateKey, state);
 
   const scope =
-    "user-read-private user-read-email user-library-read user-follow-read user-read-recently-played user-read-currently-playing user-read-playback-state user-top-read";
+    "user-read-private user-read-email user-library-read user-follow-read user-read-recently-played user-read-currently-playing user-read-playback-state user-top-read user-modify-playback-state";
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
@@ -235,8 +235,8 @@ getRecentlyPlayed = token => {
 exports.play = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/play";
-  callSpotify(token, url).then(body => {
-    res.status(200).send(body);
+  callPlayer(token, url).then(body => {
+    return res.status(200).send(body);
   });
 };
 
@@ -252,8 +252,8 @@ exports.getCurrentlyPlaying = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/currently-playing";
   callSpotify(token, url).then(body => {
-    console.log(body.item.name);
-    res.status(200).send({ song: body.item.name, uri: body.item.uri });
+    if (body)
+      res.status(200).send({ song: body.item.name, uri: body.item.uri });
   });
 };
 
@@ -312,7 +312,26 @@ const callSpotify = (token, url) => {
   };
 
   return new Promise(resolve => {
-    request.get(options, (error, response, body) => {
+    request.get(options, (err, _, body) => {
+      if (err) console.error(err);
+      resolve(body);
+    });
+  });
+};
+
+// DRY it
+const callPlayer = (token, url) => {
+  const options = {
+    url: url,
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    json: true,
+  };
+
+  return new Promise(resolve => {
+    request.put(options, (err, _, body) => {
+      if (err) console.error(err);
       resolve(body);
     });
   });
