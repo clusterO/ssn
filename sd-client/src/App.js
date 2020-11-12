@@ -10,6 +10,7 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Explore from "./components/Explore";
 import Navbar from "./components/Navbar";
+import Karaoke from "./components/Karaoke";
 
 axios.defaults.baseURL = "http://localhost:8888";
 
@@ -25,6 +26,7 @@ export class App extends Component {
             <Route exact path="/explore" component={Explore} />
             <Route exact path="/chat/:person" component={Chat} />
             <Route exact path="/chat" component={Contacts} />
+            <Route exact path="/karaoke" component={Karaoke} />
           </Switch>
         </Router>
       </Provider>
