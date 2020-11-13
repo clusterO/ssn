@@ -197,6 +197,9 @@ export default {
     },
   },
   swipeStyles: {
+    mic: {
+      visibility: "hidden",
+    },
     swipeRoot: {
       width: "100%",
       display: "flex",

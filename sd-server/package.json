@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "acr-cloud": "^0.1.4",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "busboy": "^0.3.1",

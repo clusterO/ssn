@@ -29,6 +29,7 @@ const {
 } = require("./handlers/spotify");
 const { matchRequest, notify, subscription } = require("./handlers/matchs");
 const { friends, sendMessage, getMessages, react } = require("./handlers/chat");
+const { xazam } = require("./handlers/xazam");
 const { createSocketConnection } = require("./utils/socket");
 
 const port = process.env.PORT || 8888;
@@ -86,6 +87,7 @@ app
   .post("/subscribe", subscription)
   .post("/send", sendMessage)
   .post("/react", react)
-  .post("/play", play);
+  .post("/play", play)
+  .post("/xazam", xazam);
 
 http.listen(port, console.log(`Listening on port ${port}`));
