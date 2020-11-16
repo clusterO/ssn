@@ -24,3 +24,34 @@ exports.generateRandomString = length => {
 
   return text;
 };
+
+exports.upload = (req, res) => {
+  const BusBoy = require("busboy");
+  const path = require("path");
+  const os = require("os");
+  const fs = require("fs");
+
+  const busboy = new BusBoy({ headers: req.headers });
+
+  let imageFileName;
+  let imageToUpload = {};
+
+  busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+    if (mimetype !== "image/jpeg" && mimetype !== "image/png")
+      return response.status(400).json({ error: "Wrong file type " });
+
+    const imageExtension = filename.split(".")[filename.split(".").length - 1];
+
+    imageFileName = `${Math.round(
+      Math.random() * 1000000000
+    )}.${imageExtension}`;
+
+    const filepath = path.join(os.tmpdir(), imageFileName);
+    imageToUpload = { filepath, mimetype };
+
+    file.pipe(fs.createWriteStream(filepath));
+  });
+
+  busboy.on("finish", () => {});
+  busboy.end(req.rawBody);
+};

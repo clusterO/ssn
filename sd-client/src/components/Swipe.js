@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withStyles, IconButton, Container, Tooltip } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import { Store, Waves, Mic, Explore, Forum } from "@material-ui/icons";
 import { connect } from "react-redux";
 import styles from "../styles";
@@ -8,6 +9,12 @@ import { ReactMic } from "react-mic";
 import axios from "axios";
 
 const swipeStyles = theme => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
   ...styles.swipeStyles,
 });
 
@@ -16,49 +23,57 @@ export class Swipe extends Component {
     super(props);
     this.state = {
       record: false,
+      alert: false,
+      song: "",
+      artist: "",
     };
   }
-
-  componentDidMount() {}
-
-  xazam = url => {
-    axios.post("/xazam", { sample: url }).then(data => {
-      console.log(data);
-    });
-  };
 
   handleRecording = () => {
     this.setState({ record: !this.state.record });
   };
 
+  loadBlob(url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType = "blob";
+      xhr.onload = () => resolve(xhr.response);
+      xhr.onerror = () => reject(xhr.statusText);
+      xhr.send();
+    });
+  }
+
   onStop = recordedBlob => {
-    // let xhr = new XMLHttpRequest();
-    // xhr.responseType = "blob";
-    // xhr.onload = function () {
-    //   let recoveredBlob = xhr.response;
-    //   let reader = new FileReader();
+    this.loadBlob(recordedBlob.blobURL)
+      .then(async blob => {
+        const data = new FormData();
+        data.append("audio", blob);
 
-    //   reader.onload = function () {
-    //     let blobAsDataUrl = reader.result;
-    //     window.location = blobAsDataUrl;
-    //   };
+        axios
+          .post("/xazam", data)
+          .then(response => {
+            if (response.data.length > 0) {
+              this.setState({
+                alert: true,
+                song: response.data[0].title,
+                artist: response.data[0].artists[0].name,
+              });
 
-    //   reader.readAsDataURL(recoveredBlob);
-    // };
-
-    // xhr.open("GET", recordedBlob.blobURL);
-    // xhr.send();
-
-    var request = new XMLHttpRequest();
-    request.open("GET", recordedBlob.blobURL, true);
-    request.responseType = "blob";
-    request.onload = function () {
-      console.log(request.response);
-      axios.post("/xazam", request.response).then(data => {
-        console.log(data);
+              setTimeout(() => {
+                this.setState({
+                  alert: false,
+                  song: "",
+                  artist: "",
+                });
+              }, 10000);
+            }
+          })
+          .catch(err => console.error(err));
+      })
+      .catch(err => {
+        console.error(`Could not load blob ${err}`);
       });
-    };
-    request.send();
   };
 
   render() {
@@ -108,11 +123,18 @@ export class Swipe extends Component {
             </Link>
           </Tooltip>
         </Container>
+        {this.state.alert ? (
+          <div className={classes.root}>
+            <Alert severity="success">
+              {this.state.song} - {this.state.artist}
+            </Alert>
+          </div>
+        ) : null}
         <ReactMic
           className={classes.mic}
           record={this.state.record}
           onStop={this.onStop}
-          mimeType="audio/mp3"
+          mimeType="audio/wav"
           noiseSuppression={true}
         />
       </>

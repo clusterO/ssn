@@ -9,14 +9,13 @@ const http = require("http").createServer(app);
 const db = require("./models");
 const dbInit = require("./utils/dbInit");
 const config = require("./utils/config");
-const { verifyToken } = require("./utils/util");
+const { verifyToken, upload } = require("./utils/util");
 const {
   signUp,
   signIn,
   addUserDetails,
   getAuthenticatedUser,
   getUserDetails,
-  uploadProfileImage,
 } = require("./handlers/users");
 const {
   login,
@@ -82,7 +81,7 @@ app
   .post("/signup", signUp)
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)
-  .post("/user", verifyToken, uploadProfileImage)
+  .post("/upload", verifyToken, upload)
   .post("/profile", getAuthenticatedUser)
   .post("/subscribe", subscription)
   .post("/send", sendMessage)
