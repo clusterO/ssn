@@ -217,18 +217,48 @@ getFollowedArtists = token => {
   });
 };
 
+exports.recent = (req, res) => {
+  User.findOne({
+    handle: req.headers.handle,
+  }).exec((err, user) => {
+    if (err) return res.send(500).send({ error: err });
+    if (!user) return res.send(401).send({ message: "Handle incorrect" });
+
+    getTracksNames(user.match.recent, req.headers.token).then(tracks => {
+      return res.status(200).send(tracks);
+    });
+  });
+};
+
+getTracksNames = (tracks, token) => {
+  return new Promise(async resolve => {
+    let tracksNames = [];
+
+    for (let i = 0; i < tracks.length; i++) {
+      const url = `https://api.spotify.com/v1/tracks/${tracks[i]}`;
+      tracksNames.push(await callSpotify(token, url));
+    }
+
+    resolve(tracksNames);
+  });
+};
+
 getRecentlyPlayed = token => {
   const url = "https://api.spotify.com/v1/me/player/recently-played";
   return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
-      let tracks = [];
+    callSpotify(token, url)
+      .then(body => {
+        let tracks = [];
 
-      body.items.map(item => {
-        tracks.push(item.track.id);
+        body.items.map(item => {
+          tracks.push(item.track.id);
+        });
+
+        resolve(tracks);
+      })
+      .catch(err => {
+        console.error(err);
       });
-
-      resolve(tracks);
-    });
   });
 };
 
@@ -372,7 +402,7 @@ generateDataForMatch = async (token, handle) => {
       artists: artists.artists,
       recent,
       genres: [...new Set(genres)],
-      matchs: {},
+      matchs: [...user.match.matchs],
     };
 
     user.updateOne({ match: matchData }, (err, data) => {

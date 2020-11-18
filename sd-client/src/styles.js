@@ -237,4 +237,19 @@ export default {
       color: "#915dd1 !important",
     },
   },
+  tracksStyles: {
+    media: {
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+    },
+    container: {
+      display: "flex",
+      marginTop: "10px",
+    },
+    infos: {
+      marginLeft: "10px",
+      maxWidth: "250px",
+    },
+  },
 };

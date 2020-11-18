@@ -25,6 +25,7 @@ const {
   getCurrentlyPlaying,
   getMe,
   play,
+  recent,
 } = require("./handlers/spotify");
 const { matchRequest, notify, subscription } = require("./handlers/matchs");
 const { friends, sendMessage, getMessages, react } = require("./handlers/chat");
@@ -78,6 +79,7 @@ app
   .get("/notify", notify)
   .get("/me", getMe)
   .get("/chat", getMessages)
+  .get("/recent", recent)
   .post("/signup", signUp)
   .post("/signin", signIn)
   .post("/user", verifyToken, addUserDetails)

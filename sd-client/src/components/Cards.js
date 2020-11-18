@@ -5,6 +5,7 @@ import { setHandle } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 import axios from "axios";
 import styles from "../styles";
+import Tracks from "./Tracks";
 
 const cardStyles = () => ({
   ...styles.cardStyles,
@@ -14,23 +15,13 @@ export class Cards extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profiles: [
-        {
-          name: "jane.m",
-          url:
-            "https://www.yourtango.com/sites/default/files/image_blog/types-guys-who-stay-single-men.jpg",
-        },
-        {
-          name: "Jane Doe",
-          url:
-            "https://i.pinimg.com/originals/97/ed/6b/97ed6b370803649addbf66144c18c194.png",
-        },
-      ],
+      tracks: false,
+      profiles: [],
     };
   }
 
   getUserDetails = () => {
-    let body = { handle: "fourmou.m" };
+    let body = { handle: this.props.data.user };
 
     axios.post("/profile", body).then(body => {
       const profiles = [];
@@ -41,7 +32,9 @@ export class Cards extends Component {
             url: match.images[0].url,
           });
         });
-      this.setState({ profiles: [...this.state.profiles, ...profiles] });
+
+      this.props.setHandle(profiles[profiles.length - 1].name);
+      this.setState({ profiles: [...profiles], tracks: true });
     });
   };
 
@@ -71,24 +64,27 @@ export class Cards extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Container className={classes.cardContainer}>
-        {this.state.profiles.map(profile => (
-          <TinderCard
-            onSwipe={() => this.onSwipe(profile.name)}
-            onCardLeftScreen={this.onCardLeftScreen}
-            className={classes.swipe}
-            key={profile.name}
-            preventSwipe={["up", "down"]}
-          >
-            <Container
-              style={{ backgroundImage: `url(${profile.url})` }}
-              className={classes.card}
+      <>
+        <Container className={classes.cardContainer}>
+          {this.state.profiles.map(profile => (
+            <TinderCard
+              onSwipe={() => this.onSwipe(profile.name)}
+              onCardLeftScreen={this.onCardLeftScreen}
+              className={classes.swipe}
+              key={profile.name}
+              preventSwipe={["up", "down"]}
             >
-              <Typography>{profile.name}</Typography>
-            </Container>
-          </TinderCard>
-        ))}
-      </Container>
+              <Container
+                style={{ backgroundImage: `url(${profile.url})` }}
+                className={classes.card}
+              >
+                <Typography>{profile.name}</Typography>
+              </Container>
+            </TinderCard>
+          ))}
+        </Container>
+        {this.state.tracks ? <Tracks /> : null}
+      </>
     );
   }
 }
