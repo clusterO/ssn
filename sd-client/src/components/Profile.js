@@ -32,6 +32,24 @@ export class Profile extends Component {
     this.params = getHashParams();
     localStorage.setItem("accessToken", this.params.access_token);
     localStorage.setItem("refreshToken", this.params.access_token);
+
+    if (!this.props.data.token)
+      setInterval(() => {
+        axios
+          .get("/refresh", {
+            params: { refresh_token: localStorage.getItem("refreshToken") },
+          })
+          .then(res => {
+            localStorage.setItem("accessToken", res.data.access_token);
+
+            store.dispatch({
+              type: CURRENT_USER,
+              user: this.props.data.user,
+              token: localStorage.getItem("accessToken"),
+            });
+          })
+          .catch(err => console.error(err));
+      }, (this.params.expires_in - 10) * 1000);
   }
 
   getProfile = () => {
@@ -43,7 +61,8 @@ export class Profile extends Component {
           token: localStorage.getItem("accessToken"),
           data: { ...body.data },
         });
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   componentDidMount() {
@@ -53,19 +72,10 @@ export class Profile extends Component {
         user: this.params.user,
         token: localStorage.getItem("accessToken"),
       });
+
       this.getProfile();
     }
   }
-
-  refreshToken = () => {
-    axios
-      .get(`/refresh`, {
-        data: { refresh_token: localStorage.getItem("refreshToken") },
-      })
-      .then(data => {
-        localStorage.setItem("accessToken", data.access_token);
-      });
-  };
 
   authorizeSpotify = () => {
     window.location.href = "http://localhost:8888/login";

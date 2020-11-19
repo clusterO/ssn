@@ -31,7 +31,8 @@ export class Header extends Component {
       .then(response => {
         // Add number of notifications from response
         store.dispatch({ type: ADD_NOTIFICATION });
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   componentDidMount() {

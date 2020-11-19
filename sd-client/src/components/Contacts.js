@@ -24,7 +24,8 @@ export class Contacts extends Component {
       .get("/friends", { params: { handle: this.props.data.user } })
       .then(body => {
         this.setState({ friends: body.data });
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   render() {

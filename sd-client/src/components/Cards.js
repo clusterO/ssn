@@ -23,19 +23,24 @@ export class Cards extends Component {
   getUserDetails = () => {
     let body = { handle: this.props.data.user };
 
-    axios.post("/profile", body).then(body => {
-      const profiles = [];
-      if (body.data.match?.matchs)
-        body.data.match.matchs.forEach(match => {
-          profiles.push({
-            name: match.display_name,
-            url: match.images[0].url,
+    axios
+      .post("/profile", body, {
+        headers: { authorization: this.props.data.token },
+      })
+      .then(res => {
+        const profiles = [];
+        if (res.data && res.data?.matchs)
+          res.data.matchs.forEach(match => {
+            profiles.push({
+              name: match.display_name,
+              url: match.images[0].url,
+            });
           });
-        });
 
-      this.props.setHandle(profiles[profiles.length - 1].name);
-      this.setState({ profiles: [...profiles], tracks: true });
-    });
+        this.props.setHandle(profiles[profiles.length - 1].name);
+        this.setState({ profiles: [...profiles], tracks: true });
+      })
+      .catch(err => console.error(err));
   };
 
   componentDidMount() {

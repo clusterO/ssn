@@ -52,7 +52,6 @@ exports.signIn = (req, res) => {
     email: user.email,
   }).exec((err, user) => {
     if (err) return es.status(500).send({ message: err });
-
     if (!user) return res.status(404).send({ message: "User not found" });
 
     const passwordIsValid = bcrypt.compareSync(
@@ -106,7 +105,10 @@ exports.getAuthenticatedUser = (req, res) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(404).send({ message: "User not found" });
 
-    return res.status(200).json(user);
+    let token = req.headers.token;
+    // Call getUser(token)
+
+    return res.status(200).json(user.match);
   });
 };
 
@@ -116,6 +118,8 @@ exports.getUserDetails = (req, res) => {
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(404).send({ message: "User not found" });
+
+    console.log(user);
 
     return res.status(200).json(user);
   });

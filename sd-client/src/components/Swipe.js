@@ -82,11 +82,9 @@ export class Swipe extends Component {
       <>
         <Container className={classes.swipeRoot}>
           <Tooltip title="Beats market" placement="top">
-            <Link to="/store">
-              <IconButton className={classes.swipeButtonsRepeat}>
-                <Store fontSize="large" />
-              </IconButton>
-            </Link>
+            <IconButton className={classes.swipeButtonsRepeat}>
+              <Store fontSize="large" />
+            </IconButton>
           </Tooltip>
           <Tooltip title="Song recognition" placement="top">
             <IconButton

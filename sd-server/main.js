@@ -15,7 +15,6 @@ const {
   signIn,
   addUserDetails,
   getAuthenticatedUser,
-  getUserDetails,
 } = require("./handlers/users");
 const {
   login,
@@ -59,7 +58,7 @@ let corsOptions = {
 };
 
 home = (req, res) => {
-  res.status(200).send("Tinderfy");
+  res.status(200).send("welcome home!");
 };
 
 app
@@ -68,7 +67,6 @@ app
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
   .get("/", home)
-  .get("/user/:handle", getUserDetails)
   .get("/login", login)
   .get("/callback", callback)
   .get("/refresh", refreshToken)

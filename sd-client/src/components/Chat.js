@@ -66,7 +66,8 @@ export class Chat extends Component {
       })
       .then(body => {
         this.setState({ messages: body.data });
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   handleSend = e => {
@@ -80,11 +81,13 @@ export class Chat extends Component {
         input: "",
       });
 
-      axios.post("/send", {
-        content: this.state.input,
-        from: this.props.data.user,
-        to: this.contact,
-      });
+      axios
+        .post("/send", {
+          content: this.state.input,
+          from: this.props.data.user,
+          to: this.contact,
+        })
+        .catch(err => console.error(err));
     }
   };
 
@@ -118,7 +121,8 @@ export class Chat extends Component {
 
         // need event as argument
         this.handleSend();
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   handleListening = () => {
@@ -139,7 +143,8 @@ export class Chat extends Component {
           console.log("PREMIUM_REQUIRED");
 
         // send the song and play it in the other side
-      });
+      })
+      .catch(err => console.error(err));
   };
 
   render() {
