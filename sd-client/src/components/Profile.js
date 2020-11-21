@@ -10,11 +10,18 @@ import {
   CircularProgress,
   Grid,
   Button,
+  IconButton,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
-import { PersonPinCircle, FilterList, DirectionsRun } from "@material-ui/icons";
+import { Link, withRouter } from "react-router-dom";
+import {
+  PersonPinCircle,
+  FilterList,
+  DirectionsRun,
+  ExitToApp,
+} from "@material-ui/icons";
 import axios from "axios";
-import { CURRENT_USER, SET_PROFILE } from "../redux/types";
+import { SET_PROFILE } from "../redux/types";
+import { initializeAccess, userLogout } from "../redux/actions/dataActions";
 import store from "../redux/store";
 import styles from "../styles";
 import { getHashParams } from "../utils/hash";
@@ -30,27 +37,32 @@ export class Profile extends Component {
   constructor(props) {
     super(props);
     this.params = getHashParams();
-    localStorage.setItem("accessToken", this.params.access_token);
-    localStorage.setItem("refreshToken", this.params.access_token);
 
-    if (!this.props.data.token)
-      setInterval(() => {
-        axios
-          .get("/refresh", {
-            params: { refresh_token: localStorage.getItem("refreshToken") },
-          })
-          .then(res => {
-            localStorage.setItem("accessToken", res.data.access_token);
+    if (this.props.redirect) this.props.history.push("/profile");
 
-            store.dispatch({
-              type: CURRENT_USER,
-              user: this.props.data.user,
-              token: localStorage.getItem("accessToken"),
-            });
-          })
-          .catch(err => console.error(err));
-      }, (this.params.expires_in - 10) * 1000);
+    if (!localStorage.getItem("accessToken")) {
+      localStorage.setItem("refreshToken", this.params.access_token);
+      initializeAccess(this.params.access_token, this.params.user);
+      this.refreshToken();
+    }
   }
+
+  componentDidMount() {
+    this.getProfile();
+  }
+
+  refreshToken = () => {
+    setInterval(() => {
+      axios
+        .get("/refresh", {
+          params: { refresh_token: localStorage.getItem("refreshToken") },
+        })
+        .then(res => {
+          initializeAccess(res.data.access_token, this.props.data.user);
+        })
+        .catch(err => console.error(err));
+    }, (this.params.expires_in - 10) * 1000);
+  };
 
   getProfile = () => {
     axios
@@ -58,27 +70,19 @@ export class Profile extends Component {
       .then(body => {
         store.dispatch({
           type: SET_PROFILE,
-          token: localStorage.getItem("accessToken"),
           data: { ...body.data },
         });
       })
       .catch(err => console.error(err));
   };
 
-  componentDidMount() {
-    if (!this.props.data.loggedIn) {
-      store.dispatch({
-        type: CURRENT_USER,
-        user: this.params.user,
-        token: localStorage.getItem("accessToken"),
-      });
-
-      this.getProfile();
-    }
-  }
-
   authorizeSpotify = () => {
     window.location.href = "http://localhost:8888/login";
+  };
+
+  logout = () => {
+    this.props.userLogout();
+    this.props.history.replace("/");
   };
 
   render() {
@@ -150,6 +154,9 @@ export class Profile extends Component {
                       {followers ? followers.total : null}
                     </Typography>
                   </Box>
+                  <IconButton onClick={this.logout}>
+                    <ExitToApp />
+                  </IconButton>
                 </Container>
               </CardContent>
             </Card>
@@ -181,4 +188,11 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(profileStyles)(Profile));
+const mapDispatchToProps = {
+  userLogout,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(withStyles(profileStyles)(Profile)));

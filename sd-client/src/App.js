@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import axios from "axios";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import axios from "axios";
 
 import Contacts from "./components/Contacts";
 import Chat from "./components/Chat";

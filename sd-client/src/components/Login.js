@@ -52,7 +52,7 @@ export class Login extends Component {
     else this.setState({ action: "Login", submit: "SignUp" });
   };
 
-  handleChange = (event, newValue) => {
+  handleChange = (_, newValue) => {
     this.setState({ value: newValue });
   };
 
@@ -88,11 +88,11 @@ export class Login extends Component {
   };
 
   render() {
-    const { classes, data } = this.props;
+    const { classes } = this.props;
     return (
       <>
-        {data.loggedIn ? (
-          <Profile />
+        {localStorage.getItem("accessToken") ? (
+          <Profile redirect={true} />
         ) : (
           <Container className={classes.container}>
             <Paper square>

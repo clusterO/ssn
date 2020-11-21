@@ -3,15 +3,16 @@ import {
   CURRENT_USER,
   ADD_NOTIFICATION,
   SET_PROFILE,
+  SET_UNAUTHENTICATED,
+  SET_AUTHENTICATED,
 } from "../types";
 
 const initialState = {
   user: "",
   handle: "",
-  token: "",
   notifications: 0,
   loading: false,
-  loggedIn: false,
+  authenticated: false,
   profile: {
     display_name: "",
     id: "",
@@ -35,8 +36,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         user: action.user,
-        loggedIn: true,
-        token: action.token,
       };
     case ADD_NOTIFICATION:
       return {
@@ -46,9 +45,15 @@ export default function (state = initialState, action) {
     case SET_PROFILE:
       return {
         ...state,
-        loggedIn: action.token ? true : false,
         profile: { ...action.data },
       };
+    case SET_AUTHENTICATED:
+      return {
+        ...state,
+        authenticated: true,
+      };
+    case SET_UNAUTHENTICATED:
+      return initialState;
     default:
       return state;
   }
