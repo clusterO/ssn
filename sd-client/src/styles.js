@@ -94,7 +94,7 @@ export default {
   reactionStyles: {
     reaction: {
       padding: "0 0.25rem 0 0.25rem",
-      fontSize: "1rem",
+      fontSize: "1.3rem",
       transition: "O.25s",
       "&:hover": {
         textDecoration: "none",
@@ -138,7 +138,6 @@ export default {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "20px",
       height: "70px",
       borderBottom: "1px solid #fafafa",
     },
@@ -189,6 +188,7 @@ export default {
     },
     pos: {
       marginBottom: 12,
+      color: "blue",
     },
     media: {
       width: "150px",

@@ -37,6 +37,12 @@ const profileStyles = () => ({
 });
 
 export class Profile extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hide: true,
+    };
+  }
   componentDidMount() {
     if (this.props.redirect) this.props.history.push("/profile");
 
@@ -63,6 +69,10 @@ export class Profile extends Component {
   logout = () => {
     this.props.userLogout();
     this.props.history.replace("/");
+  };
+
+  handleHide = () => {
+    this.setState({ hide: !this.state.hide });
   };
 
   render() {
@@ -101,9 +111,16 @@ export class Profile extends Component {
                   <Container>
                     <Typography variant="h5" component="h2">
                       {display_name}
+                      <IconButton onClick={this.logout}>
+                        <ExitToApp />
+                      </IconButton>
                     </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {id}
+                    <Typography
+                      onClick={this.handleHide}
+                      className={classes.pos}
+                      color="textSecondary"
+                    >
+                      {this.state.hide ? "show password" : id}
                     </Typography>
                     <Typography variant="body2" component="p">
                       {email}
@@ -131,12 +148,9 @@ export class Profile extends Component {
                   <Box>
                     <DirectionsRun />
                     <Typography variant="body2" component="p">
-                      {followers ? followers.total : null}
+                      {followers ? followers.total : ""}
                     </Typography>
                   </Box>
-                  <IconButton onClick={this.logout}>
-                    <ExitToApp />
-                  </IconButton>
                 </Container>
               </CardContent>
             </Card>

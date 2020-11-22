@@ -81,12 +81,12 @@ export class Swipe extends Component {
     return (
       <>
         <Container className={classes.swipeRoot}>
-          <Tooltip title="Beats market" placement="top">
+          <Tooltip title="Beats market" placement="bottom">
             <IconButton className={classes.swipeButtonsRepeat}>
               <Store fontSize="large" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Song recognition" placement="top">
+          <Tooltip title="Song recognition" placement="bottom">
             <IconButton
               className={classes.swipeButtonsLeft}
               onClick={this.handleRecording}
@@ -95,7 +95,7 @@ export class Swipe extends Component {
             </IconButton>
           </Tooltip>
           {this.props.token ? (
-            <Tooltip title="Explore" placement="top">
+            <Tooltip title="Explore" placement="bottom">
               <Link to="/explore">
                 <IconButton
                   onClick={() => {}}
@@ -106,14 +106,14 @@ export class Swipe extends Component {
               </Link>
             </Tooltip>
           ) : null}
-          <Tooltip title="Karaoke" placement="top">
+          <Tooltip title="Karaoke" placement="bottom">
             <Link to="/karaoke">
               <IconButton className={classes.swipeButtonsStar}>
                 <Mic fontSize="large" />
               </IconButton>
             </Link>
           </Tooltip>
-          <Tooltip title="Messages" placement="top">
+          <Tooltip variant="h2" title="Messages" placement="bottom">
             <Link to="/chat">
               <IconButton className={classes.messages}>
                 <Forum fontSize="large" />

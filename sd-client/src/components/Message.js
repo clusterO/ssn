@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Container, withStyles, Avatar, Typography } from "@material-ui/core";
+import { withStyles, Avatar, Typography } from "@material-ui/core";
 import styles from "../styles";
 
 const messageStyles = theme => ({
@@ -12,14 +12,16 @@ export class Message extends Component {
     const { classes, handle, message, image, timestamp } = this.props;
     return (
       <Link to={`/chat/${handle}`} className={classes.link}>
-        <Container className={classes.chat}>
+        <div className={classes.chat}>
           <Avatar className={classes.chatImage} alt={handle} src={image} />
-          <Container className={classes.chatDetails}>
-            <Typography>{handle}</Typography>
-            <Typography className={classes.message}>{message}</Typography>
-          </Container>
+          <div className={classes.chatDetails}>
+            <Typography variant="h6">{handle}</Typography>
+            <Typography variant="body1" className={classes.message}>
+              {message ? message : "new friend.. say hi!"}
+            </Typography>
+          </div>
           <Typography className={classes.chatTimestamp}>{timestamp}</Typography>
-        </Container>
+        </div>
       </Link>
     );
   }

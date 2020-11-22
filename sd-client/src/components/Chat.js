@@ -172,7 +172,10 @@ export class Chat extends Component {
                         "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
                       }
                     />
-                    <Typography className={classes.chatScreenText}>
+                    <Typography
+                      variant="body1"
+                      className={classes.chatScreenText}
+                    >
                       {message.content}
                       {message.uri ? (
                         <a href={message.uri}>
@@ -220,7 +223,10 @@ export class Chat extends Component {
                   </Container>
                 ) : (
                   <Container key={index} className={classes.chatScreenMessage}>
-                    <Typography className={classes.chatScreenTextUser}>
+                    <Typography
+                      variant="body1"
+                      className={classes.chatScreenTextUser}
+                    >
                       {message.content}
                       {message.uri ? (
                         <a href={message.uri}>

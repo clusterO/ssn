@@ -54,7 +54,7 @@ export class Cards extends Component {
                 style={{ backgroundImage: `url(${profile.url})` }}
                 className={classes.card}
               >
-                <Typography>{profile.name}</Typography>
+                <Typography variant="h4">{profile.name}</Typography>
               </Container>
             </TinderCard>
           ))}

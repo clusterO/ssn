@@ -17,7 +17,8 @@ export const setProfile = () => dispatch => {
   axios
     .get("/me", { params: { token: localStorage.getItem("accessToken") } })
     .then(body => {
-      if (body.data.error && body.data.error.status === 401) refreshToken();
+      if (body.data.error && body.data.error.status === 401)
+        dispatch(refreshToken());
 
       dispatch({
         type: SET_PROFILE,
@@ -75,6 +76,7 @@ const refreshToken = () => dispatch => {
       localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
       axios.defaults.headers.common["authorization"] = res.data.access_token;
       dispatch({ type: SET_AUTHENTICATED });
+      window.location.href = "/";
     })
     .catch(err => {
       console.error(err);
