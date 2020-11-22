@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import TinderCard from "react-tinder-card";
 import { Container, Typography, withStyles } from "@material-ui/core";
-import { setHandle } from "../redux/actions/dataActions";
+import { setHandle, getUserDetails } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 import axios from "axios";
 import styles from "../styles";
@@ -12,39 +12,8 @@ const cardStyles = () => ({
 });
 
 export class Cards extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tracks: false,
-      profiles: [],
-    };
-  }
-
-  getUserDetails = () => {
-    let body = { handle: this.props.data.user };
-
-    axios
-      .post("/profile", body, {
-        headers: { authorization: this.props.data.token },
-      })
-      .then(res => {
-        const profiles = [];
-        if (res.data && res.data?.matchs)
-          res.data.matchs.forEach(match => {
-            profiles.push({
-              name: match.display_name,
-              url: match.images[0].url,
-            });
-          });
-
-        this.props.setHandle(profiles[profiles.length - 1].name);
-        this.setState({ profiles: [...profiles], tracks: true });
-      })
-      .catch(err => console.error(err));
-  };
-
   componentDidMount() {
-    this.getUserDetails();
+    this.props.getUserDetails();
   }
 
   onCardLeftScreen = direction => {
@@ -68,10 +37,12 @@ export class Cards extends Component {
 
   render() {
     const { classes } = this.props;
+    const { cards } = this.props.data;
+
     return (
       <>
         <Container className={classes.cardContainer}>
-          {this.state.profiles.map(profile => (
+          {cards.profiles.map(profile => (
             <TinderCard
               onSwipe={() => this.onSwipe(profile.name)}
               onCardLeftScreen={this.onCardLeftScreen}
@@ -88,7 +59,7 @@ export class Cards extends Component {
             </TinderCard>
           ))}
         </Container>
-        {this.state.tracks ? <Tracks /> : null}
+        {cards.tracks ? <Tracks /> : null}
       </>
     );
   }
@@ -100,6 +71,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setHandle,
+  getUserDetails,
 };
 
 export default connect(

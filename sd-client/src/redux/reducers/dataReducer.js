@@ -1,10 +1,10 @@
 import {
   CURRENT_SWIPE_HANDLE,
-  CURRENT_USER,
   ADD_NOTIFICATION,
   SET_PROFILE,
   SET_UNAUTHENTICATED,
   SET_AUTHENTICATED,
+  SET_CARDS,
 } from "../types";
 
 const initialState = {
@@ -23,6 +23,10 @@ const initialState = {
     external_urls: { spotify: "" },
     followers: { total: null },
   },
+  cards: {
+    tracks: false,
+    profiles: [],
+  },
 };
 
 export default function (state = initialState, action) {
@@ -31,11 +35,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         handle: action.handle,
-      };
-    case CURRENT_USER:
-      return {
-        ...state,
-        user: action.user,
       };
     case ADD_NOTIFICATION:
       return {
@@ -54,6 +53,11 @@ export default function (state = initialState, action) {
       };
     case SET_UNAUTHENTICATED:
       return initialState;
+    case SET_CARDS:
+      return {
+        ...state,
+        cards: { tracks: true, profiles: action.profiles },
+      };
     default:
       return state;
   }

@@ -155,10 +155,10 @@ exports.refreshToken = (req, res) => {
   request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       const access_token = body.access_token;
-      res.send({
-        access_token: access_token,
+      res.status(200).send({
+        access_token,
       });
-    }
+    } else res.status(500).send({ error });
   });
 };
 
@@ -220,11 +220,12 @@ getFollowedArtists = token => {
 };
 
 exports.recent = (req, res) => {
+  console.log(req.headers.handle);
   User.findOne({
     handle: req.headers.handle,
   }).exec((err, user) => {
-    if (err) return res.send(500).send({ error: err });
-    if (!user) return res.send(401).send({ message: "Handle incorrect" });
+    if (err) return res.status(500).send({ error: err });
+    if (!user) return res.status(401).send({ message: "Handle incorrect" });
 
     getTracksNames(user.match.recent, req.headers.token).then(tracks => {
       return res.status(200).send(tracks);

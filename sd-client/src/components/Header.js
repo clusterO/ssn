@@ -26,7 +26,7 @@ export class Header extends Component {
   checkNotification = () => {
     axios
       .get("/notify", {
-        params: { handle: this.props.data.user },
+        params: { handle: localStorage.getItem("user") },
       })
       .then(response => {
         // Add number of notifications from response

@@ -16,11 +16,10 @@ import {
 import { Face, Fingerprint } from "@material-ui/icons";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
-import store from "../redux/store";
-import { CURRENT_USER } from "../redux/types";
 import styles from "../styles";
 import { connect } from "react-redux";
 import Profile from "./Profile";
+import { setProfile } from "../redux/actions/dataActions";
 
 const loginStyles = theme => ({
   ...styles.loginStyles,
@@ -68,7 +67,8 @@ export class Login extends Component {
           password: this.state.password,
         })
         .then(body => {
-          store.dispatch({ type: CURRENT_USER, user: body.data.handle });
+          // Set spotify token
+          this.props.setProfile();
           this.props.history.replace("/profile");
         })
         .catch(err => console.error(err));
@@ -81,7 +81,8 @@ export class Login extends Component {
           handle: this.state.handle,
         })
         .then(body => {
-          store.dispatch({ type: CURRENT_USER, user: body.data.handle });
+          // Set spotify token
+          this.props.setProfile();
           this.signup();
         })
         .catch(err => console.error(err));
@@ -91,7 +92,8 @@ export class Login extends Component {
     const { classes } = this.props;
     return (
       <>
-        {localStorage.getItem("accessToken") ? (
+        {localStorage.getItem("accessToken") &&
+        Date.parse(localStorage.getItem("expireTime")) > Date.now() ? (
           <Profile redirect={true} />
         ) : (
           <Container className={classes.container}>
@@ -241,6 +243,11 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(
-  withRouter(withStyles(loginStyles)(Login))
-);
+const mapDispatchToProps = {
+  setProfile,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(withStyles(loginStyles)(Login)));

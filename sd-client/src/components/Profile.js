@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+
 import {
   withStyles,
   Card,
@@ -12,68 +15,42 @@ import {
   Button,
   IconButton,
 } from "@material-ui/core";
-import { Link, withRouter } from "react-router-dom";
 import {
   PersonPinCircle,
   FilterList,
   DirectionsRun,
   ExitToApp,
 } from "@material-ui/icons";
-import axios from "axios";
-import { SET_PROFILE } from "../redux/types";
-import { initializeAccess, userLogout } from "../redux/actions/dataActions";
-import store from "../redux/store";
+
+import {
+  initializeAccess,
+  userLogout,
+  setProfile,
+} from "../redux/actions/dataActions";
 import styles from "../styles";
 import { getHashParams } from "../utils/hash";
-import { connect } from "react-redux";
 import Swipe from "./Swipe";
 
-const profileStyles = theme => ({
+const profileStyles = () => ({
   ...styles.loginStyles,
   ...styles.profileStyles,
 });
 
 export class Profile extends Component {
-  constructor(props) {
-    super(props);
-    this.params = getHashParams();
-
+  componentDidMount() {
     if (this.props.redirect) this.props.history.push("/profile");
 
     if (!localStorage.getItem("accessToken")) {
+      this.params = getHashParams();
       localStorage.setItem("refreshToken", this.params.access_token);
-      initializeAccess(this.params.access_token, this.params.user);
-      this.refreshToken();
+      this.props.initializeAccess(this.params.access_token);
     }
-  }
 
-  componentDidMount() {
     this.getProfile();
   }
 
-  refreshToken = () => {
-    setInterval(() => {
-      axios
-        .get("/refresh", {
-          params: { refresh_token: localStorage.getItem("refreshToken") },
-        })
-        .then(res => {
-          initializeAccess(res.data.access_token, this.props.data.user);
-        })
-        .catch(err => console.error(err));
-    }, (this.params.expires_in - 10) * 1000);
-  };
-
   getProfile = () => {
-    axios
-      .get("/me", { params: { token: localStorage.getItem("accessToken") } })
-      .then(body => {
-        store.dispatch({
-          type: SET_PROFILE,
-          data: { ...body.data },
-        });
-      })
-      .catch(err => console.error(err));
+    this.props.setProfile();
   };
 
   authorizeSpotify = () => {
@@ -190,6 +167,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   userLogout,
+  setProfile,
+  initializeAccess,
 };
 
 export default connect(

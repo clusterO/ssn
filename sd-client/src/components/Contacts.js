@@ -21,7 +21,7 @@ export class Contacts extends Component {
 
   getFriendsList = () => {
     axios
-      .get("/friends", { params: { handle: this.props.data.user } })
+      .get("/friends", { params: { handle: localStorage.getItem("user") } })
       .then(body => {
         this.setState({ friends: body.data });
       })

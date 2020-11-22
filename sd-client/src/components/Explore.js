@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Container, withStyles } from "@material-ui/core";
 import Header from "./Header";
-
 import Cards from "./Cards";
 import { urlBase64ToUint8Array } from "../utils/converter";
 import axios from "axios";
@@ -41,7 +40,7 @@ class Explore extends Component {
   // SocketIo with MongoDb stream Change
   changeStream = () => {
     const url = "ws://localhost:8888";
-    const socket = io(url, { query: `handle=${this.props.data.user}` });
+    const socket = io(url, { query: `handle=${localStorage.getItem("user")}` });
 
     socket.on("notificationStream", data => {
       store.dispatch({ type: ADD_NOTIFICATION });
@@ -79,4 +78,9 @@ const mapStateToProps = state => ({
   data: state.data,
 });
 
-export default connect(mapStateToProps)(withStyles(exploreStyles)(Explore));
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(exploreStyles)(Explore));

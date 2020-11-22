@@ -60,7 +60,7 @@ export class Chat extends Component {
     axios
       .get("/chat", {
         params: {
-          handle: this.props.data.user,
+          handle: localStorage.getItem("user"),
           from: this.contact,
         },
       })
@@ -84,7 +84,7 @@ export class Chat extends Component {
       axios
         .post("/send", {
           content: this.state.input,
-          from: this.props.data.user,
+          from: localStorage.getItem("user"),
           to: this.contact,
         })
         .catch(err => console.error(err));
@@ -110,7 +110,7 @@ export class Chat extends Component {
 
   handleShare = () => {
     axios
-      .get("/current", { headers: { authorization: this.props.data.token } })
+      .get("/current")
       .then(body => {
         if (body.data) {
           this.setState({
@@ -129,11 +129,7 @@ export class Chat extends Component {
     // send request to listen together
     // ... call waiting response & cancel button
     axios
-      .post(
-        "/play",
-        { song: "" },
-        { headers: { authorization: this.props.data.token } }
-      )
+      .post("/play", { song: "" })
       .then(body => {
         if (
           body.data &&
@@ -216,7 +212,7 @@ export class Chat extends Component {
                       onClose={this.handlePopoverClose}
                     >
                       <Reactions
-                        from={this.props.data.user}
+                        from={localStorage.getItem("user")}
                         to={this.contact}
                         messageId={message.id}
                       />

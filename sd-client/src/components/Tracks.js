@@ -22,7 +22,9 @@ export class Tracks extends Component {
   }
 
   componentDidMount() {
-    this.getRecentlyPlayed();
+    setImmediate(() => {
+      this.getRecentlyPlayed();
+    });
   }
 
   getRecentlyPlayed = () => {
@@ -30,7 +32,7 @@ export class Tracks extends Component {
       .get("/recent", {
         headers: {
           handle: this.props.data.handle,
-          token: this.props.data.token,
+          token: localStorage.getItem("accessToken"),
         },
       })
       .then(res => {
