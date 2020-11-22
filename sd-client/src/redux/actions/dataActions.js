@@ -7,8 +7,6 @@ import {
   SET_CARDS,
 } from "../types";
 import dayjs from "dayjs";
-import store from "../store";
-
 import axios from "axios";
 
 export const setHandle = identifier => dispatch => {
@@ -19,9 +17,9 @@ export const setProfile = () => dispatch => {
   axios
     .get("/me", { params: { token: localStorage.getItem("accessToken") } })
     .then(body => {
-      if (body.data.error.status === 401) refreshToken();
+      if (body.data.error && body.data.error.status === 401) refreshToken();
 
-      store.dispatch({
+      dispatch({
         type: SET_PROFILE,
         data: { ...body.data },
       });
@@ -42,13 +40,6 @@ export const userLogout = () => dispatch => {
   localStorage.removeItem("user");
   delete axios.defaults.headers.common["authorization"];
   dispatch({ type: SET_UNAUTHENTICATED });
-};
-
-export const initializeAccess = accessToken => {
-  localStorage.setItem("accessToken", accessToken);
-  localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
-  axios.defaults.headers.common["authorization"] = accessToken;
-  store.dispatch({ type: SET_AUTHENTICATED });
 };
 
 export const getUserDetails = () => dispatch => {
@@ -73,13 +64,17 @@ export const getUserDetails = () => dispatch => {
     .catch(err => console.error(err));
 };
 
-const refreshToken = () => {
+const refreshToken = () => dispatch => {
   axios
     .get("/refresh", {
       params: { refresh_token: localStorage.getItem("refreshToken") },
     })
     .then(res => {
-      initializeAccess(res.data.access_token);
+      // DRY it
+      localStorage.setItem("accessToken", res.data.access_token);
+      localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
+      axios.defaults.headers.common["authorization"] = res.data.access_token;
+      dispatch({ type: SET_AUTHENTICATED });
     })
     .catch(err => {
       console.error(err);

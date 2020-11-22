@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import axios from "axios";
+import dayjs from "dayjs";
 
 import {
   withStyles,
@@ -22,11 +24,9 @@ import {
   ExitToApp,
 } from "@material-ui/icons";
 
-import {
-  initializeAccess,
-  userLogout,
-  setProfile,
-} from "../redux/actions/dataActions";
+import store from "../redux/store";
+import { userLogout, setProfile } from "../redux/actions/dataActions";
+import { SET_AUTHENTICATED } from "../redux/types";
 import styles from "../styles";
 import { getHashParams } from "../utils/hash";
 import Swipe from "./Swipe";
@@ -42,8 +42,11 @@ export class Profile extends Component {
 
     if (!localStorage.getItem("accessToken")) {
       this.params = getHashParams();
-      localStorage.setItem("refreshToken", this.params.access_token);
-      this.props.initializeAccess(this.params.access_token);
+      localStorage.setItem("accessToken", this.params.access_token);
+      localStorage.setItem("refreshToken", this.params.refresh_token);
+      localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
+      axios.defaults.headers.common["authorization"] = this.params.access_token;
+      store.dispatch({ type: SET_AUTHENTICATED });
     }
 
     this.getProfile();
@@ -168,7 +171,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   userLogout,
   setProfile,
-  initializeAccess,
 };
 
 export default connect(
