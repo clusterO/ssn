@@ -7,7 +7,16 @@ import axios from "axios";
 import styles from "../styles";
 import Tracks from "./Tracks";
 
-const cardStyles = () => ({
+const cardStyles = (theme) => ({
+  cardContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "10vh",
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "5vh",
+      height: "55vh !important",
+    },
+  },
   ...styles.cardStyles,
 });
 
@@ -16,21 +25,21 @@ export class Cards extends Component {
     this.props.getUserDetails();
   }
 
-  onCardLeftScreen = direction => {
+  onCardLeftScreen = (direction) => {
     if (direction === "right") this.match(this.props.data.handle);
   };
 
-  onSwipe = identifier => {
+  onSwipe = (identifier) => {
     this.props.setHandle(identifier);
   };
 
-  match = handle => {
+  match = (handle) => {
     axios
       .get("/match", { params: { handle } })
-      .then(data => {
+      .then((data) => {
         // console.log(data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
   };
@@ -41,8 +50,8 @@ export class Cards extends Component {
 
     return (
       <>
-        <Container className={classes.cardContainer}>
-          {cards.profiles.map(profile => (
+        <div className={classes.cardContainer}>
+          {cards.profiles.map((profile) => (
             <TinderCard
               onSwipe={() => this.onSwipe(profile.name)}
               onCardLeftScreen={this.onCardLeftScreen}
@@ -58,14 +67,14 @@ export class Cards extends Component {
               </Container>
             </TinderCard>
           ))}
-        </Container>
-        {cards.tracks ? <Tracks /> : null}
+        </div>
+        <div className={classes.tracks}>{cards.tracks ? <Tracks /> : null}</div>
       </>
     );
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

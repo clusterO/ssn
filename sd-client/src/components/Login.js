@@ -21,7 +21,15 @@ import { connect } from "react-redux";
 import Profile from "./Profile";
 import { setProfile } from "../redux/actions/dataActions";
 
-const loginStyles = theme => ({
+const loginStyles = (theme) => ({
+  container: {
+    margin: "10% auto 0 auto",
+    width: "70%",
+    [theme.breakpoints.down("sm")]: {
+      margin: "30% auto 0 auto",
+      width: "100%",
+    },
+  },
   ...styles.loginStyles,
 });
 
@@ -55,7 +63,7 @@ export class Login extends Component {
     this.setState({ value: newValue });
   };
 
-  handleInput = event => {
+  handleInput = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -66,12 +74,12 @@ export class Login extends Component {
           email: this.state.email,
           password: this.state.password,
         })
-        .then(body => {
+        .then((body) => {
           // Set spotify token
           this.props.setProfile();
           this.props.history.replace("/profile");
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     else
       axios
         .post("/signup", {
@@ -80,12 +88,12 @@ export class Login extends Component {
           confirmPassword: this.state.confirmPassword,
           handle: this.state.handle,
         })
-        .then(body => {
+        .then((body) => {
           // Set spotify token
           this.props.setProfile();
           this.signup();
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
   };
 
   render() {
@@ -239,7 +247,7 @@ export class Login extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

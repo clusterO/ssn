@@ -16,13 +16,11 @@ export default {
       bottom: "10px",
       color: "white",
     },
-    cardContainer: {
-      display: "flex",
-      justifyContent: "center",
-      marginTop: "10vh",
-    },
     swipe: {
       position: "absolute",
+    },
+    tracks: {
+      justifyContent: "center",
     },
   },
   chatStyles: {
@@ -51,10 +49,8 @@ export default {
     },
     chatScreenInput: {
       display: "flex",
-      padding: "5px",
       position: "fixed",
       bottom: 0,
-      width: "80%",
       marginBottom: "10px",
     },
     chatScreenInputField: {
@@ -113,7 +109,6 @@ export default {
       height: "40px",
       objectFit: "contain",
     },
-    headerIcon: {},
   },
   loginStyles: {
     form: {
@@ -122,10 +117,6 @@ export default {
     paper: {
       padding: "10px",
       marginTop: "1px",
-    },
-    container: {
-      margin: "10% auto 0 auto",
-      width: "70%",
     },
     spotifyButton: {
       margin: "auto auto",
@@ -164,15 +155,15 @@ export default {
     },
   },
   profileStyles: {
-    root: {
+    rootProfile: {
       margin: "auto auto",
       marginTop: "5%",
-      width: "80%",
+      width: "90%",
     },
     details: {
       display: "flex",
     },
-    infos: {
+    profileInfos: {
       display: "flex",
       width: "15%",
       justifyContent: "space-evenly",
@@ -190,15 +181,11 @@ export default {
       marginBottom: 12,
       color: "blue",
     },
-    media: {
-      width: "150px",
-      height: "150px",
-      borderRadius: "50%",
-    },
   },
   swipeStyles: {
     mic: {
       visibility: "hidden",
+      display: "none",
     },
     swipeRoot: {
       width: "100%",
@@ -243,7 +230,7 @@ export default {
       height: "50px",
       borderRadius: "50%",
     },
-    container: {
+    trackContainer: {
       display: "flex",
       marginTop: "10px",
     },

@@ -8,8 +8,8 @@ import styles from "../styles";
 import { ReactMic } from "react-mic";
 import axios from "axios";
 
-const swipeStyles = theme => ({
-  root: {
+const swipeStyles = (theme) => ({
+  alert: {
     width: "100%",
     "& > * + *": {
       marginTop: theme.spacing(2),
@@ -44,15 +44,15 @@ export class Swipe extends Component {
     });
   }
 
-  onStop = recordedBlob => {
+  onStop = (recordedBlob) => {
     this.loadBlob(recordedBlob.blobURL)
-      .then(async blob => {
+      .then(async (blob) => {
         const data = new FormData();
         data.append("audio", blob);
 
         axios
           .post("/xazam", data)
-          .then(response => {
+          .then((response) => {
             if (response.data.length > 0) {
               this.setState({
                 alert: true,
@@ -69,9 +69,9 @@ export class Swipe extends Component {
               }, 10000);
             }
           })
-          .catch(err => console.error(err));
+          .catch((err) => console.error(err));
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`Could not load blob ${err}`);
       });
   };
@@ -122,7 +122,7 @@ export class Swipe extends Component {
           </Tooltip>
         </Container>
         {this.state.alert ? (
-          <div className={classes.root}>
+          <div className={classes.alert}>
             <Alert severity="success">
               {this.state.song} - {this.state.artist}
             </Alert>
@@ -140,7 +140,7 @@ export class Swipe extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

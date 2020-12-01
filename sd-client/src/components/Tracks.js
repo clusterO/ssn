@@ -9,7 +9,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import styles from "../styles";
 
-const tracksStyles = theme => ({
+const tracksStyles = (theme) => ({
   ...styles.tracksStyles,
 });
 
@@ -35,7 +35,7 @@ export class Tracks extends Component {
           token: localStorage.getItem("accessToken"),
         },
       })
-      .then(res => {
+      .then((res) => {
         let tracks = [];
         res.data.map((track, index) => {
           if (index < 5)
@@ -50,7 +50,7 @@ export class Tracks extends Component {
 
         this.setState({ recentlyPlayed: tracks });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
   };
@@ -61,7 +61,7 @@ export class Tracks extends Component {
       <>
         <Typography variant="h5">Recently played</Typography>
         {this.state.recentlyPlayed.map((track, index) => (
-          <div className={classes.container} key={index}>
+          <div className={classes.trackContainer} key={index}>
             {track.images && track.images[0].url ? (
               <CardMedia
                 className={classes.media}
@@ -86,7 +86,7 @@ export class Tracks extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

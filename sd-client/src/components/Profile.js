@@ -30,8 +30,24 @@ import { SET_AUTHENTICATED } from "../redux/types";
 import styles from "../styles";
 import { getHashParams } from "../utils/hash";
 import Swipe from "./Swipe";
+import Header from "./Header";
 
-const profileStyles = () => ({
+const profileStyles = (theme) => ({
+  media: {
+    borderRadius: "50%",
+    [theme.breakpoints.down("sm")]: {
+      width: "100px",
+      height: "100px",
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "150px",
+      height: "150px",
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "150px",
+      height: "150px",
+    },
+  },
   ...styles.loginStyles,
   ...styles.profileStyles,
 });
@@ -90,9 +106,10 @@ export class Profile extends Component {
 
     return (
       <>
+        <Header profile={true} />
         {localStorage.getItem("accessToken") ? (
-          <>
-            <Card className={classes.root} variant="outlined">
+          <Grid className={classes.rootProfile}>
+            <Card variant="outlined">
               <CardContent>
                 <Container className={classes.details}>
                   {images && images[0].url ? (
@@ -132,7 +149,7 @@ export class Profile extends Component {
                     </Link>
                   </Container>
                 </Container>
-                <Container className={classes.infos}>
+                <Container className={classes.profileInfos}>
                   <Box>
                     <PersonPinCircle />
                     <Typography variant="body2" component="p">
@@ -155,7 +172,7 @@ export class Profile extends Component {
               </CardContent>
             </Card>
             <Swipe token={true} />
-          </>
+          </Grid>
         ) : (
           <>
             <Swipe />
@@ -178,7 +195,7 @@ export class Profile extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

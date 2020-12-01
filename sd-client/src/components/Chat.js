@@ -19,7 +19,7 @@ import styles from "../styles";
 import Header from "./Header";
 import Reactions from "./Reactions";
 
-const chatStyles = theme => ({
+const chatStyles = (theme) => ({
   ...styles.chatStyles,
 });
 
@@ -40,7 +40,7 @@ export class Chat extends Component {
     const socket = io(url, { query: `handle=${"_"}` });
 
     // message should be received onetime (db watch messages change)
-    socket.on("newMessage", data => {
+    socket.on("newMessage", (data) => {
       this.setState({
         messages: [
           ...this.state.messages,
@@ -64,13 +64,13 @@ export class Chat extends Component {
           from: this.contact,
         },
       })
-      .then(body => {
+      .then((body) => {
         this.setState({ messages: body.data });
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
-  handleSend = e => {
+  handleSend = (e) => {
     e.preventDefault();
     if (this.state.input && this.state.input.trim() !== "") {
       this.setState({
@@ -87,31 +87,31 @@ export class Chat extends Component {
           from: localStorage.getItem("user"),
           to: this.contact,
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({ input: e.target.value });
   };
 
-  onKeyPress = e => {
+  onKeyPress = (e) => {
     // need event as argument
     if (e.charCode === 13) this.handleSend();
   };
 
-  handlePopoverOpen = event => {
+  handlePopoverOpen = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handlePopoverClose = event => {
+  handlePopoverClose = (event) => {
     this.setState({ anchorEl: null });
   };
 
   handleShare = () => {
     axios
       .get("/current")
-      .then(body => {
+      .then((body) => {
         if (body.data) {
           this.setState({
             input: body.data.song,
@@ -122,7 +122,7 @@ export class Chat extends Component {
         // need event as argument
         this.handleSend();
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   handleListening = () => {
@@ -130,7 +130,7 @@ export class Chat extends Component {
     // ... call waiting response & cancel button
     axios
       .post("/play", { song: "" })
-      .then(body => {
+      .then((body) => {
         if (
           body.data &&
           body.data.error &&
@@ -140,7 +140,7 @@ export class Chat extends Component {
 
         // send the song and play it in the other side
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   render() {
@@ -282,7 +282,7 @@ export class Chat extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

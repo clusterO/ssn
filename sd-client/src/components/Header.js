@@ -18,7 +18,7 @@ import store from "../redux/store";
 import { ADD_NOTIFICATION } from "../redux/types";
 import styles from "../styles";
 
-const headerStyles = theme => ({
+const headerStyles = (theme) => ({
   ...styles.headerStyles,
 });
 
@@ -28,11 +28,11 @@ export class Header extends Component {
       .get("/notify", {
         params: { handle: localStorage.getItem("user") },
       })
-      .then(response => {
+      .then((response) => {
         // Add number of notifications from response
         store.dispatch({ type: ADD_NOTIFICATION });
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   componentDidMount() {
@@ -44,7 +44,7 @@ export class Header extends Component {
 
     return (
       <Container className={classes.header}>
-        {backButton ? (
+        {this.props.profile ? null : backButton ? (
           <IconButton onClick={() => history.replace(backButton)}>
             <ArrowBackIos className={classes.headerIcon} fontSize="large" />
           </IconButton>
@@ -76,7 +76,7 @@ export class Header extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

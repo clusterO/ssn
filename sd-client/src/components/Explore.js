@@ -62,7 +62,7 @@ class Explore extends Component {
       store.dispatch({ type: ADD_NOTIFICATION });
     });
   };
-  // Dead
+  // Dead_______________________________
 
   render() {
     return (

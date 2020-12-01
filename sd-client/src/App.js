@@ -11,7 +11,6 @@ import Chat from "./components/Chat";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Explore from "./components/Explore";
-import Navbar from "./components/Navbar";
 import Karaoke from "./components/Karaoke";
 
 axios.defaults.baseURL = "http://localhost:8888";
@@ -32,7 +31,6 @@ export class App extends Component {
       <MuiThemeProvider theme={theme}>
         <Provider store={store}>
           <Router>
-            <Navbar />
             <Switch>
               <Route exact path="/" component={Login} />
               <Route exact path="/profile" component={Profile} />

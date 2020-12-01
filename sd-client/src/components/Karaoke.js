@@ -14,16 +14,15 @@ import { PlayCircleFilledWhite } from "@material-ui/icons";
 import songs from "../songs";
 import Header from "./Header";
 
-const karaokeStyles = theme => ({
+const karaokeStyles = (theme) => ({
   title: {
     fontWeight: 400,
   },
   container: {
     marginTop: "50px",
   },
-  root: {
+  main: {
     padding: "theme.spacing(1)",
-    [theme.breakpoints.down("sm")]: {},
     [theme.breakpoints.up("md")]: {
       display: "flex",
     },
@@ -35,10 +34,8 @@ const karaokeStyles = theme => ({
     maxHeight: "100vh",
     overflow: "auto",
     [theme.breakpoints.down("sm")]: {
-      width: "100%",
+      maxHeight: "50vh",
     },
-    [theme.breakpoints.up("md")]: {},
-    [theme.breakpoints.up("lg")]: {},
   },
 });
 
@@ -57,7 +54,7 @@ export class Karaoke extends Component {
     this.container.current.appendChild(this.karaoke.audio);
   }
 
-  loadAndPlay = name => {
+  loadAndPlay = (name) => {
     this.karaoke.loadAndPlay(`${name}.mp3`, `${name}.cdg`);
   };
 
@@ -65,9 +62,9 @@ export class Karaoke extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <div>
-          <Header />
+      <>
+        <Header />
+        <div className={classes.main}>
           <List className={classes.demo} dense={this.state.dense}>
             {songs.map((value, index) => (
               <ListItem key={index}>
@@ -87,9 +84,9 @@ export class Karaoke extends Component {
               </ListItem>
             ))}
           </List>
+          <div className={classes.container} ref={this.container}></div>
         </div>
-        <div className={classes.container} ref={this.container}></div>
-      </div>
+      </>
     );
   }
 }
