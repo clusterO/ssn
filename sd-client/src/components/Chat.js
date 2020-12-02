@@ -96,8 +96,8 @@ export class Chat extends Component {
   };
 
   onKeyPress = (e) => {
-    // need event as argument
-    if (e.charCode === 13) this.handleSend();
+    let event = new Event("click");
+    if (e.charCode === 13) this.handleSend(event);
   };
 
   handlePopoverOpen = (event) => {
@@ -119,8 +119,8 @@ export class Chat extends Component {
           });
         }
 
-        // need event as argument
-        this.handleSend();
+        let event = new Event("click", { bubbles: true, cancelable: false });
+        this.handleSend(event);
       })
       .catch((err) => console.error(err));
   };

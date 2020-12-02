@@ -75,8 +75,11 @@ export class Login extends Component {
           password: this.state.password,
         })
         .then((body) => {
+          localStorage.setItem("id", body.data.id);
+          localStorage.setItem("user", body.data.handle);
+          localStorage.setItem("accessToken", body.data.accessToken);
           // Set spotify token
-          this.props.setProfile();
+          //this.props.setProfile();
           this.props.history.replace("/profile");
         })
         .catch((err) => console.error(err));

@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import TinderCard from "react-tinder-card";
 import { Container, Typography, withStyles } from "@material-ui/core";
-import { setHandle, getUserDetails } from "../redux/actions/dataActions";
+import {
+  setHandle,
+  getUserDetails,
+  swipeProfile,
+} from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 import axios from "axios";
 import styles from "../styles";
@@ -27,10 +31,11 @@ export class Cards extends Component {
 
   onCardLeftScreen = (direction) => {
     if (direction === "right") this.match(this.props.data.handle);
+    this.props.swipeProfile();
   };
 
   onSwipe = (identifier) => {
-    this.props.setHandle(identifier);
+    //this.props.setHandle(identifier);
   };
 
   match = (handle) => {
@@ -68,7 +73,9 @@ export class Cards extends Component {
             </TinderCard>
           ))}
         </div>
-        <div className={classes.tracks}>{cards.tracks ? <Tracks /> : null}</div>
+        <div className={classes.tracks}>
+          {cards.tracks ? <Tracks render={true} /> : null}
+        </div>
       </>
     );
   }
@@ -81,6 +88,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   setHandle,
   getUserDetails,
+  swipeProfile,
 };
 
 export default connect(

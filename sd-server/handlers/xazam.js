@@ -23,20 +23,20 @@ exports.xazam = (req, res) => {
     storage: storage,
   }).any();
 
-  upload(req, res, err => {
+  upload(req, res, (err) => {
     if (err) return res.end("Error");
     else {
-      req.files.forEach(item => {
+      req.files.forEach((item) => {
         let buffer = fs.readFileSync(item.path);
         let path = `./file/${item.filename}.wav`;
         fs.writeFileSync(path, buffer);
 
         let sample = fs.readFileSync(path);
-        acr.identify(sample).then(data => {
+        acr.identify(sample).then((data) => {
           if (JSON.parse(data.body).status.msg === "Success")
             return res.status(200).send(JSON.parse(data.body).metadata.music);
 
-          res.status(401).send({ msg: "Song not recognized" });
+          res.status(204).send({ msg: "Song not recognized" });
         });
       });
     }

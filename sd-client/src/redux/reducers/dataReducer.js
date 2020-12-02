@@ -1,10 +1,11 @@
 import {
-  CURRENT_SWIPE_HANDLE,
+  SWIPED_CARD_HANDLE,
   ADD_NOTIFICATION,
   SET_PROFILE,
   SET_UNAUTHENTICATED,
   SET_AUTHENTICATED,
   SET_CARDS,
+  SWIPE_PROFILE,
 } from "../types";
 
 const initialState = {
@@ -31,7 +32,7 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case CURRENT_SWIPE_HANDLE:
+    case SWIPED_CARD_HANDLE:
       return {
         ...state,
         handle: action.handle,
@@ -57,6 +58,16 @@ export default function (state = initialState, action) {
       return {
         ...state,
         cards: { tracks: true, profiles: action.profiles },
+      };
+    case SWIPE_PROFILE:
+      state.cards.profiles.pop();
+      return {
+        ...state,
+        cards: { tracks: true, profiles: [...state.cards.profiles] },
+        handle:
+          state.cards.profiles.length > 0
+            ? state.cards.profiles[state.cards.profiles.length - 1].name
+            : "",
       };
     default:
       return state;

@@ -59,6 +59,7 @@ export class Profile extends Component {
       hide: true,
     };
   }
+
   componentDidMount() {
     if (this.props.redirect) this.props.history.push("/profile");
 
@@ -71,7 +72,7 @@ export class Profile extends Component {
       store.dispatch({ type: SET_AUTHENTICATED });
     }
 
-    this.getProfile();
+    if (!localStorage.getItem("id")) this.getProfile();
   }
 
   getProfile = () => {

@@ -21,38 +21,39 @@ export class Tracks extends Component {
     };
   }
 
-  componentDidMount() {
-    setImmediate(() => {
-      this.getRecentlyPlayed();
-    });
+  componentWillReceiveProps() {
+    this.getRecentlyPlayed();
   }
 
   getRecentlyPlayed = () => {
-    axios
-      .get("/recent", {
-        headers: {
-          handle: this.props.data.handle,
-          token: localStorage.getItem("accessToken"),
-        },
-      })
-      .then((res) => {
-        let tracks = [];
-        res.data.map((track, index) => {
-          if (index < 5)
-            tracks.push({
-              song: track.name,
-              artist: track.artists[0].name,
-              images: track.album.images,
-            });
+    let profiles = this.props.data.cards.profiles;
 
-          return null;
+    if (profiles.length > 0)
+      axios
+        .get("/recent", {
+          headers: {
+            handle: profiles[profiles.length - 1].name,
+            token: localStorage.getItem("accessToken"),
+          },
+        })
+        .then((res) => {
+          let tracks = [];
+          res.data.map((track, index) => {
+            if (index < 5)
+              tracks.push({
+                song: track.name,
+                artist: track.artists[0].name,
+                images: track.album.images,
+              });
+
+            return null;
+          });
+
+          this.setState({ recentlyPlayed: tracks });
+        })
+        .catch((err) => {
+          console.error(err);
         });
-
-        this.setState({ recentlyPlayed: tracks });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
   };
 
   render() {

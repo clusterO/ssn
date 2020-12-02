@@ -1,23 +1,32 @@
 import {
-  CURRENT_SWIPE_HANDLE,
+  SWIPED_CARD_HANDLE,
   ADD_NOTIFICATION,
   SET_UNAUTHENTICATED,
   SET_AUTHENTICATED,
   SET_PROFILE,
   SET_CARDS,
+  SWIPE_PROFILE,
 } from "../types";
 import dayjs from "dayjs";
 import axios from "axios";
 
-export const setHandle = identifier => dispatch => {
-  dispatch({ type: CURRENT_SWIPE_HANDLE, handle: identifier });
+export const setHandle = (identifier) => (dispatch) => {
+  dispatch({ type: SWIPED_CARD_HANDLE, handle: identifier });
 };
 
-export const setProfile = () => dispatch => {
+export const swipeProfile = () => (dispatch) => {
+  dispatch({ type: SWIPE_PROFILE });
+};
+
+export const setProfile = () => (dispatch) => {
   axios
     .get("/me", { params: { token: localStorage.getItem("accessToken") } })
-    .then(body => {
-      if (body.data.error && body.data.error.status === 401)
+    .then((body) => {
+      if (
+        body.data.error &&
+        body.data.error.status === 401 &&
+        localStorage.getItem("refreshToken")
+      )
         dispatch(refreshToken());
 
       dispatch({
@@ -27,14 +36,14 @@ export const setProfile = () => dispatch => {
 
       localStorage.setItem("user", body.data.display_name);
     })
-    .catch(err => console.error(err));
+    .catch((err) => console.error(err));
 };
 
-export const addNotification = () => dispatch => {
+export const addNotification = () => (dispatch) => {
   dispatch({ type: ADD_NOTIFICATION });
 };
 
-export const userLogout = () => dispatch => {
+export const userLogout = () => (dispatch) => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("expireTime");
@@ -43,13 +52,13 @@ export const userLogout = () => dispatch => {
   dispatch({ type: SET_UNAUTHENTICATED });
 };
 
-export const getUserDetails = () => dispatch => {
+export const getUserDetails = () => (dispatch) => {
   axios
     .post("/profile", { handle: localStorage.getItem("user") })
-    .then(res => {
+    .then((res) => {
       const profiles = [];
       if (res.data && res.data?.matchs)
-        res.data.matchs.forEach(match => {
+        res.data.matchs.forEach((match) => {
           profiles.push({
             name: match.display_name,
             url: match.images[0].url,
@@ -58,19 +67,19 @@ export const getUserDetails = () => dispatch => {
 
       dispatch({ type: SET_CARDS, profiles: [...profiles] });
       dispatch({
-        type: CURRENT_SWIPE_HANDLE,
+        type: SWIPED_CARD_HANDLE,
         handle: profiles[profiles.length - 1].name,
       });
     })
-    .catch(err => console.error(err));
+    .catch((err) => console.error(err));
 };
 
-const refreshToken = () => dispatch => {
+const refreshToken = () => (dispatch) => {
   axios
     .get("/refresh", {
       params: { refresh_token: localStorage.getItem("refreshToken") },
     })
-    .then(res => {
+    .then((res) => {
       // DRY it
       localStorage.setItem("accessToken", res.data.access_token);
       localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
@@ -78,7 +87,7 @@ const refreshToken = () => dispatch => {
       dispatch({ type: SET_AUTHENTICATED });
       window.location.href = "/";
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
     });
 };

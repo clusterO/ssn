@@ -166,17 +166,17 @@ exports.getUser = (req, res) => {
   const token = req.headers.authorization;
   const user = req.headers.user;
   const url = `https://api.spotify.com/v1/users/${user}`;
-  callSpotify(token, url).then(body => {
+  callSpotify(token, url).then((body) => {
     res.status(200).send(body);
   });
 };
 
-getSavedTracks = token => {
+getSavedTracks = (token) => {
   const url = "https://api.spotify.com/v1/me/tracks?limit=50";
-  return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
+  return new Promise((resolve) => {
+    callSpotify(token, url).then((body) => {
       let tracks = [];
-      body.items.map(item => {
+      body.items.map((item) => {
         tracks.push(item.track.id);
       });
 
@@ -185,14 +185,14 @@ getSavedTracks = token => {
   });
 };
 
-getAlbums = token => {
+getAlbums = (token) => {
   const url = "https://api.spotify.com/v1/me/albums";
-  return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
+  return new Promise((resolve) => {
+    callSpotify(token, url).then((body) => {
       let albums = [];
       let genres = [];
 
-      body.items.map(item => {
+      body.items.map((item) => {
         albums.push(item.album.id);
         genres.push(item.album.genres);
       });
@@ -202,14 +202,14 @@ getAlbums = token => {
   });
 };
 
-getFollowedArtists = token => {
+getFollowedArtists = (token) => {
   const url = "https://api.spotify.com/v1/me/following?type=artist";
-  return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
+  return new Promise((resolve) => {
+    callSpotify(token, url).then((body) => {
       let artists = [];
       let genres = [];
 
-      body.artists.items.map(item => {
+      body.artists.items.map((item) => {
         artists.push(item.id);
         genres.push(item.genres);
       });
@@ -220,21 +220,22 @@ getFollowedArtists = token => {
 };
 
 exports.recent = (req, res) => {
-  console.log(req.headers.handle);
   User.findOne({
     handle: req.headers.handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ error: err });
     if (!user) return res.status(401).send({ message: "Handle incorrect" });
 
-    getTracksNames(user.match.recent, req.headers.token).then(tracks => {
-      return res.status(200).send(tracks);
-    });
+    if (user.match && user.match.recent)
+      getTracksNames(user.match.recent, req.headers.token).then((tracks) => {
+        return res.status(200).send(tracks);
+      });
+    else return res.status(200).send([]);
   });
 };
 
 getTracksNames = (tracks, token) => {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve) => {
     let tracksNames = [];
 
     for (let i = 0; i < tracks.length; i++) {
@@ -246,20 +247,20 @@ getTracksNames = (tracks, token) => {
   });
 };
 
-getRecentlyPlayed = token => {
+getRecentlyPlayed = (token) => {
   const url = "https://api.spotify.com/v1/me/player/recently-played";
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     callSpotify(token, url)
-      .then(body => {
+      .then((body) => {
         let tracks = [];
 
-        body.items.map(item => {
+        body.items.map((item) => {
           tracks.push(item.track.id);
         });
 
         resolve(tracks);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
   });
@@ -268,7 +269,7 @@ getRecentlyPlayed = token => {
 exports.play = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/play";
-  callPlayer(token, url).then(body => {
+  callPlayer(token, url).then((body) => {
     return res.status(200).send(body);
   });
 };
@@ -276,7 +277,7 @@ exports.play = (req, res) => {
 exports.transferPlayback = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player";
-  callSpotify(token, url).then(body => {
+  callSpotify(token, url).then((body) => {
     res.status(200).send(body);
   });
 };
@@ -284,19 +285,19 @@ exports.transferPlayback = (req, res) => {
 exports.getCurrentlyPlaying = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/currently-playing";
-  callSpotify(token, url).then(body => {
+  callSpotify(token, url).then((body) => {
     if (body)
       res.status(200).send({ song: body.item.name, uri: body.item.uri });
   });
 };
 
-getPlaylists = token => {
+getPlaylists = (token) => {
   const url = "https://api.spotify.com/v1/me/playlists";
-  return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
+  return new Promise((resolve) => {
+    callSpotify(token, url).then((body) => {
       let playlists = [];
 
-      body.items.map(item => {
+      body.items.map((item) => {
         playlists.push(item.id);
       });
 
@@ -309,10 +310,10 @@ exports.getUserPlaylists = (req, res) => {
   const token = req.headers.authorization;
   const userId = req.headers.user;
   const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
-  callSpotify(token, url).then(body => {
+  callSpotify(token, url).then((body) => {
     let playlists = [];
 
-    body.items.map(item => {
+    body.items.map((item) => {
       playlists.push(item.id);
     });
 
@@ -322,11 +323,11 @@ exports.getUserPlaylists = (req, res) => {
 
 getUserTops = (token, type) => {
   const url = `https://api.spotify.com/v1/me/top/${type}`;
-  return new Promise(resolve => {
-    callSpotify(token, url).then(body => {
+  return new Promise((resolve) => {
+    callSpotify(token, url).then((body) => {
       let tops = [];
 
-      body.items.map(item => {
+      body.items.map((item) => {
         tops.push(item.id);
       });
 
@@ -344,7 +345,7 @@ const callSpotify = (token, url) => {
     json: true,
   };
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     request.get(options, (err, _, body) => {
       if (err) console.error(err);
       resolve(body);
@@ -362,7 +363,7 @@ const callPlayer = (token, url) => {
     json: true,
   };
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     request.put(options, (err, _, body) => {
       if (err) console.error(err);
       resolve(body);
@@ -370,7 +371,7 @@ const callPlayer = (token, url) => {
   });
 };
 
-updateConnectionTime = handle => {
+updateConnectionTime = (handle) => {
   User.findOne({
     handle: handle,
   }).exec((err, user) => {
