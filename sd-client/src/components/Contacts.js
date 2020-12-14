@@ -5,7 +5,11 @@ import { connect } from "react-redux";
 import axios from "axios";
 import Header from "./Header";
 
-const contactStyles = theme => ({});
+const contactStyles = (theme) => ({
+  contacts: {
+    paddingTop: "8vh",
+  },
+});
 
 export class Contacts extends Component {
   constructor(props) {
@@ -22,10 +26,10 @@ export class Contacts extends Component {
   getFriendsList = () => {
     axios
       .get("/friends", { params: { handle: localStorage.getItem("user") } })
-      .then(body => {
+      .then((body) => {
         this.setState({ friends: body.data });
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   render() {
@@ -33,7 +37,7 @@ export class Contacts extends Component {
     return (
       <>
         <Header backButton="/profile" />
-        <Container className={classes.chats}>
+        <Container className={classes.contacts}>
           {this.state.friends.map((friend, index) => (
             <Message
               key={index}
@@ -49,7 +53,7 @@ export class Contacts extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 

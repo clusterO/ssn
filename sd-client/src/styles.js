@@ -24,6 +24,11 @@ export default {
     },
   },
   chatStyles: {
+    chatScreen: {
+      paddingTop: "8vh",
+      paddingBottom: "10vh",
+      display: "block",
+    },
     chatScreenMessage: {
       display: "flex",
       alignItems: "center",
@@ -52,6 +57,7 @@ export default {
       position: "fixed",
       bottom: 0,
       marginBottom: "10px",
+      backgroundColor: "white",
     },
     chatScreenInputField: {
       flex: 1,
@@ -104,6 +110,10 @@ export default {
       justifyContent: "space-between",
       borderBottom: "1px solid #f9f9f9",
       alignItems: "center",
+      position: "fixed",
+      top: 0,
+      background: "white",
+      zIndex: 9999,
     },
     headerLogo: {
       height: "40px",
