@@ -18,7 +18,7 @@ const filter = [
 
 const options = { fullDocument: "updateLookup" };
 
-User.watch(filter, options).on("change", data => {
+User.watch(filter, options).on("change", (data) => {
   newMessage(data);
 });
 
@@ -39,7 +39,9 @@ exports.react = (req, res) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    let index = user.messages.findIndex(message => message.id === req.body.id);
+    let index = user.messages.findIndex(
+      (message) => message.id === req.body.id
+    );
 
     if (index) user.messages[index].reaction = req.body.reaction;
     user.save();
@@ -49,7 +51,9 @@ exports.react = (req, res) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    let index = user.messages.findIndex(message => message.id === req.body.id);
+    let index = user.messages.findIndex(
+      (message) => message.id === req.body.id
+    );
 
     if (index) user.messages[index].reaction = req.body.reaction;
     user.save();
@@ -63,6 +67,9 @@ exports.sendMessage = (req, res) => {
   let to = req.body.to;
   let from = req.body.from;
   let id = uuidv4();
+  let uri;
+
+  req.body.uri ? (uri = req.body.uri) : "";
 
   User.findOne({ handle: to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
@@ -70,7 +77,7 @@ exports.sendMessage = (req, res) => {
 
     const update = {
       messages: [
-        { id, content, from, date: Date.now(), read: false },
+        { id, content, from, date: Date.now(), read: false, uri },
         ...user.messages,
       ],
     };
@@ -85,13 +92,13 @@ exports.sendMessage = (req, res) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    let index = user.friends.findIndex(friend => friend.handle === to);
+    let index = user.friends.findIndex((friend) => friend.handle === to);
 
     if (index) user.friends[index].message = content;
 
     const update = {
       messages: [
-        { id, content, to, date: Date.now(), read: false },
+        { id, content, to, date: Date.now(), read: false, uri },
         ...user.messages,
       ],
       friends: [...user.friends],
@@ -116,7 +123,7 @@ exports.getMessages = (req, res) => {
 
     if (user.messages)
       messages = user.messages.filter(
-        msg => msg.from === req.query.from || msg.to === req.query.from
+        (msg) => msg.from === req.query.from || msg.to === req.query.from
       );
 
     // Set read to true

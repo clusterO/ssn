@@ -122,11 +122,17 @@ export class Swipe extends Component {
           </Tooltip>
         </Container>
         {this.state.alert ? (
-          <div className={classes.alert}>
-            <Alert severity="success">
-              {this.state.song} - {this.state.artist}
-            </Alert>
-          </div>
+          this.state.song ? (
+            <div className={classes.alert}>
+              <Alert severity="success">
+                {this.state.song} - {this.state.artist}
+              </Alert>
+            </div>
+          ) : (
+            <div className={classes.alert}>
+              <Alert severity="error">Song not recognized</Alert>
+            </div>
+          )
         ) : null}
         <ReactMic
           className={classes.mic}

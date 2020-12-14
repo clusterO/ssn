@@ -81,13 +81,25 @@ export class Chat extends Component {
         input: "",
       });
 
-      axios
-        .post("/send", {
-          content: this.state.input,
-          from: localStorage.getItem("user"),
-          to: this.contact,
-        })
-        .catch((err) => console.error(err));
+      this.state.input
+        ? axios
+            .post("/send", {
+              content: this.state.input,
+              from: localStorage.getItem("user"),
+              to: this.contact,
+            })
+            .catch((err) => console.error(err))
+        : axios
+            .post("/send", {
+              uri: this.state.messages[this.state.messages.length - 1].uri
+                ? this.state.messages[this.state.messages.length - 1].uri
+                : "",
+              content: this.state.messages[this.state.messages.length - 1]
+                .content,
+              from: localStorage.getItem("user"),
+              to: this.contact,
+            })
+            .catch((err) => console.error(err));
     }
   };
 
@@ -109,6 +121,11 @@ export class Chat extends Component {
   };
 
   handleShare = () => {
+    if (!axios.defaults.headers.common["authorization"])
+      axios.defaults.headers.common["authorization"] = localStorage.getItem(
+        "accessToken"
+      );
+
     axios
       .get("/current")
       .then((body) => {
