@@ -1,19 +1,21 @@
-let io;
 let online = [];
+let socket;
 
 exports.createSocketConnection = (http) => {
-  io = require("socket.io")(http);
+  let io = require("socket.io")(http);
 
-  io.on("connection", (socket) => {
+  io.on("connection", (so) => {
+    socket = so;
+
     online.push({
       id: socket.id,
       handle: socket.request._query.handle,
     });
   });
 
-  io.on("disconnect", (socket) => {
-    let index = online.findIndex((user) => user.id === socket.id);
-
+  io.on("disconnect", (so) => {
+    console.log("diss");
+    let index = online.findIndex((user) => user.id === so.id);
     online.splice(index, 1);
   });
 };
@@ -23,7 +25,10 @@ exports.emitNotification = (data) => {
     (user) => user.handle === data.fullDocument.handle
   );
 
-  io.compress(true).to(online[index].id).emit("notificationStream", data);
+  socket.broadcast
+    .compress(true)
+    .to(online[index].id)
+    .emit("notification", data);
 };
 
 exports.newMessage = (data) => {
@@ -31,5 +36,5 @@ exports.newMessage = (data) => {
     (user) => user.handle === data.fullDocument.handle
   );
 
-  io.compress(true).to(online[index].id).emit("newMessage", data);
+  socket.broadcast.compress(true).to(online[index].id).emit("messaging", data);
 };

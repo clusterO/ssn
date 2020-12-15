@@ -3,6 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 import dayjs from "dayjs";
+import * as io from "socket.io-client";
 
 import {
   withStyles,
@@ -26,7 +27,7 @@ import {
 
 import store from "../redux/store";
 import { userLogout, setProfile } from "../redux/actions/dataActions";
-import { SET_AUTHENTICATED } from "../redux/types";
+import { SET_AUTHENTICATED, ADD_NOTIFICATION } from "../redux/types";
 import styles from "../styles";
 import { getHashParams } from "../utils/hash";
 import Swipe from "./Swipe";
@@ -55,6 +56,9 @@ const profileStyles = (theme) => ({
 export class Profile extends Component {
   constructor(props) {
     super(props);
+    this.socket = io("ws://localhost:8888", {
+      query: `handle=${localStorage.getItem("user")}`,
+    });
     this.state = {
       hide: true,
     };
@@ -73,6 +77,18 @@ export class Profile extends Component {
     }
 
     if (!localStorage.getItem("id")) this.getProfile();
+
+    this.realTimeNotifications();
+  }
+
+  realTimeNotifications = () => {
+    this.socket.on("notification", (data) => {
+      store.dispatch({ type: ADD_NOTIFICATION });
+    });
+  };
+
+  componentWillUnmout() {
+    this.socket.disconnect();
   }
 
   getProfile = () => {

@@ -1,6 +1,7 @@
 const db = require("../models");
 const { newMessage } = require("../utils/socket");
 const { v4: uuidv4 } = require("uuid");
+const { user } = require("../models");
 
 const User = db.user;
 
@@ -83,25 +84,24 @@ exports.react = (req, res) => {
 };
 
 exports.sendMessage = (req, res) => {
-  let newMessage = {
-    content: req.body.content,
-    to: req.body.to,
-    from: req.body.from,
-    id: uuidv4(),
-    date: Date.now(),
-    read: false,
-    reaction: "",
-    uri: "",
-  };
+  let content = req.body.content;
+  let to = req.body.to;
+  let from = req.body.from;
+  let id = uuidv4();
+  let date = Date.now();
+  let read = false;
+  let reaction = "";
+  let uri = req.body.uri ? (uri = req.body.uri) : "";
 
-  req.body.uri ? (uri = req.body.uri) : "";
-
-  User.findOne({ handle: newMessage.to }).exec((err, user) => {
+  User.findOne({ handle: to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
     const update = {
-      messages: [newMessage, ...user.messages],
+      messages: [
+        { id, content, from, date, read, reaction, uri },
+        ...user.messages,
+      ],
     };
 
     user.updateOne(update, (err, data) => {
@@ -110,18 +110,19 @@ exports.sendMessage = (req, res) => {
     });
   });
 
-  User.findOne({ handle: newMessage.from }).exec((err, user) => {
+  User.findOne({ handle: from }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    let index = user.friends.findIndex(
-      (friend) => friend.handle === newMessage.to
-    );
+    let index = user.friends.findIndex((friend) => friend.handle === to);
 
-    if (index) user.friends[index].message = newMessage.content;
+    if (index) user.friends[index].message = content;
 
     const update = {
-      messages: [newMessage, ...user.messages],
+      messages: [
+        { id, content, to, date, read, reaction, uri },
+        ...user.messages,
+      ],
       friends: [...user.friends],
     };
 

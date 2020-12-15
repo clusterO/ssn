@@ -7,13 +7,12 @@ import axios from "axios";
 import Pusher from "pusher-js";
 import store from "../redux/store";
 import { ADD_NOTIFICATION } from "../redux/types";
-import * as io from "socket.io-client";
 import { connect } from "react-redux";
 
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
-const exploreStyles = theme => ({});
+const exploreStyles = (theme) => ({});
 
 class Explore extends Component {
   // Push Notification With SW
@@ -31,22 +30,6 @@ class Explore extends Component {
         "content-type": "application/json",
       },
     });
-  };
-
-  componentDidMount() {
-    this.changeStream();
-  }
-
-  // SocketIo with MongoDb stream Change
-  changeStream = () => {
-    const url = "ws://localhost:8888";
-    const socket = io(url, { query: `handle=${localStorage.getItem("user")}` });
-
-    socket.on("notificationStream", data => {
-      store.dispatch({ type: ADD_NOTIFICATION });
-    });
-
-    // socket.disconnect();
   };
 
   // Dead : Realtime stream using Pusher
@@ -74,7 +57,7 @@ class Explore extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 
