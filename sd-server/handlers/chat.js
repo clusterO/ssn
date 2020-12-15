@@ -96,7 +96,7 @@ exports.sendMessage = (req, res) => {
 
   req.body.uri ? (uri = req.body.uri) : "";
 
-  User.findOne({ handle: to }).exec((err, user) => {
+  User.findOne({ handle: newMessage.to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
@@ -110,13 +110,15 @@ exports.sendMessage = (req, res) => {
     });
   });
 
-  User.findOne({ handle: from }).exec((err, user) => {
+  User.findOne({ handle: newMessage.from }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    let index = user.friends.findIndex((friend) => friend.handle === to);
+    let index = user.friends.findIndex(
+      (friend) => friend.handle === newMessage.to
+    );
 
-    if (index) user.friends[index].message = content;
+    if (index) user.friends[index].message = newMessage.content;
 
     const update = {
       messages: [newMessage, ...user.messages],

@@ -48,7 +48,7 @@ export class Chat extends Component {
 
   componentDidMount() {
     const url = "ws://localhost:8888";
-    const socket = io(url, { query: `handle=${"_"}` });
+    const socket = io(url, { query: `handle=${localStorage.getItem("user")}` });
 
     // message should be received onetime (db watch messages change)
     socket.on("newMessage", (data) => {
