@@ -45,7 +45,7 @@ db.mongoose
     console.log("DB CONNECTED");
     dbInit();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("DB connection error", err);
     process.exit();
   });

@@ -3,14 +3,12 @@ import {
   withStyles,
   Avatar,
   IconButton,
-  Popover,
   Container,
   Typography,
   TextField,
   Tooltip,
   Box,
 } from "@material-ui/core";
-import { InsertEmoticon } from "@material-ui/icons";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
@@ -20,9 +18,6 @@ import Header from "./Header";
 import Reactions from "./Reactions";
 
 const chatStyles = (theme) => ({
-  head: {
-    display: "block",
-  },
   "@global": {
     "*::-webkit-scrollbar": {
       width: "0.4em",
@@ -45,7 +40,6 @@ export class Chat extends Component {
     this.messagesEndRef = React.createRef();
     this.contact = this.props.match.params.person;
     this.state = {
-      anchorEl: null,
       input: "",
       uri: "",
       messages: [],
@@ -139,14 +133,6 @@ export class Chat extends Component {
     if (e.charCode === 13) this.handleSend(event);
   };
 
-  handlePopoverOpen = (event) => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handlePopoverClose = (event) => {
-    this.setState({ anchorEl: null });
-  };
-
   handleShare = () => {
     if (!axios.defaults.headers.common["authorization"])
       axios.defaults.headers.common["authorization"] = localStorage.getItem(
@@ -189,7 +175,6 @@ export class Chat extends Component {
 
   render() {
     const { classes } = this.props;
-    const open = Boolean(this.state.anchorEl);
 
     return (
       <>
@@ -197,7 +182,7 @@ export class Chat extends Component {
           <Header backButton="/chat" />
         </div>
 
-        <div className={classes.chatScreen} onClick={this.handlePopoverClose}>
+        <div className={classes.chatScreen}>
           <Typography className={classes.chatScreenTimestamp}>
             YOU MATCHED WITH {this.contact} ON _
           </Typography>
@@ -229,39 +214,11 @@ export class Chat extends Component {
                       </a>
                     ) : null}
                   </Typography>
-                  <IconButton
-                    disableRipple
-                    variant="link"
-                    aria-owns={open ? "mouse-over-popover" : undefined}
-                    aria-haspopup="true"
-                    onMouseEnter={this.handlePopoverOpen}
-                  >
-                    <InsertEmoticon />
-                  </IconButton>
-                  <Popover
-                    id="mouse-over-popover"
-                    className={classes.popover}
-                    classes={{
-                      paper: classes.paper,
-                    }}
-                    open={open}
-                    anchorEl={this.state.anchorEl}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    onClose={this.handlePopoverClose}
-                  >
-                    <Reactions
-                      from={localStorage.getItem("user")}
-                      to={this.contact}
-                      messageId={message.id}
-                    />
-                  </Popover>
+                  <Reactions
+                    to={this.contact}
+                    id={message.id}
+                    reaction={message.reaction}
+                  />
                 </Container>
               ) : (
                 <Container key={index} className={classes.chatScreenMessage}>

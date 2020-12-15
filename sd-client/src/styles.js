@@ -24,6 +24,9 @@ export default {
     },
   },
   chatStyles: {
+    head: {
+      display: "block",
+    },
     chatScreen: {
       paddingTop: "8vh",
       paddingBottom: "10vh",
@@ -102,6 +105,9 @@ export default {
         textDecoration: "none",
         fontSize: "2rem",
       },
+    },
+    popover: {
+      height: "30px",
     },
   },
   headerStyles: {

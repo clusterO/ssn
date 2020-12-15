@@ -33,41 +33,66 @@ exports.friends = (req, res) => {
   });
 };
 
+// DRY it
 exports.react = (req, res) => {
-  // Update
-  User.findOne({ handle: to }).exec((err, user) => {
+  User.findOne({ handle: req.body.to }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
     let index = user.messages.findIndex(
-      (message) => message.id === req.body.id
+      (message) => message.id === req.body.messageId
     );
 
-    if (index) user.messages[index].reaction = req.body.reaction;
-    user.save();
+    if (index) {
+      user.messages[index].reaction = req.body.reaction;
+
+      const update = {
+        messages: [...user.messages],
+      };
+
+      user.updateOne(update, (err, data) => {
+        if (err) return res.status(500).send({ message: err });
+        user.save();
+      });
+    }
   });
 
-  User.findOne({ handle: from }).exec((err, user) => {
+  User.findOne({ handle: req.body.from }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
     let index = user.messages.findIndex(
-      (message) => message.id === req.body.id
+      (message) => message.id === req.body.messageId
     );
 
-    if (index) user.messages[index].reaction = req.body.reaction;
-    user.save();
+    if (index) {
+      user.messages[index].reaction = req.body.reaction;
+
+      const update = {
+        messages: [...user.messages],
+      };
+
+      user.updateOne(update, (err, data) => {
+        if (err) return res.status(500).send({ message: err });
+        user.save();
+      });
+    }
   });
 
   return res.status(200).send({ message: "reaction updated" });
 };
 
 exports.sendMessage = (req, res) => {
-  let content = req.body.content;
-  let to = req.body.to;
-  let from = req.body.from;
-  let id = uuidv4();
-  let uri;
+  let newMessage = {
+    content: req.body.content,
+    to: req.body.to,
+    from: req.body.from,
+    id: uuidv4(),
+    date: Date.now(),
+    read: false,
+    reaction: "",
+    uri: "",
+  };
 
   req.body.uri ? (uri = req.body.uri) : "";
 
@@ -76,10 +101,7 @@ exports.sendMessage = (req, res) => {
     if (!user) return res.status(401).send({ message: "User not found" });
 
     const update = {
-      messages: [
-        { id, content, from, date: Date.now(), read: false, uri },
-        ...user.messages,
-      ],
+      messages: [newMessage, ...user.messages],
     };
 
     user.updateOne(update, (err, data) => {
@@ -97,10 +119,7 @@ exports.sendMessage = (req, res) => {
     if (index) user.friends[index].message = content;
 
     const update = {
-      messages: [
-        { id, content, to, date: Date.now(), read: false, uri },
-        ...user.messages,
-      ],
+      messages: [newMessage, ...user.messages],
       friends: [...user.friends],
     };
 
