@@ -13,6 +13,7 @@ import axios from "axios";
 import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import * as io from "socket.io-client";
+
 import styles from "../styles";
 import Header from "./Header";
 import Reactions from "./Reactions";
@@ -37,9 +38,6 @@ const chatStyles = (theme) => ({
 export class Chat extends Component {
   constructor(props) {
     super(props);
-    this.socket = io("ws://localhost:8888", {
-      query: `handle=${localStorage.getItem("user")}`,
-    });
     this.messagesEndRef = React.createRef();
     this.contact = this.props.match.params.person;
     this.state = {
@@ -50,13 +48,17 @@ export class Chat extends Component {
   }
 
   componentDidMount() {
-    this.socket.on("messaging", (data) => {
+    let socket = io("ws://localhost:8888", {
+      query: { handle: localStorage.getItem("user"), event: "chat" },
+    });
+
+    socket.on("messaging", (data) => {
       this.setState({
         messages: [
           ...this.state.messages,
           {
-            content: data.fullDocument.messages[0].content,
-            from: data.fullDocument.handle,
+            content: data.content,
+            from: data.handle,
           },
         ],
       });
@@ -71,14 +73,13 @@ export class Chat extends Component {
   }
 
   componentWillUnmout() {
-    this.socket.disconnect();
+    // this.socket.disconnect();
   }
 
   scrollToBottom = () => {
     this.messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
-  // sender shouldn't receive message
   getMessages = () => {
     axios
       .get("/chat", {

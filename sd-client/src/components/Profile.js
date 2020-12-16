@@ -56,9 +56,6 @@ const profileStyles = (theme) => ({
 export class Profile extends Component {
   constructor(props) {
     super(props);
-    this.socket = io("ws://localhost:8888", {
-      query: `handle=${localStorage.getItem("user")}`,
-    });
     this.state = {
       hide: true,
     };
@@ -82,13 +79,17 @@ export class Profile extends Component {
   }
 
   realTimeNotifications = () => {
-    this.socket.on("notification", (data) => {
+    let socket = io("ws://localhost:8888", {
+      query: { handle: localStorage.getItem("user"), event: "notification" },
+    });
+
+    socket.on("notification", () => {
       store.dispatch({ type: ADD_NOTIFICATION });
     });
   };
 
   componentWillUnmout() {
-    this.socket.disconnect();
+    // this.socket.disconnect();
   }
 
   getProfile = () => {

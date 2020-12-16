@@ -20,7 +20,7 @@ const filter = [
 const options = { fullDocument: "updateLookup" };
 
 User.watch(filter, options).on("change", (data) => {
-  newMessage(data);
+  // newMessage(data);
 });
 
 exports.friends = (req, res) => {
@@ -107,6 +107,7 @@ exports.sendMessage = (req, res) => {
     user.updateOne(update, (err, data) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
+      newMessage({ handle: to, content });
     });
   });
 

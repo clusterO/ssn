@@ -1,40 +1,40 @@
 let online = [];
-let socket;
+let notify = [];
+let io;
 
 exports.createSocketConnection = (http) => {
-  let io = require("socket.io")(http);
+  io = require("socket.io")(http);
 
-  io.on("connection", (so) => {
-    socket = so;
+  io.on("connection", (socket) => {
+    if (socket.request._query.event === "chat")
+      online.push({
+        id: socket.id,
+        handle: socket.request._query.handle,
+      });
 
-    online.push({
-      id: socket.id,
-      handle: socket.request._query.handle,
-    });
+    if (socket.request._query.event === "notification")
+      notify.push({
+        id: socket.id,
+        handle: socket.request._query.handle,
+      });
   });
 
-  io.on("disconnect", (so) => {
+  io.on("disconnect", (socket) => {
     console.log("diss");
-    let index = online.findIndex((user) => user.id === so.id);
+    let index = online.findIndex((user) => user.id === socket.id);
     online.splice(index, 1);
   });
 };
 
 exports.emitNotification = (data) => {
-  let index = online.findIndex(
+  let index = notify.findIndex(
     (user) => user.handle === data.fullDocument.handle
   );
 
-  socket.broadcast
-    .compress(true)
-    .to(online[index].id)
-    .emit("notification", data);
+  io.compress(true).to(notify[index].id).emit("notification", data);
 };
 
 exports.newMessage = (data) => {
-  let index = online.findIndex(
-    (user) => user.handle === data.fullDocument.handle
-  );
-
-  socket.broadcast.compress(true).to(online[index].id).emit("messaging", data);
+  let index = online.findIndex((user) => user.handle === data.handle);
+  io.compress(true).to(online[index].id).emit("messaging", data);
 };
