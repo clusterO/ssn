@@ -106,7 +106,7 @@ exports.sendMessage = (req, res) => {
     user.updateOne(update, (err) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
-      newMessage({ handle: to, content, contact: from });
+      newMessage({ handle: to, contact: from, content });
     });
   });
 

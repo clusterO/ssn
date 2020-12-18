@@ -7,7 +7,11 @@ exports.createSocketConnection = (http) => {
 
   io.on("connection", (socket) => {
     if (socket.request._query.event === "chat") {
-      disconnectUserSocket(online, socket.request._query.handle);
+      let index = online.findIndex(
+        (user) => user.handle === socket.request._query.handle
+      );
+
+      if (index !== -1) online.splice(index, 1);
 
       online.push({
         id: socket.id,
@@ -17,7 +21,11 @@ exports.createSocketConnection = (http) => {
     }
 
     if (socket.request._query.event === "notification") {
-      disconnectUserSocket(notify, socket.request._query.handle);
+      let index = notify.findIndex(
+        (user) => user.handle === socket.request._query.handle
+      );
+
+      if (index !== -1) notify.splice(index, 1);
 
       notify.push({
         id: socket.id,
@@ -27,14 +35,18 @@ exports.createSocketConnection = (http) => {
 
     socket.on("disconnect", (socket) => {
       let index = online.findIndex((user) => user.id === socket.id);
-      if (index) online.splice(index, 1);
+      if (index !== -1) online.splice(index, 1);
     });
   });
 };
 
-disconnectUserSocket = (socket, handle) => {
-  let index = socket.findIndex((user) => user.handle === handle);
-  if (index) socket.splice(index, 1);
+exports.newMessage = (data) => {
+  console.log(online);
+
+  let index = online.findIndex((user) => user.handle === data.handle);
+  console.log(index);
+  if (index !== -1 && online[index].contact === data.contact)
+    io.compress(true).to(online[index].id).emit("messaging", data);
 };
 
 exports.emitNotification = (data) => {
@@ -43,11 +55,4 @@ exports.emitNotification = (data) => {
   );
 
   io.compress(true).to(notify[index].id).emit("notification", data);
-};
-
-exports.newMessage = (data) => {
-  let index = online.findIndex((user) => user.handle === data.handle);
-
-  if (index && online[index].contact === data.contact)
-    io.compress(true).to(online[index].id).emit("messaging", data);
 };
