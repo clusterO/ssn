@@ -1,7 +1,6 @@
 const db = require("../models");
 const { newMessage } = require("../utils/socket");
 const { v4: uuidv4 } = require("uuid");
-const { user } = require("../models");
 
 const User = db.user;
 
@@ -104,10 +103,10 @@ exports.sendMessage = (req, res) => {
       ],
     };
 
-    user.updateOne(update, (err, data) => {
+    user.updateOne(update, (err) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
-      newMessage({ handle: to, content });
+      newMessage({ handle: to, content, contact: from });
     });
   });
 

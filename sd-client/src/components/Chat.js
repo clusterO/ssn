@@ -18,7 +18,7 @@ import styles from "../styles";
 import Header from "./Header";
 import Reactions from "./Reactions";
 
-const chatStyles = (theme) => ({
+const chatStyles = () => ({
   "@global": {
     "*::-webkit-scrollbar": {
       width: "0.4em",
@@ -38,6 +38,7 @@ const chatStyles = (theme) => ({
 export class Chat extends Component {
   constructor(props) {
     super(props);
+    this.socket = null;
     this.messagesEndRef = React.createRef();
     this.contact = this.props.match.params.person;
     this.state = {
@@ -48,11 +49,15 @@ export class Chat extends Component {
   }
 
   componentDidMount() {
-    let socket = io("ws://localhost:8888", {
-      query: { handle: localStorage.getItem("user"), event: "chat" },
+    this.socket = io("ws://localhost:8888", {
+      query: {
+        handle: localStorage.getItem("user"),
+        event: "chat",
+        contact: this.contact,
+      },
     });
 
-    socket.on("messaging", (data) => {
+    this.socket.on("messaging", (data) => {
       this.setState({
         messages: [
           ...this.state.messages,
@@ -70,10 +75,6 @@ export class Chat extends Component {
 
   componentDidUpdate() {
     this.scrollToBottom();
-  }
-
-  componentWillUnmout() {
-    // this.socket.disconnect();
   }
 
   scrollToBottom = () => {
@@ -183,12 +184,12 @@ export class Chat extends Component {
     return (
       <>
         <div className={classes.head}>
-          <Header backButton="/chat" />
+          <Header backButton="/chat" socket={this.socket} />
         </div>
 
         <div className={classes.chatScreen}>
           <Typography className={classes.chatScreenTimestamp}>
-            YOU MATCHED WITH {this.contact} ON _
+            YOU MATCHED WITH {this.contact} ON
           </Typography>
           {this.state.messages
             .sort((a, b) => a.date - b.date)

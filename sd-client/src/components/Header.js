@@ -39,13 +39,20 @@ export class Header extends Component {
     // this.checkNotification();
   }
 
+  handleBack = () => this.props.history.replace(this.props.backButton);
+
+  componentWillUnmount() {
+    if (this.props.socket && this.props.socket.query.event == "chat")
+      this.props.socket.disconnect();
+  }
+
   render() {
-    const { backButton, history, classes, data } = this.props;
+    const { backButton, classes, data } = this.props;
 
     return (
       <Container className={classes.header}>
         {this.props.profile ? null : backButton ? (
-          <IconButton onClick={() => history.replace(backButton)}>
+          <IconButton onClick={this.handleBack}>
             <ArrowBackIos className={classes.headerIcon} fontSize="large" />
           </IconButton>
         ) : (

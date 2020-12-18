@@ -89,7 +89,7 @@ export class Profile extends Component {
   };
 
   componentWillUnmout() {
-    // this.socket.disconnect();
+    // this.socket.close();
   }
 
   getProfile = () => {
