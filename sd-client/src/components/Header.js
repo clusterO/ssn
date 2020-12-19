@@ -40,7 +40,7 @@ export class Header extends Component {
   }
 
   componentWillUnmount() {
-    if (this.props.socket && this.props.socket.query.event == "chat")
+    if (this.props.socket && this.props.socket.query.event === "chat")
       this.props.socket.disconnect();
   }
 

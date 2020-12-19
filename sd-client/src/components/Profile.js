@@ -56,6 +56,7 @@ const profileStyles = (theme) => ({
 export class Profile extends Component {
   constructor(props) {
     super(props);
+    this.socket = null;
     this.state = {
       hide: true,
     };
@@ -79,18 +80,14 @@ export class Profile extends Component {
   }
 
   realTimeNotifications = () => {
-    let socket = io("ws://localhost:8888", {
+    this.socket = io("ws://localhost:8888", {
       query: { handle: localStorage.getItem("user"), event: "notification" },
     });
 
-    socket.on("notification", () => {
+    this.socket.on("notification", () => {
       store.dispatch({ type: ADD_NOTIFICATION });
     });
   };
-
-  componentWillUnmout() {
-    // this.socket.close();
-  }
 
   getProfile = () => {
     this.props.setProfile();
@@ -101,6 +98,8 @@ export class Profile extends Component {
   };
 
   logout = () => {
+    this.socket.emit("stopNotification", this.props.data.profile.display_name);
+
     this.props.userLogout();
     this.props.history.replace("/");
   };
@@ -124,7 +123,7 @@ export class Profile extends Component {
 
     return (
       <>
-        <Header profile={true} />
+        <Header profile={true} socket={this.socket} />
         {localStorage.getItem("accessToken") ? (
           <Grid className={classes.rootProfile}>
             <Card variant="outlined">

@@ -13,6 +13,10 @@ import Profile from "./components/Profile";
 import Explore from "./components/Explore";
 import Karaoke from "./components/Karaoke";
 
+window.addEventListener("beforeunload", (ev) => {
+  ev.preventDefault();
+});
+
 axios.defaults.baseURL = "http://localhost:8888";
 
 const theme = createMuiTheme({

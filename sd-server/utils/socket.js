@@ -37,14 +37,17 @@ exports.createSocketConnection = (http) => {
       let index = online.findIndex((user) => user.id === socket.id);
       if (index !== -1) online.splice(index, 1);
     });
+
+    socket.on("stopNotification", (handle) => {
+      let index = notify.findIndex((user) => user.handle === handle);
+      if (index !== -1) notify.splice(index, 1);
+    });
   });
 };
 
 exports.newMessage = (data) => {
-  console.log(online);
-
   let index = online.findIndex((user) => user.handle === data.handle);
-  console.log(index);
+
   if (index !== -1 && online[index].contact === data.contact)
     io.compress(true).to(online[index].id).emit("messaging", data);
 };
