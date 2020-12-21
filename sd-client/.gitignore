@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+#karaoke files
+/public/*.mp3
+/public/*.cdg
+/public/*.png
+
 # testing
 /coverage
 
