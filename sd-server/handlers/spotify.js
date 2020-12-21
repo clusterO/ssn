@@ -274,6 +274,14 @@ exports.play = (req, res) => {
   });
 };
 
+exports.pause = (req, res) => {
+  const token = req.headers.authorization;
+  const url = "https://api.spotify.com/v1/me/player/pause";
+  callPlayer(token, url).then((body) => {
+    return res.status(200).send(body);
+  });
+};
+
 exports.transferPlayback = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player";
@@ -286,6 +294,7 @@ exports.getCurrentlyPlaying = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/currently-playing";
   callSpotify(token, url).then((body) => {
+    // check item.name
     if (body)
       res.status(200).send({ song: body.item.name, uri: body.item.uri });
   });

@@ -38,9 +38,21 @@ exports.createSocketConnection = (http) => {
       if (index !== -1) online.splice(index, 1);
     });
 
-    socket.on("stopNotification", (handle) => {
+    socket.on("notification", (handle) => {
       let index = notify.findIndex((user) => user.handle === handle);
       if (index !== -1) notify.splice(index, 1);
+    });
+
+    socket.on("request", (response) => {
+      let index = online.findIndex((user) => user.handle === response.contact);
+
+      if (index !== -1 && online[index].contact === response.handle) {
+        if (response.action === "accept")
+          io.compress(true).to(online[index].id).emit("play");
+
+        if (response.action === "reject")
+          io.compress(true).to(online[index].id).emit("reject");
+      }
     });
   });
 };
@@ -50,6 +62,13 @@ exports.newMessage = (data) => {
 
   if (index !== -1 && online[index].contact === data.contact)
     io.compress(true).to(online[index].id).emit("messaging", data);
+};
+
+exports.callRequest = (data) => {
+  let index = online.findIndex((user) => user.handle === data.handle);
+
+  if (index !== -1 && online[index].contact === data.contact)
+    io.compress(true).to(online[index].id).emit("calling", data);
 };
 
 exports.emitNotification = (data) => {

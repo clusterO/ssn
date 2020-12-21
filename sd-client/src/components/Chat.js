@@ -8,7 +8,11 @@ import {
   TextField,
   Tooltip,
   Box,
+  LinearProgress,
+  Button,
 } from "@material-ui/core";
+import { CallReceived } from "@material-ui/icons";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import axios from "axios";
 import { withRouter } from "react-router";
 import { connect } from "react-redux";
@@ -32,6 +36,9 @@ const chatStyles = () => ({
       outline: "1px solid slategrey",
     },
   },
+  colorPrimary: {
+    background: "green",
+  },
   ...styles.chatStyles,
 });
 
@@ -45,6 +52,10 @@ export class Chat extends Component {
       input: "",
       uri: "",
       messages: [],
+      alert: false,
+      call: false,
+      wait: false,
+      song: "",
     };
   }
 
@@ -67,6 +78,19 @@ export class Chat extends Component {
           },
         ],
       });
+    });
+
+    this.socket.on("calling", (data) => {
+      this.setState({ call: true, song: data.song });
+    });
+
+    this.socket.on("play", () => {
+      this.setState({ wait: false });
+      this.playCurrentSong();
+    });
+
+    this.socket.on("reject", () => {
+      this.setState({ wait: false });
     });
 
     this.getMessages();
@@ -138,6 +162,29 @@ export class Chat extends Component {
     if (e.charCode === 13) this.handleSend(event);
   };
 
+  stopWaiting = () => {
+    this.setState({ wait: false });
+  };
+
+  requestRejected = () => {
+    this.setState({ call: false });
+    this.socket.emit("request", {
+      handle: localStorage.getItem("user"),
+      contact: this.contact,
+      action: "reject",
+    });
+  };
+
+  requestAccepted = () => {
+    this.setState({ call: false });
+    this.socket.emit("request", {
+      handle: localStorage.getItem("user"),
+      contact: this.contact,
+      action: "accept",
+    });
+    this.playCurrentSong();
+  };
+
   handleShare = () => {
     if (!axios.defaults.headers.common["authorization"])
       axios.defaults.headers.common["authorization"] = localStorage.getItem(
@@ -161,19 +208,42 @@ export class Chat extends Component {
   };
 
   handleListening = () => {
-    // send request to listen together
-    // ... call waiting response & cancel button
+    if (!axios.defaults.headers.common["authorization"])
+      axios.defaults.headers.common["authorization"] = localStorage.getItem(
+        "accessToken"
+      );
+
     axios
-      .post("/play", { song: "" })
+      .get("/current")
+      .then((response) => {
+        this.setState({ song: response.data.song });
+
+        axios
+          .post("/request", {
+            song: response.data.song,
+            from: localStorage.getItem("user"),
+            to: this.contact,
+          })
+          .then(() => {
+            this.setState({ wait: true });
+          })
+          .catch((err) => console.error(err));
+      })
+      .catch((err) => console.error(err));
+  };
+
+  playCurrentSong = () => {
+    axios
+      .post("/play", { song: this.state.song })
       .then((body) => {
         if (
           body.data &&
           body.data.error &&
           body.data.error.reason === "PREMIUM_REQUIRED"
-        )
-          console.log("PREMIUM_REQUIRED");
-
-        // send the song and play it in the other side
+        ) {
+          this.setState({ alert: true });
+          setTimeout(() => this.setState({ alert: false }), 2000);
+        }
       })
       .catch((err) => console.error(err));
   };
@@ -245,6 +315,54 @@ export class Chat extends Component {
                 </Container>
               )
             )}
+          {this.state.alert ? (
+            <Alert severity="info">
+              <AlertTitle>Info</AlertTitle>
+              You need a premium profile — <strong>PREMIUM_REQUIRED</strong>
+            </Alert>
+          ) : null}
+
+          {this.state.wait ? (
+            <div>
+              <LinearProgress color="secondary" />
+              <Alert onClose={this.stopWaiting} icon={false} severity="warning">
+                <AlertTitle>Requesting</AlertTitle>
+                Listen together request sent
+              </Alert>
+            </div>
+          ) : null}
+
+          {this.state.call ? (
+            <div>
+              <LinearProgress className={classes.colorPrimary} />
+              <Alert
+                action={
+                  <div>
+                    <Button
+                      onClick={this.requestAccepted}
+                      color="inherit"
+                      size="small"
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      onClick={this.requestRejected}
+                      color="inherit"
+                      size="small"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                }
+                icon={<CallReceived fontSize="inherit" />}
+                severity="success"
+              >
+                <AlertTitle>Request</AlertTitle>
+                {this.contact} asking you to listen together to —{" "}
+                <strong>{this.state.song}</strong>
+              </Alert>
+            </div>
+          ) : null}
           <div ref={this.messagesEndRef} />
         </div>
 

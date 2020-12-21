@@ -98,7 +98,7 @@ export class Profile extends Component {
   };
 
   logout = () => {
-    this.socket.emit("stopNotification", this.props.data.profile.display_name);
+    this.socket.emit("notification", this.props.data.profile.display_name);
 
     this.props.userLogout();
     this.props.history.replace("/");

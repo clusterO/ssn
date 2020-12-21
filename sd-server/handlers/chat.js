@@ -1,5 +1,5 @@
 const db = require("../models");
-const { newMessage } = require("../utils/socket");
+const { newMessage, callRequest } = require("../utils/socket");
 const { v4: uuidv4 } = require("uuid");
 
 const User = db.user;
@@ -80,6 +80,16 @@ exports.react = (req, res) => {
   });
 
   return res.status(200).send({ message: "reaction updated" });
+};
+
+exports.requestCall = (req, res) => {
+  let song = req.body.song;
+  let to = req.body.to;
+  let from = req.body.from;
+
+  callRequest({ handle: to, contact: from, song });
+
+  return res.status(200).send({ msg: "call sent" });
 };
 
 exports.sendMessage = (req, res) => {

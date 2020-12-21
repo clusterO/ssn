@@ -24,10 +24,17 @@ const {
   getCurrentlyPlaying,
   getMe,
   play,
+  pause,
   recent,
 } = require("./handlers/spotify");
 const { matchRequest, notify, subscription } = require("./handlers/matchs");
-const { friends, sendMessage, getMessages, react } = require("./handlers/chat");
+const {
+  friends,
+  sendMessage,
+  getMessages,
+  react,
+  requestCall,
+} = require("./handlers/chat");
 const { xazam } = require("./handlers/xazam");
 const { createSocketConnection } = require("./utils/socket");
 
@@ -85,8 +92,10 @@ app
   .post("/profile", getAuthenticatedUser)
   .post("/subscribe", subscription)
   .post("/send", sendMessage)
+  .post("/request", requestCall)
   .post("/react", react)
   .post("/play", play)
+  .post("/pause", pause)
   .post("/xazam", xazam);
 
 http.listen(port, console.log(`Listening on port ${port}`));
