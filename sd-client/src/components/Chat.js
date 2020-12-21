@@ -60,7 +60,7 @@ export class Chat extends Component {
   }
 
   componentDidMount() {
-    this.socket = io("ws://spotidate.herokuapp.com", {
+    this.socket = io("https://spotidate.herokuapp.com", {
       query: {
         handle: localStorage.getItem("user"),
         event: "chat",
