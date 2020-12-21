@@ -48,6 +48,8 @@ export const userLogout = () => (dispatch) => {
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("expireTime");
   localStorage.removeItem("user");
+  localStorage.removeItem("id");
+
   delete axios.defaults.headers.common["authorization"];
   dispatch({ type: SET_UNAUTHENTICATED });
 };
