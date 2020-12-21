@@ -49,7 +49,7 @@ export class Login extends Component {
   }
 
   login = () => {
-    window.location.href = "http://localhost:8888/login";
+    window.location.href = "https://spotidate.herokuapp.com/login";
   };
 
   signup = () => {

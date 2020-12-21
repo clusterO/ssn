@@ -80,7 +80,7 @@ export class Profile extends Component {
   }
 
   realTimeNotifications = () => {
-    this.socket = io("ws://localhost:8888", {
+    this.socket = io("ws://spotidate.herokuapp.com", {
       query: { handle: localStorage.getItem("user"), event: "notification" },
     });
 
@@ -94,7 +94,7 @@ export class Profile extends Component {
   };
 
   authorizeSpotify = () => {
-    window.location.href = "http://localhost:8888/login";
+    window.location.href = "https://spotidate.herokuapp.com/login";
   };
 
   logout = () => {

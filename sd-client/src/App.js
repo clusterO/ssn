@@ -17,7 +17,7 @@ window.addEventListener("beforeunload", (ev) => {
   ev.preventDefault();
 });
 
-axios.defaults.baseURL = "http://localhost:8888";
+axios.defaults.baseURL = "https://spotidate.herokuapp.com";
 
 const theme = createMuiTheme({
   overrides: {

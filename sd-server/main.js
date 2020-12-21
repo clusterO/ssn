@@ -58,7 +58,7 @@ db.mongoose
 createSocketConnection(http);
 
 let corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://spotidate-bdd25.web.app",
   credentials: true,
 };
 
