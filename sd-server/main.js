@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const app = require("express")();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -38,7 +36,7 @@ const {
 const { xazam } = require("./handlers/xazam");
 const { createSocketConnection } = require("./utils/socket");
 
-const port = process.env.PORT || 8888;
+const port = process.env.PORT;
 const dbURL = config.connectionString;
 
 db.mongoose
