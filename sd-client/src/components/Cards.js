@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TinderCard from "react-tinder-card";
+import uuid from "react-uuid";
 import { Container, Typography, withStyles } from "@material-ui/core";
 import {
   setHandle,
@@ -21,6 +22,9 @@ const cardStyles = (theme) => ({
       height: "55vh !important",
     },
   },
+  score: {
+    color: "#ff073a",
+  },
   ...styles.cardStyles,
 });
 
@@ -39,19 +43,24 @@ export class Cards extends Component {
   };
 
   match = (handle) => {
-    axios
-      .get("/match", { params: { handle } })
-      .then((data) => {
-        // console.log(data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    axios.get("/match", { params: { handle } }).catch((err) => {
+      // console.error(err);
+    });
   };
 
   render() {
     const { classes } = this.props;
     const { cards } = this.props.data;
+
+    // Temporary code
+    cards.profiles.push({
+      name: "This feature starts soon...",
+      url:
+        "https://i.pinimg.com/originals/97/ed/6b/97ed6b370803649addbf66144c18c194.png",
+    });
+
+    cards.tracks = true;
+    // End of temporary code
 
     return (
       <>
@@ -61,7 +70,7 @@ export class Cards extends Component {
               onSwipe={() => this.onSwipe(profile.name)}
               onCardLeftScreen={this.onCardLeftScreen}
               className={classes.swipe}
-              key={profile.name}
+              key={uuid()}
               preventSwipe={["up", "down"]}
             >
               <Container
@@ -69,6 +78,10 @@ export class Cards extends Component {
                 className={classes.card}
               >
                 <Typography variant="h4">{profile.name}</Typography>
+                <Typography variant="h4">2938/10000 users</Typography>
+                <Typography className={classes.score} variant="h6">
+                  matching score of 88%
+                </Typography>
               </Container>
             </TinderCard>
           ))}

@@ -1,4 +1,5 @@
 import React, { Component, createRef } from "react";
+import uuid from "react-uuid";
 import CDGKaraokePlayer from "karaoke";
 import {
   withStyles,
@@ -67,7 +68,7 @@ export class Karaoke extends Component {
         <div className={classes.main}>
           <List className={classes.demo} dense={this.state.dense}>
             {songs.map((value, index) => (
-              <ListItem key={index}>
+              <ListItem key={uuid()}>
                 <ListItemAvatar>
                   <Avatar src={`${value}.png`}></Avatar>
                 </ListItemAvatar>

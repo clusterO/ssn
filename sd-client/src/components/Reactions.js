@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import uuid from "react-uuid";
 import { withStyles, IconButton } from "@material-ui/core";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { InsertEmoticon } from "@material-ui/icons";
@@ -52,7 +53,7 @@ export class Reactions extends Component {
                 <IconButton
                   variant="link"
                   className={classes.reaction}
-                  key={reaction}
+                  key={uuid()}
                   onClick={() => this.react(reaction)}
                 >
                   {reaction}

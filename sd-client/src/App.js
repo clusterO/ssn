@@ -16,8 +16,8 @@ import Karaoke from "./components/Karaoke";
 window.addEventListener("beforeunload", (ev) => {
   ev.preventDefault();
 });
-
-axios.defaults.baseURL = "https://spotidate.herokuapp.com";
+// https://spotidate.herokuapp.com
+axios.defaults.baseURL = "http://localhost:8888";
 
 const theme = createMuiTheme({
   overrides: {

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import uuid from "react-uuid";
 import {
   withStyles,
   Avatar,
@@ -265,7 +266,7 @@ export class Chat extends Component {
             .sort((a, b) => a.date - b.date)
             .map((message, index) =>
               message.from ? (
-                <Container key={index} className={classes.chatScreenMessage}>
+                <Container key={uuid()} className={classes.chatScreenMessage}>
                   <Avatar
                     className={classes.chatScreenImage}
                     alt={message.from}
@@ -296,7 +297,7 @@ export class Chat extends Component {
                   />
                 </Container>
               ) : (
-                <Container key={index} className={classes.chatScreenMessage}>
+                <Container key={uuid()} className={classes.chatScreenMessage}>
                   <Typography
                     variant="body1"
                     className={classes.chatScreenTextUser}

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import uuid from "react-uuid";
 import { Container, withStyles } from "@material-ui/core";
 import Message from "./Message";
 import { connect } from "react-redux";
@@ -40,7 +41,7 @@ export class Contacts extends Component {
         <Container className={classes.contacts}>
           {this.state.friends.map((friend, index) => (
             <Message
-              key={index}
+              key={uuid()}
               handle={friend.handle}
               message={friend.message}
               timestamp={friend.timestamp}

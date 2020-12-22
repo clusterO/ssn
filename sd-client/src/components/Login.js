@@ -49,9 +49,9 @@ export class Login extends Component {
   }
 
   login = () => {
-    window.location.href = "https://spotidate.herokuapp.com/login";
+    window.location.href = "http://localhost:8888/login";
   };
-
+  //https://spotidate.herokuapp.com
   signup = () => {
     this.setState({ signup: !this.state.signup });
     if (this.state.action === "Login")

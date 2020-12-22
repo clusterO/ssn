@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import uuid from "react-uuid";
 import {
   withStyles,
   Typography,
@@ -27,12 +28,12 @@ export class Tracks extends Component {
 
   getRecentlyPlayed = () => {
     let profiles = this.props.data.cards.profiles;
-
+    // handle: profiles[profiles.length - 1].name
     if (profiles.length > 0)
       axios
         .get("/recent", {
           headers: {
-            handle: profiles[profiles.length - 1].name,
+            handle: "jane.m",
             token: localStorage.getItem("accessToken"),
           },
         })
@@ -58,11 +59,12 @@ export class Tracks extends Component {
 
   render() {
     const { classes } = this.props;
+
     return (
       <>
         <Typography variant="h5">Recently played</Typography>
         {this.state.recentlyPlayed.map((track, index) => (
-          <div className={classes.trackContainer} key={index}>
+          <div className={classes.trackContainer} key={uuid()}>
             {track.images && track.images[0].url ? (
               <CardMedia
                 className={classes.media}
