@@ -18,9 +18,7 @@ const filter = [
 
 const options = { fullDocument: "updateLookup" };
 
-User.watch(filter, options).on("change", (data) => {
-  // newMessage(data);
-});
+User.watch(filter, options).on("change", (data) => {});
 
 exports.friends = (req, res) => {
   User.findOne({
@@ -43,14 +41,14 @@ exports.react = (req, res) => {
       (message) => message.id === req.body.messageId
     );
 
-    if (index) {
+    if (index !== -1) {
       user.messages[index].reaction = req.body.reaction;
 
       const update = {
         messages: [...user.messages],
       };
 
-      user.updateOne(update, (err, data) => {
+      user.updateOne(update, (err) => {
         if (err) return res.status(500).send({ message: err });
         user.save();
       });
@@ -65,16 +63,23 @@ exports.react = (req, res) => {
       (message) => message.id === req.body.messageId
     );
 
-    if (index) {
+    if (index !== -1) {
       user.messages[index].reaction = req.body.reaction;
 
       const update = {
         messages: [...user.messages],
       };
 
-      user.updateOne(update, (err, data) => {
+      user.updateOne(update, (err) => {
         if (err) return res.status(500).send({ message: err });
         user.save();
+
+        newMessage({
+          handle: req.body.to,
+          contact: req.body.from,
+          content: req.body.reaction,
+          type: "reaction",
+        });
       });
     }
   });
@@ -116,7 +121,8 @@ exports.sendMessage = (req, res) => {
     user.updateOne(update, (err) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
-      newMessage({ handle: to, contact: from, content });
+
+      newMessage({ id, handle: to, contact: from, content, type: "message" });
     });
   });
 
@@ -126,7 +132,7 @@ exports.sendMessage = (req, res) => {
 
     let index = user.friends.findIndex((friend) => friend.handle === to);
 
-    if (index) user.friends[index].message = content;
+    if (index !== -1) user.friends[index].message = content;
 
     const update = {
       messages: [
@@ -158,7 +164,12 @@ exports.getMessages = (req, res) => {
         (msg) => msg.from === req.query.from || msg.to === req.query.from
       );
 
-    // Set read to true
-    res.status(200).send(messages);
+    messages.forEach((msg) => {
+      msg.read = true;
+    });
+
+    res
+      .status(200)
+      .send({ messages: messages.splice(0, 20), length: messages.length });
   });
 };

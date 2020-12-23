@@ -15,7 +15,7 @@ import {
 import axios from "axios";
 import { connect } from "react-redux";
 import store from "../redux/store";
-import { ADD_NOTIFICATION } from "../redux/types";
+import { CLEAR_NOTIFICATION, ADD_NOTIFICATION } from "../redux/types";
 import styles from "../styles";
 
 const headerStyles = (theme) => ({
@@ -23,26 +23,42 @@ const headerStyles = (theme) => ({
 });
 
 export class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notifications= [],
+       showNotifications: false,
+    }
+  }
+
   checkNotification = () => {
     axios
       .get("/notify", {
         params: { handle: localStorage.getItem("user") },
       })
       .then((response) => {
-        // Add number of notifications from response
-        store.dispatch({ type: ADD_NOTIFICATION });
+        this.setState({ notifications: response.data.notifications })
+        store.dispatch({
+          type: ADD_NOTIFICATION,
+          length: response.data.length,
+        });
       })
       .catch((err) => console.error(err));
   };
 
   componentDidMount() {
-    // this.checkNotification();
+    this.checkNotification();
   }
 
   componentWillUnmount() {
     if (this.props.socket && this.props.socket.query.event === "chat")
       this.props.socket.disconnect();
   }
+
+  showNotifications = () => {
+    store.dispatch({ type: CLEAR_NOTIFICATION });
+    this.setState({ showNotifications: true });
+  };
 
   render() {
     const { backButton, history, classes, data } = this.props;
@@ -60,7 +76,6 @@ export class Header extends Component {
             </IconButton>
           </Link>
         )}
-
         <Link to="/">
           <CardMedia
             className={classes.headerLogo}
@@ -68,7 +83,7 @@ export class Header extends Component {
             title="logo"
           />
         </Link>
-        <IconButton>
+        <IconButton onClick={this.showNotifications}>
           <Badge badgeContent={data.notifications} color="secondary">
             <NotificationsNone
               className={classes.headerIcon}

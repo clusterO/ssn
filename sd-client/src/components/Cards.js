@@ -18,7 +18,6 @@ const cardStyles = (theme) => ({
     justifyContent: "center",
     marginTop: "10vh",
     [theme.breakpoints.down("sm")]: {
-      marginTop: "5vh",
       height: "55vh !important",
     },
   },
@@ -38,21 +37,19 @@ export class Cards extends Component {
     this.props.swipeProfile();
   };
 
-  onSwipe = (identifier) => {
-    //this.props.setHandle(identifier);
+  match = (handle) => {
+    axios
+      .get("/match", { params: { handle, user: localStorage.getItem("user") } })
+      .catch((err) => {});
   };
 
-  match = (handle) => {
-    axios.get("/match", { params: { handle } }).catch((err) => {
-      // console.error(err);
-    });
-  };
+  onSwipe = (name) => {};
 
   render() {
     const { classes } = this.props;
     const { cards } = this.props.data;
 
-    // Temporary code
+    /* Temporary code
     cards.profiles.push({
       name: "This feature starts soon...",
       url:
@@ -60,7 +57,7 @@ export class Cards extends Component {
     });
 
     cards.tracks = true;
-    // End of temporary code
+    */
 
     return (
       <>

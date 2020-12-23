@@ -1,6 +1,7 @@
 const db = require("../models");
 const webpush = require("web-push");
 const config = require("../utils/config");
+const { v4: uuidv4 } = require("uuid");
 const { emitNotification } = require("../utils/socket");
 
 const User = db.user;
@@ -18,9 +19,7 @@ const filter = [
 ];
 const options = { fullDocument: "updateLookup" };
 
-User.watch(filter, options).on("change", data => {
-  emitNotification(data);
-});
+User.watch(filter, options).on("change", (data) => {});
 
 webpush.setVapidDetails(
   "mailto:me@gmail.com",
@@ -29,21 +28,25 @@ webpush.setVapidDetails(
 );
 
 exports.matchRequest = (req, res) => {
-  const filter = { handle: req.query.handle };
-  const update = {
-    notifications: [{ user: req.query.handle, date: Date.now() }],
-  };
+  let id = uuidv4();
 
-  User.findOneAndUpdate(filter, update, (err, doc) => {
+  User.findOne({ handle: req.query.handle }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
 
-    if (!doc)
-      return res.status(401).send({
-        message: "User not found",
-      });
+    const update = {
+      notifications: [
+        { id, user: req.query.user, date: Date.now(), received: false },
+        ...user.notifications,
+      ],
+    };
 
-    doc.save();
-    return res.status(200).send(doc);
+    user.updateOne(update, (err) => {
+      if (err) return res.status(500).send({ message: err });
+      user.save();
+      emitNotification({ id, handle: req.query.handle });
+      return res.status(200).send({ msg: "notification sent" });
+    });
   });
 };
 
@@ -52,7 +55,7 @@ exports.subscription = (req, res) => {
   const payload = JSON.stringify({ title: "Push" });
   webpush
     .sendNotification(req.params, payload)
-    .catch(err => console.error(err));
+    .catch((err) => console.error(err));
 };
 
 // Dead : Pusher beams
@@ -74,7 +77,7 @@ pusher = () => {
 };
 // Dead
 
-exports.getCurrentUserMatch = handle => {
+exports.getCurrentUserMatch = (handle) => {
   User.findOne({
     handle,
   }).exec((err, user) => {
@@ -89,21 +92,31 @@ exports.getUsersMatchData = () => {
   User.find().exec((err, users) => {
     if (err) return console.error(err);
 
-    users.forEach(user => {
+    users.forEach((user) => {
       matchData.push(user.match);
     });
   });
 };
 
 exports.notify = (req, res) => {
-  const handle = req.params.handle;
+  const handle = req.query.handle;
 
   User.findOne({
     handle,
   }).exec((err, user) => {
     if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
 
-    res.status(200).send({ length: user.notifications.length });
+    let unreadNotifications = user.notifications.filter(
+      (notification) => notification.received === false
+    );
+
+    res
+      .status(200)
+      .send({
+        length: unreadNotifications.length,
+        notifications: unreadNotifications,
+      });
     user.notifications = [];
     return user.save();
   });

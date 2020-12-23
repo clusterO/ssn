@@ -15,10 +15,19 @@ export class Reactions extends Component {
     super(props);
     this.state = {
       showPopover: false,
+      reaction: null,
     };
   }
 
+  componentDidMount() {
+    this.setState({ reaction: this.props.reaction });
+  }
+
   react = (reaction) => {
+    console.log(this.props.id);
+
+    this.setState({ reaction });
+
     axios
       .post("/react", {
         reaction,
@@ -26,11 +35,10 @@ export class Reactions extends Component {
         from: localStorage.getItem("user"),
         to: this.props.to,
       })
-      .then()
       .catch((err) => console.error(err));
   };
 
-  handlePopover = (event) => {
+  handlePopover = () => {
     this.setState({ showPopover: !this.state.showPopover });
   };
 
@@ -64,7 +72,7 @@ export class Reactions extends Component {
         }
       >
         <IconButton>
-          {this.props.reaction ? this.props.reaction : <InsertEmoticon />}
+          {this.state.reaction ? this.state.reaction : <InsertEmoticon />}
         </IconButton>
       </OverlayTrigger>
     );

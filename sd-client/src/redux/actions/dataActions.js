@@ -40,7 +40,7 @@ export const setProfile = () => (dispatch) => {
 };
 
 export const addNotification = () => (dispatch) => {
-  dispatch({ type: ADD_NOTIFICATION });
+  dispatch({ type: ADD_NOTIFICATION, length: 1 });
 };
 
 export const userLogout = () => (dispatch) => {

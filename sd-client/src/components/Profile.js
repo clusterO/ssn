@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -85,7 +85,7 @@ export class Profile extends Component {
     });
 
     this.socket.on("notification", () => {
-      store.dispatch({ type: ADD_NOTIFICATION });
+      store.dispatch({ type: ADD_NOTIFICATION, length: 1 });
     });
   };
 
@@ -114,7 +114,6 @@ export class Profile extends Component {
       display_name,
       id,
       email,
-      href,
       country,
       images,
       spotify,
@@ -130,18 +129,37 @@ export class Profile extends Component {
               <CardContent>
                 <Container className={classes.details}>
                   {images && images[0].url ? (
-                    <CardMedia
-                      className={classes.media}
-                      image={
-                        images
-                          ? images[0].url
-                          : "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
-                      }
-                      title="Profile picture"
-                    />
+                    <div>
+                      <CardMedia
+                        className={classes.media}
+                        image={images ? images[0].url : "/profile.png"}
+                        title="Profile picture"
+                      />
+                      <Container className={classes.profileInfos}>
+                        <Box>
+                          <PersonPinCircle />
+                          <Typography variant="body2" component="p">
+                            {country}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <FilterList />
+                          <Typography variant="body2" component="p">
+                            {spotify}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <DirectionsRun />
+                          <Typography variant="body2" component="p">
+                            {followers ? followers.total : ""}
+                          </Typography>
+                        </Box>
+                      </Container>
+                    </div>
                   ) : (
                     <CircularProgress />
                   )}
+
                   <Container>
                     <Typography variant="h5" component="h2">
                       {display_name}
@@ -159,32 +177,7 @@ export class Profile extends Component {
                     <Typography variant="body2" component="p">
                       {email}
                     </Typography>
-                    <Link to={href}>
-                      <Typography variant="body2" component="p">
-                        Spotify
-                      </Typography>
-                    </Link>
                   </Container>
-                </Container>
-                <Container className={classes.profileInfos}>
-                  <Box>
-                    <PersonPinCircle />
-                    <Typography variant="body2" component="p">
-                      {country}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <FilterList />
-                    <Typography variant="body2" component="p">
-                      {spotify}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <DirectionsRun />
-                    <Typography variant="body2" component="p">
-                      {followers ? followers.total : ""}
-                    </Typography>
-                  </Box>
                 </Container>
               </CardContent>
             </Card>

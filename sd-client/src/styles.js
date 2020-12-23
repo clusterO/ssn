@@ -48,12 +48,21 @@ export default {
       color: "grey",
       padding: "20px",
     },
+    loadMore: {
+      textAlign: "center",
+      color: "blue",
+    },
     chatScreenTextUser: {
-      marginLeft: "auto",
+      marginLeft: 0,
       backgroundColor: "#321450",
       padding: "15px",
       borderRadius: "20px",
       color: "white",
+      width: "fit-content",
+    },
+    chatScreenTextUserContainer: {
+      marginLeft: "auto",
+      display: "flex",
     },
     chatScreenInput: {
       display: "flex",
@@ -172,9 +181,9 @@ export default {
   },
   profileStyles: {
     rootProfile: {
+      width: "80%",
       margin: "auto auto",
-      marginTop: "5%",
-      width: "90%",
+      marginTop: "7%",
     },
     details: {
       display: "flex",

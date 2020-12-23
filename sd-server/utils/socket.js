@@ -1,6 +1,10 @@
+const db = require("../models");
+
 let online = [];
 let notify = [];
 let io;
+
+const User = db.user;
 
 exports.createSocketConnection = (http) => {
   io = require("socket.io")(http);
@@ -72,9 +76,27 @@ exports.callRequest = (data) => {
 };
 
 exports.emitNotification = (data) => {
-  let index = notify.findIndex(
-    (user) => user.handle === data.fullDocument.handle
-  );
+  let index = notify.findIndex((user) => user.handle === data.handle);
 
-  io.compress(true).to(notify[index].id).emit("notification", data);
+  if (index !== -1) {
+    io.compress(true).to(notify[index].id).emit("notification", data);
+
+    User.findOne({ handle: data.handle }).exec((err, user) => {
+      let index = user.notifications.findIndex(
+        (notification) => notification.id === data.id
+      );
+
+      if (index !== -1) {
+        user.notifications[index].received = true;
+
+        const update = {
+          notifications: [...user.notifications],
+        };
+
+        user.updateOne(update, (err) => {
+          user.save();
+        });
+      }
+    });
+  }
 };

@@ -6,6 +6,7 @@ import {
   SET_AUTHENTICATED,
   SET_CARDS,
   SWIPE_PROFILE,
+  CLEAR_NOTIFICATION,
 } from "../types";
 
 const initialState = {
@@ -40,7 +41,12 @@ export default function (state = initialState, action) {
     case ADD_NOTIFICATION:
       return {
         ...state,
-        notifications: state.notifications + 1,
+        notifications: state.notifications + action.length,
+      };
+    case CLEAR_NOTIFICATION:
+      return {
+        ...state,
+        notifications: 0,
       };
     case SET_PROFILE:
       return {

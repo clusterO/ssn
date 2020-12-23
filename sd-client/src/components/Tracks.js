@@ -71,7 +71,7 @@ export class Tracks extends Component {
                 image={
                   track.images
                     ? track.images[0].url
-                    : "https://www.sleekcover.com/covers/girls-simple-pink-facebook-cover.jpg"
+                    : "/pink-facebook-cover.jpg"
                 }
                 title="track picture"
               />

@@ -59,9 +59,9 @@ export class Chat extends Component {
       song: "",
     };
   }
-
+  //wss://spotidate.herokuapp.com
   componentDidMount() {
-    this.socket = io("wss://spotidate.herokuapp.com", {
+    this.socket = io("ws://localhost:8888", {
       query: {
         handle: localStorage.getItem("user"),
         event: "chat",
@@ -70,15 +70,19 @@ export class Chat extends Component {
     });
 
     this.socket.on("messaging", (data) => {
-      this.setState({
-        messages: [
-          ...this.state.messages,
-          {
-            content: data.content,
-            from: data.handle,
-          },
-        ],
-      });
+      if (data.type === "message")
+        this.setState({
+          messages: [
+            ...this.state.messages,
+            {
+              id: data.id,
+              content: data.content,
+              from: data.handle,
+            },
+          ],
+        });
+
+      if (data.type === "reaction") this.getMessages();
     });
 
     this.socket.on("calling", (data) => {
@@ -115,7 +119,7 @@ export class Chat extends Component {
         },
       })
       .then((body) => {
-        this.setState({ messages: body.data });
+        this.setState({ messages: body.data.messages });
       })
       .catch((err) => console.error(err));
   };
@@ -264,16 +268,13 @@ export class Chat extends Component {
           </Typography>
           {this.state.messages
             .sort((a, b) => a.date - b.date)
-            .map((message, index) =>
+            .map((message) =>
               message.from ? (
                 <Container key={uuid()} className={classes.chatScreenMessage}>
                   <Avatar
                     className={classes.chatScreenImage}
                     alt={message.from}
-                    src={
-                      message.image ||
-                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-                    }
+                    src={message.image || "/profile.png"}
                   />
                   <Typography
                     variant="body1"
@@ -298,21 +299,26 @@ export class Chat extends Component {
                 </Container>
               ) : (
                 <Container key={uuid()} className={classes.chatScreenMessage}>
-                  <Typography
-                    variant="body1"
-                    className={classes.chatScreenTextUser}
-                  >
-                    {message.content}
-                    {message.uri ? (
-                      <a href={message.uri}>
-                        <span role="img" aria-label="musical note">
-                          {" "}
-                          🎵
-                        </span>{" "}
-                        click to listen
-                      </a>
+                  <div className={classes.chatScreenTextUserContainer}>
+                    {message.reaction ? (
+                      <IconButton>{message.reaction}</IconButton>
                     ) : null}
-                  </Typography>
+                    <Typography
+                      variant="body1"
+                      className={classes.chatScreenTextUser}
+                    >
+                      {message.content}
+                      {message.uri ? (
+                        <a href={message.uri}>
+                          <span role="img" aria-label="musical note">
+                            {" "}
+                            🎵
+                          </span>{" "}
+                          click to listen
+                        </a>
+                      ) : null}
+                    </Typography>
+                  </div>
                 </Container>
               )
             )}
