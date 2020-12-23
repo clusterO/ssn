@@ -12,7 +12,10 @@ import {
 const initialState = {
   user: "",
   handle: "",
-  notifications: 0,
+  notifications: {
+    length: 0,
+    data: [],
+  },
   loading: false,
   authenticated: false,
   profile: {
@@ -41,12 +44,18 @@ export default function (state = initialState, action) {
     case ADD_NOTIFICATION:
       return {
         ...state,
-        notifications: state.notifications + action.length,
+        notifications: {
+          length: state.notifications.length + action.length,
+          data: [...action.data, ...state.notifications.data],
+        },
       };
     case CLEAR_NOTIFICATION:
       return {
         ...state,
-        notifications: 0,
+        notifications: {
+          length: 0,
+          data: [],
+        },
       };
     case SET_PROFILE:
       return {

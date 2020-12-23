@@ -111,7 +111,7 @@ exports.sendMessage = (req, res) => {
     if (err) return res.status(500).send({ message: err });
     if (!user) return res.status(401).send({ message: "User not found" });
 
-    const update = {
+    let update = {
       messages: [
         { id, content, from, date, read, reaction, uri },
         ...user.messages,
@@ -134,7 +134,7 @@ exports.sendMessage = (req, res) => {
 
     if (index !== -1) user.friends[index].message = content;
 
-    const update = {
+    let update = {
       messages: [
         { id, content, to, date, read, reaction, uri },
         ...user.messages,

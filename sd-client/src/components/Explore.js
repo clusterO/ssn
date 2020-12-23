@@ -42,7 +42,11 @@ class Explore extends Component {
     });
 
     pusher.subscribe("notifications").bind("someone_interested", () => {
-      store.dispatch({ type: ADD_NOTIFICATION, length: 1, from: "pusher" });
+      store.dispatch({
+        type: ADD_NOTIFICATION,
+        length: 1,
+        data: { from: "pusher", date: Date.now() },
+      });
     });
   };
   // Dead_______________________________

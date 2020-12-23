@@ -25,7 +25,12 @@ const {
   pause,
   recent,
 } = require("./handlers/spotify");
-const { matchRequest, notify, subscription } = require("./handlers/matchs");
+const {
+  matchRequest,
+  notification,
+  subscription,
+  markNotifications,
+} = require("./handlers/matchs");
 const {
   friends,
   sendMessage,
@@ -79,7 +84,8 @@ app
   .get("/current", getCurrentlyPlaying)
   .get("/friends", friends)
   .get("/match", matchRequest)
-  .get("/notify", notify)
+  .get("/notification", notification)
+  .get("/mark", markNotifications)
   .get("/me", getMe)
   .get("/chat", getMessages)
   .get("/recent", recent)

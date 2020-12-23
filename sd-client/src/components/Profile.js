@@ -56,9 +56,11 @@ const profileStyles = (theme) => ({
 export class Profile extends Component {
   constructor(props) {
     super(props);
+    this.params = getHashParams();
     this.socket = null;
     this.state = {
       hide: true,
+      progress: false,
     };
   }
 
@@ -66,7 +68,6 @@ export class Profile extends Component {
     if (this.props.redirect) this.props.history.push("/profile");
 
     if (!localStorage.getItem("accessToken")) {
-      this.params = getHashParams();
       localStorage.setItem("accessToken", this.params.access_token);
       localStorage.setItem("refreshToken", this.params.refresh_token);
       localStorage.setItem("expireTime", dayjs(Date.now()).add(1, "hour"));
@@ -76,16 +77,22 @@ export class Profile extends Component {
 
     if (!localStorage.getItem("id")) this.getProfile();
 
-    this.realTimeNotifications();
+    this.realTimeNotifications(this.params.user);
   }
+  // wss://spotidate.herokuapp.com
+  realTimeNotifications = (user) => {
+    if (!user) user = localStorage.getItem("user");
 
-  realTimeNotifications = () => {
-    this.socket = io("wss://spotidate.herokuapp.com", {
-      query: { handle: localStorage.getItem("user"), event: "notification" },
+    this.socket = io("ws://localhost:8888", {
+      query: { handle: user, event: "notification" },
     });
 
-    this.socket.on("notification", () => {
-      store.dispatch({ type: ADD_NOTIFICATION, length: 1 });
+    this.socket.on("notification", (data) => {
+      store.dispatch({
+        type: ADD_NOTIFICATION,
+        length: 1,
+        data: [{ id: data.id, handle: data.handle, date: data.date }],
+      });
     });
   };
 
@@ -98,8 +105,7 @@ export class Profile extends Component {
   };
   // https://spotidate.herokuapp.com
   logout = () => {
-    this.socket.emit("notification", this.props.data.profile.display_name);
-
+    this.socket.emit("notification", localStorage.getItem("user"));
     this.props.userLogout();
     this.props.history.replace("/");
   };

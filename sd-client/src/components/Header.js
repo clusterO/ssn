@@ -33,21 +33,20 @@ export class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications: [],
       anchorEl: null,
     };
   }
 
   checkNotification = () => {
     axios
-      .get("/notify", {
+      .get("/notification", {
         params: { handle: localStorage.getItem("user") },
       })
       .then((response) => {
-        this.setState({ notifications: response.data.notifications });
         store.dispatch({
           type: ADD_NOTIFICATION,
           length: response.data.length,
+          data: response.data.notifications,
         });
       })
       .catch((err) => console.error(err));
@@ -71,7 +70,13 @@ export class Header extends Component {
     this.setState({ anchorEl: null });
   };
 
-  handleMenuOpened = () => {};
+  handleMenuOpened = () => {
+    axios
+      .get("/mark", {
+        params: { handle: localStorage.getItem("user") },
+      })
+      .catch((err) => console.error(err));
+  };
 
   render() {
     const { backButton, history, classes, data } = this.props;
@@ -79,12 +84,12 @@ export class Header extends Component {
 
     dayjs.extend(relativeTime);
 
-    let notifications = this.state.notifications;
+    let notifications = data.notifications;
     let notificationsIcon;
 
     notifications && notifications.length > 0
       ? (notificationsIcon = (
-          <Badge badgeContent={data.notifications} color="secondary">
+          <Badge badgeContent={notifications.length} color="secondary">
             <NotificationsNone
               className={classes.headerIcon}
               fontSize="large"
@@ -95,7 +100,7 @@ export class Header extends Component {
 
     let notificationsMarkup =
       notifications && notifications.length > 0 ? (
-        notifications.map((notification) => {
+        notifications.data.map((notification) => {
           const verb = "like";
           const time = dayjs(notification.date).fromNow();
           const iconColor = notification.received ? "primary" : "secondary";
@@ -125,34 +130,36 @@ export class Header extends Component {
       );
 
     return (
-      <Container className={classes.header}>
-        {this.props.profile ? null : backButton ? (
-          <IconButton onClick={() => history.replace(backButton)}>
-            <ArrowBackIos className={classes.icons} />
-          </IconButton>
-        ) : (
-          <Link to="/profile">
-            <IconButton>
-              <PermIdentity className={classes.icons} />
+      <>
+        <Container className={classes.header}>
+          {this.props.profile ? null : backButton ? (
+            <IconButton onClick={() => history.replace(backButton)}>
+              <ArrowBackIos className={classes.icons} />
             </IconButton>
+          ) : (
+            <Link to="/profile">
+              <IconButton>
+                <PermIdentity className={classes.icons} />
+              </IconButton>
+            </Link>
+          )}
+          <Link to="/">
+            <CardMedia
+              className={classes.headerLogo}
+              image="/tinderify.png"
+              title="logo"
+            />
           </Link>
-        )}
-        <Link to="/">
-          <CardMedia
-            className={classes.headerLogo}
-            image="/tinderify.png"
-            title="logo"
-          />
-        </Link>
-        <Tooltip placement="top" title="Notifications">
-          <IconButton
-            aria-owns={anchorEl ? "simple-menu" : undefined}
-            aria-haspopup="true"
-            onClick={this.handleOpen}
-          >
-            {notificationsIcon}
-          </IconButton>
-        </Tooltip>
+          <Tooltip placement="top" title="Notifications">
+            <IconButton
+              aria-owns={anchorEl ? "simple-menu" : undefined}
+              aria-haspopup="true"
+              onClick={this.handleOpen}
+            >
+              {notificationsIcon}
+            </IconButton>
+          </Tooltip>
+        </Container>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -161,7 +168,7 @@ export class Header extends Component {
         >
           {notificationsMarkup}
         </Menu>
-      </Container>
+      </>
     );
   }
 }

@@ -82,6 +82,9 @@ exports.emitNotification = (data) => {
     io.compress(true).to(notify[index].id).emit("notification", data);
 
     User.findOne({ handle: data.handle }).exec((err, user) => {
+      if (err) console.error({ message: err });
+      if (!user) console.error({ message: "User not found" });
+
       let index = user.notifications.findIndex(
         (notification) => notification.id === data.id
       );

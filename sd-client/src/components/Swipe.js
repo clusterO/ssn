@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { withStyles, IconButton, Container, Tooltip } from "@material-ui/core";
+import {
+  withStyles,
+  IconButton,
+  Container,
+  Tooltip,
+  LinearProgress,
+} from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { Store, Waves, Mic, Explore, Forum } from "@material-ui/icons";
 import { connect } from "react-redux";
@@ -22,6 +28,7 @@ export class Swipe extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      progress: false,
       record: false,
       alert: false,
       song: "",
@@ -30,7 +37,7 @@ export class Swipe extends Component {
   }
 
   handleRecording = () => {
-    this.setState({ record: !this.state.record });
+    this.setState({ record: !this.state.record, progress: true });
   };
 
   loadBlob(url) {
@@ -67,7 +74,17 @@ export class Swipe extends Component {
                   artist: "",
                 });
               }, 10000);
+            } else {
+              this.setState({
+                alert: true,
+              });
+
+              setTimeout(() => {
+                this.setState({ alert: false });
+              }, 10000);
             }
+
+            this.setState({ progress: false });
           })
           .catch((err) => console.error(err));
       })
@@ -80,6 +97,7 @@ export class Swipe extends Component {
     const { classes } = this.props;
     return (
       <>
+        {this.state.progress ? <LinearProgress /> : null}
         <Container className={classes.swipeRoot}>
           <Tooltip title="Beats market" placement="bottom">
             <IconButton className={classes.swipeButtonsRepeat}>

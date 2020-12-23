@@ -44,7 +44,7 @@ exports.matchRequest = (req, res) => {
     user.updateOne(update, (err) => {
       if (err) return res.status(500).send({ message: err });
       user.save();
-      emitNotification({ id, handle: req.query.handle });
+      emitNotification({ id, handle: req.query.handle, date: Date.now() });
       return res.status(200).send({ msg: "notification sent" });
     });
   });
@@ -98,7 +98,7 @@ exports.getUsersMatchData = () => {
   });
 };
 
-exports.notify = (req, res) => {
+exports.notification = (req, res) => {
   const handle = req.query.handle;
 
   User.findOne({
@@ -116,7 +116,31 @@ exports.notify = (req, res) => {
       notifications: unreadNotifications,
     });
 
-    user.notifications = [];
     return user.save();
+  });
+};
+
+exports.markNotifications = (req, res) => {
+  const handle = req.query.handle;
+
+  User.findOne({
+    handle,
+  }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
+
+    user.notifications.every((notification) => {
+      if (!notification.received) notification.received = true;
+      else return true;
+    });
+
+    let update = { notifications: [...user.notifications] };
+
+    user.updateOne(update, (err) => {
+      if (err) return res.status(500).send({ message: err });
+
+      res.status(200).send({ msg: "all read" });
+      return user.save();
+    });
   });
 };
