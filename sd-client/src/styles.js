@@ -134,6 +134,13 @@ export default {
       height: "40px",
       objectFit: "contain",
     },
+    notificationIcon: {
+      marginRight: 5,
+    },
+    notificationTypography: {
+      color: "#000",
+    },
+    icons: {},
   },
   loginStyles: {
     form: {

@@ -1,6 +1,5 @@
 import {
   SWIPED_CARD_HANDLE,
-  ADD_NOTIFICATION,
   SET_UNAUTHENTICATED,
   SET_AUTHENTICATED,
   SET_PROFILE,
@@ -37,10 +36,6 @@ export const setProfile = () => (dispatch) => {
       localStorage.setItem("user", body.data.display_name);
     })
     .catch((err) => console.error(err));
-};
-
-export const addNotification = () => (dispatch) => {
-  dispatch({ type: ADD_NOTIFICATION, length: 1 });
 };
 
 export const userLogout = () => (dispatch) => {

@@ -111,12 +111,11 @@ exports.notify = (req, res) => {
       (notification) => notification.received === false
     );
 
-    res
-      .status(200)
-      .send({
-        length: unreadNotifications.length,
-        notifications: unreadNotifications,
-      });
+    res.status(200).send({
+      length: unreadNotifications.length,
+      notifications: unreadNotifications,
+    });
+
     user.notifications = [];
     return user.save();
   });

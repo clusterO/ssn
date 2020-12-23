@@ -6,13 +6,20 @@ import {
   IconButton,
   Badge,
   CardMedia,
+  Menu,
+  MenuItem,
+  Typography,
+  Tooltip,
 } from "@material-ui/core";
 import {
   PermIdentity,
   NotificationsNone,
   ArrowBackIos,
+  Favorite as FavoriteIcon,
 } from "@material-ui/icons";
 import axios from "axios";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { connect } from "react-redux";
 import store from "../redux/store";
 import { CLEAR_NOTIFICATION, ADD_NOTIFICATION } from "../redux/types";
@@ -26,9 +33,9 @@ export class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications= [],
-       showNotifications: false,
-    }
+      notifications: [],
+      anchorEl: null,
+    };
   }
 
   checkNotification = () => {
@@ -37,7 +44,7 @@ export class Header extends Component {
         params: { handle: localStorage.getItem("user") },
       })
       .then((response) => {
-        this.setState({ notifications: response.data.notifications })
+        this.setState({ notifications: response.data.notifications });
         store.dispatch({
           type: ADD_NOTIFICATION,
           length: response.data.length,
@@ -55,24 +62,78 @@ export class Header extends Component {
       this.props.socket.disconnect();
   }
 
-  showNotifications = () => {
+  handleOpen = (event) => {
     store.dispatch({ type: CLEAR_NOTIFICATION });
-    this.setState({ showNotifications: true });
+    this.setState({ anchorEl: event.target });
   };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  handleMenuOpened = () => {};
 
   render() {
     const { backButton, history, classes, data } = this.props;
+    const anchorEl = this.state.anchorEl;
+
+    dayjs.extend(relativeTime);
+
+    let notifications = this.state.notifications;
+    let notificationsIcon;
+
+    notifications && notifications.length > 0
+      ? (notificationsIcon = (
+          <Badge badgeContent={data.notifications} color="secondary">
+            <NotificationsNone
+              className={classes.headerIcon}
+              fontSize="large"
+            />
+          </Badge>
+        ))
+      : (notificationsIcon = <NotificationsNone className={classes.icons} />);
+
+    let notificationsMarkup =
+      notifications && notifications.length > 0 ? (
+        notifications.map((notification) => {
+          const verb = "like";
+          const time = dayjs(notification.date).fromNow();
+          const iconColor = notification.received ? "primary" : "secondary";
+          const icon = (
+            <FavoriteIcon
+              color={iconColor}
+              className={classes.notificationIcon}
+            />
+          );
+
+          return (
+            <MenuItem key={notification.date} onClick={this.handleClose}>
+              {icon}
+              <Typography
+                variant="body1"
+                className={classes.notificationTypography}
+              >
+                {notification.user} {verb} your taste {time}
+              </Typography>
+            </MenuItem>
+          );
+        })
+      ) : (
+        <MenuItem onClick={this.handleClose}>
+          You have no notifications
+        </MenuItem>
+      );
 
     return (
       <Container className={classes.header}>
         {this.props.profile ? null : backButton ? (
           <IconButton onClick={() => history.replace(backButton)}>
-            <ArrowBackIos className={classes.headerIcon} fontSize="large" />
+            <ArrowBackIos className={classes.icons} />
           </IconButton>
         ) : (
           <Link to="/profile">
             <IconButton>
-              <PermIdentity className={classes.headerIcon} fontSize="large" />
+              <PermIdentity className={classes.icons} />
             </IconButton>
           </Link>
         )}
@@ -83,14 +144,23 @@ export class Header extends Component {
             title="logo"
           />
         </Link>
-        <IconButton onClick={this.showNotifications}>
-          <Badge badgeContent={data.notifications} color="secondary">
-            <NotificationsNone
-              className={classes.headerIcon}
-              fontSize="large"
-            />
-          </Badge>
-        </IconButton>
+        <Tooltip placement="top" title="Notifications">
+          <IconButton
+            aria-owns={anchorEl ? "simple-menu" : undefined}
+            aria-haspopup="true"
+            onClick={this.handleOpen}
+          >
+            {notificationsIcon}
+          </IconButton>
+        </Tooltip>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={this.handleClose}
+          onEntered={this.handleMenuOpened}
+        >
+          {notificationsMarkup}
+        </Menu>
       </Container>
     );
   }
