@@ -79,11 +79,11 @@ export class Profile extends Component {
 
     this.realTimeNotifications(this.params.user);
   }
-  // wss://spotidate.herokuapp.com
+
   realTimeNotifications = (user) => {
     if (!user) user = localStorage.getItem("user");
 
-    this.socket = io("ws://localhost:8888", {
+    this.socket = io("wss://spotidate.herokuapp.com", {
       query: { handle: user, event: "notification" },
     });
 
@@ -101,9 +101,9 @@ export class Profile extends Component {
   };
 
   authorizeSpotify = () => {
-    window.location.href = "http://localhost:8888/login";
+    window.location.href = "https://spotidate.herokuapp.com/login";
   };
-  // https://spotidate.herokuapp.com
+
   logout = () => {
     this.socket.emit("notification", localStorage.getItem("user"));
     this.props.userLogout();

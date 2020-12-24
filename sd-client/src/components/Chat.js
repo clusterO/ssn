@@ -59,9 +59,9 @@ export class Chat extends Component {
       song: "",
     };
   }
-  //wss://spotidate.herokuapp.com
+
   componentDidMount() {
-    this.socket = io("ws://localhost:8888", {
+    this.socket = io("wss://spotidate.herokuapp.com", {
       query: {
         handle: localStorage.getItem("user"),
         event: "chat",

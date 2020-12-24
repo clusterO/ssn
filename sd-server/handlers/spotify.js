@@ -8,8 +8,7 @@ const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
-const redirect_uri = "http://localhost:8888/callback";
-//https://spotidate.herokuapp.com
+const redirect_uri = "https://spotidate.herokuapp.com/callback";
 
 const stateKey = "spotify_auth_state";
 
@@ -102,9 +101,9 @@ exports.callback = (req, res) => {
                 generateDataForMatch(access_token, handle);
               });
           });
-          // https://spotidate-bdd25.web.app
+
           res.redirect(
-            "http://localhost:3000/profile#" +
+            "https://spotidate-bdd25.web.app/profile#" +
               querystring.stringify({
                 access_token,
                 refresh_token,
@@ -115,7 +114,7 @@ exports.callback = (req, res) => {
         });
       } else {
         res.redirect(
-          "http://localhost:3000/#" +
+          "https://spotidate-bdd25.web.app/#" +
             querystring.stringify({
               error: "Invalid token",
             })

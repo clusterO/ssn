@@ -49,9 +49,9 @@ export class Login extends Component {
   }
 
   login = () => {
-    window.location.href = "http://localhost:8888/login";
+    window.location.href = "https://spotidate.herokuapp.com/login";
   };
-  //https://spotidate.herokuapp.com
+
   signup = () => {
     this.setState({ signup: !this.state.signup });
     if (this.state.action === "Login")
@@ -78,8 +78,6 @@ export class Login extends Component {
           localStorage.setItem("id", body.data.id);
           localStorage.setItem("user", body.data.handle);
           localStorage.setItem("accessToken", body.data.accessToken);
-          // Set spotify token
-          //this.props.setProfile();
           this.props.history.replace("/profile");
         })
         .catch((err) => console.error(err));
@@ -92,7 +90,6 @@ export class Login extends Component {
           handle: this.state.handle,
         })
         .then((body) => {
-          // Set spotify token
           this.props.setProfile();
           this.signup();
         })
