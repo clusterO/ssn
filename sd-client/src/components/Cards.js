@@ -49,7 +49,7 @@ export class Cards extends Component {
     const { classes } = this.props;
     const { cards } = this.props.data;
 
-    /* Temporary code
+    // Temporary code
     cards.profiles.push({
       name: "This feature starts soon...",
       url:
@@ -57,7 +57,6 @@ export class Cards extends Component {
     });
 
     cards.tracks = true;
-    */
 
     return (
       <>

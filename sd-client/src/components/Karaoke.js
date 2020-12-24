@@ -23,6 +23,7 @@ const karaokeStyles = (theme) => ({
     marginTop: "50px",
   },
   main: {
+    margin: "60px auto",
     padding: "theme.spacing(1)",
     [theme.breakpoints.up("md")]: {
       display: "flex",
@@ -56,7 +57,10 @@ export class Karaoke extends Component {
   }
 
   loadAndPlay = (name) => {
-    this.karaoke.loadAndPlay(`${name}.mp3`, `${name}.cdg`);
+    this.karaoke.loadAndPlay(
+      `https://firebasestorage.googleapis.com/v0/b/spotidate-bdd25.appspot.com/o/${name}.mp3`,
+      `https://firebasestorage.googleapis.com/v0/b/spotidate-bdd25.appspot.com/o/${name}.cdg`
+    );
   };
 
   render() {
@@ -67,10 +71,12 @@ export class Karaoke extends Component {
         <Header />
         <div className={classes.main}>
           <List className={classes.demo} dense={this.state.dense}>
-            {songs.map((value, index) => (
+            {songs.map((value) => (
               <ListItem key={uuid()}>
                 <ListItemAvatar>
-                  <Avatar src={`${value}.png`}></Avatar>
+                  <Avatar
+                    src={`https://firebasestorage.googleapis.com/v0/b/spotidate-bdd25.appspot.com/o/${value}.png`}
+                  ></Avatar>
                 </ListItemAvatar>
                 <Typography variant="h5">{value}</Typography>
                 <ListItemSecondaryAction>

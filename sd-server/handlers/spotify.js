@@ -132,7 +132,7 @@ exports.getMe = (req, res) => {
     json: true,
   };
 
-  request.get(options, (error, response, body) => {
+  request.get(options, (_, __, body) => {
     res.send(body);
   });
 };
@@ -295,9 +295,9 @@ exports.getCurrentlyPlaying = (req, res) => {
   const token = req.headers.authorization;
   const url = "https://api.spotify.com/v1/me/player/currently-playing";
   callSpotify(token, url).then((body) => {
-    // check item.name
-    if (body)
+    if (body && body.item && body.item.name && body.item.uri)
       res.status(200).send({ song: body.item.name, uri: body.item.uri });
+    else res.status(500).send({ err: "data unavailable" });
   });
 };
 

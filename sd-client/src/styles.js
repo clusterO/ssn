@@ -189,8 +189,7 @@ export default {
   profileStyles: {
     rootProfile: {
       width: "80%",
-      margin: "auto auto",
-      marginTop: "7%",
+      margin: "60px auto",
     },
     details: {
       display: "flex",
