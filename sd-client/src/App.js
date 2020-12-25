@@ -12,8 +12,8 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Explore from "./components/Explore";
 import Karaoke from "./components/Karaoke";
-
-axios.defaults.baseURL = "https://spotidate.herokuapp.com";
+// https://spotidate.herokuapp.com
+axios.defaults.baseURL = "http://localhost:8888";
 
 const theme = createMuiTheme({
   overrides: {

@@ -1,17 +1,26 @@
+const db = require("../models");
 const config = require("../utils/config");
 
-class match {
-  constructor(users, currentUser) {
-    users = users;
-    currentUser = currentUser;
-    types = config.types;
-    usersLibraries = [];
+const User = db.user;
+
+class Match {
+  constructor(users, currentUser, res) {
+    this.users = users;
+    this.currentUser = currentUser;
+    this.types = config.types;
+    this.usersLibraries = [];
+    this.counter = 0;
+    this.res = res;
+
+    this.currentUser.matchs = [];
   }
 
   getLibrary = (type, handle) => {
-    return new Promise(resolve => {
-      this.users.forEach(user => {
-        if (user.handle === handle) resolve({ elements: user[type], handle });
+    return new Promise((resolve) => {
+      this.users.forEach((user) => {
+        if (user.handle === handle) {
+          resolve({ elements: user[type], handle });
+        }
       });
     });
   };
@@ -20,7 +29,7 @@ class match {
     const user = someusers.shift();
 
     if (user.handle !== this.currentUser.handle) {
-      this.getLibrary(type, user.handle).then(library => {
+      this.getLibrary(type, user.handle).then((library) => {
         this.usersLibraries.push(library);
       });
     }
@@ -28,10 +37,10 @@ class match {
     if (someusers.length) this.goThroughUsers(someusers, type);
   };
 
-  getUsersLibraryByType = type => {
+  getUsersLibraryByType = (type) => {
     let someusers = [];
 
-    this.users.map(user => {
+    this.users.map((user) => {
       someusers.push(user);
     });
 
@@ -43,7 +52,7 @@ class match {
 
     this.getUsersLibraryByType(type);
 
-    this.getLibrary(type, this.currentUser.handle).then(library => {
+    this.getLibrary(type, this.currentUser.handle).then((library) => {
       this.match(type, library, this.usersLibraries);
       this.usersLibraries = [];
     });
@@ -52,20 +61,29 @@ class match {
   };
 
   match = (type, library, users) => {
-    library.elements.forEach(element => {
-      users.forEach(user => {
-        this.findMatch(type, element, user);
+    if (library && library.elements)
+      library.elements.forEach((element) => {
+        users.forEach((user) => {
+          this.findMatch(type, element, user);
+        });
       });
-    });
   };
 
   findMatch = (type, elm, userElements) => {
-    userElements.elements.forEach(element => {
-      if (element === elm) scorePoints(type, userElements.handle);
-    });
+    if (userElements && userElements.elements)
+      userElements.elements.forEach((element) => {
+        if (element === elm) {
+          this.counter++;
+          setTimeout(() => {
+            --this.counter;
+            this.scorePoints(type, userElements.handle, userElements.image);
+          }, 0);
+        }
+      });
   };
 
-  scorePoints = (type, handle) => {
+  // DRY
+  scorePoints = (type, handle, image) => {
     switch (type) {
       case "tracks":
         this.currentUser.matchs[handle]
@@ -93,27 +111,27 @@ class match {
         break;
     }
 
-    sort(this.currentUser.matchs);
-  };
+    if (this.counter === 0)
+      User.findOne({ handle: this.currentUser.handle }).exec((err, user) => {
+        if (err) return console.error({ message: err });
+        if (!user) return console.error({ message: "User not found" });
 
-  sort = matchs => {
-    let sorted = Object.keys(matchs).sort((a, b) => matchs[b] - matchs[a]);
-    console.log(sorted);
+        let matchs = [];
+        for (const property in this.currentUser.matchs) {
+          matchs.push({
+            display_name: property,
+            score: this.currentUser.matchs[property],
+            images: [{ url: "" }],
+          });
+        }
+
+        user.updateOne({ "match.matchs": matchs }, (err) => {
+          if (err) return console.error({ message: err });
+          user.save();
+          return this.res.status(200).send({ matchs });
+        });
+      });
   };
 }
 
-/**
-  ## CPU intence process for array
-
-  processArray = (items, process) {
-    let todo = tiems.concat()
-    setTimeout(() => {
-      process(todo.shift())
-      if(todo.length) setTimeout(arguments.callee, 25)
-    }, 25)
-  }
-
-  processArray([...], func)
-
-  ## async.forEachOf 
- */
+module.exports.Match = Match;

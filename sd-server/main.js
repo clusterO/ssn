@@ -26,10 +26,11 @@ const {
   recent,
 } = require("./handlers/spotify");
 const {
-  matchRequest,
-  notification,
+  newHit,
+  getNotifications,
   subscription,
-  markNotifications,
+  markNotificationsAsRead,
+  match,
 } = require("./handlers/matchs");
 const {
   friends,
@@ -41,7 +42,7 @@ const {
 const { xazam } = require("./handlers/xazam");
 const { createSocketConnection } = require("./utils/socket");
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8888;
 const dbURL = config.connectionString;
 
 db.mongoose
@@ -61,9 +62,9 @@ db.mongoose
   });
 
 createSocketConnection(http);
-
+// https://spotidate-bdd25.web.app
 let corsOptions = {
-  origin: "https://spotidate-bdd25.web.app",
+  origin: "http://localhost:3000",
   credentials: true,
 };
 
@@ -83,9 +84,10 @@ app
   .get("/artist", getUser)
   .get("/current", getCurrentlyPlaying)
   .get("/friends", friends)
-  .get("/match", matchRequest)
-  .get("/notification", notification)
-  .get("/mark", markNotifications)
+  .get("/hit", newHit)
+  .get("/match", match)
+  .get("/notification", getNotifications)
+  .get("/mark", markNotificationsAsRead)
   .get("/me", getMe)
   .get("/chat", getMessages)
   .get("/recent", recent)

@@ -1,12 +1,13 @@
 const db = require("../models");
 const webpush = require("web-push");
 const config = require("../utils/config");
+const Match = require("../utils/match").Match;
 const { v4: uuidv4 } = require("uuid");
 const { emitNotification } = require("../utils/socket");
 
 const User = db.user;
 
-// SocketIo with MongoDb stream Change realtime notifications
+// watch notifications
 const filter = [
   {
     $match: {
@@ -17,9 +18,9 @@ const filter = [
     },
   },
 ];
-const options = { fullDocument: "updateLookup" };
 
-User.watch(filter, options).on("change", (data) => {});
+const options = { fullDocument: "updateLookup" };
+User.watch(filter, options).on("change", (_) => {});
 
 webpush.setVapidDetails(
   "mailto:me@gmail.com",
@@ -27,7 +28,24 @@ webpush.setVapidDetails(
   config.PrivateVapidKey
 );
 
-exports.matchRequest = (req, res) => {
+exports.match = (req, res) => {
+  User.findOne({ handle: req.query.handle }).exec((err, user) => {
+    if (err) return res.status(500).send({ message: err });
+    if (!user) return res.status(401).send({ message: "User not found" });
+
+    User.find().exec((err, data) => {
+      if (err) return res.status(500).send({ message: err });
+
+      if (data.length > 0) {
+        let users = data.map((user) => user.match);
+        let match = new Match(users, user.match, res);
+        match.startScoringRoutine();
+      }
+    });
+  });
+};
+
+exports.newHit = (req, res) => {
   let id = uuidv4();
 
   User.findOne({ handle: req.query.handle }).exec((err, user) => {
@@ -58,25 +76,6 @@ exports.subscription = (req, res) => {
     .catch((err) => console.error(err));
 };
 
-// Dead : Pusher beams
-pusher = () => {
-  let Pusher = require("pusher");
-  let pusher = new Pusher({
-    appId: process.env.PUSHER_APP_ID,
-    key: process.env.PUSHER_APP_KEY,
-    secret: process.env.PUSHER_APP_SECRET,
-    cluster: process.env.PUSHER_APP_CLUSTER,
-  });
-
-  pusher.trigger(
-    "notifications",
-    "someone_interested",
-    { data: "any" },
-    req.headers["x-socket-id"]
-  );
-};
-// Dead
-
 exports.getCurrentUserMatch = (handle) => {
   User.findOne({
     handle,
@@ -98,7 +97,7 @@ exports.getUsersMatchData = () => {
   });
 };
 
-exports.notification = (req, res) => {
+exports.getNotifications = (req, res) => {
   const handle = req.query.handle;
 
   User.findOne({
@@ -120,7 +119,7 @@ exports.notification = (req, res) => {
   });
 };
 
-exports.markNotifications = (req, res) => {
+exports.markNotificationsAsRead = (req, res) => {
   const handle = req.query.handle;
 
   User.findOne({

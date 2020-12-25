@@ -39,7 +39,7 @@ export class Cards extends Component {
 
   match = (handle) => {
     axios
-      .get("/match", { params: { handle, user: localStorage.getItem("user") } })
+      .get("/hit", { params: { handle, user: localStorage.getItem("user") } })
       .catch((err) => {});
   };
 

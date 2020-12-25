@@ -11,7 +11,7 @@ const Match = mongoose.model(
     artists: Array,
     recent: Array,
     genres: Array,
-    matchs: Object,
+    matchs: Array,
   })
 );
 

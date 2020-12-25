@@ -8,7 +8,7 @@ const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
-const redirect_uri = "https://spotidate.herokuapp.com/callback";
+const redirect_uri = "http://localhost:8888/callback";
 
 const stateKey = "spotify_auth_state";
 
@@ -45,6 +45,7 @@ exports.callback = (req, res) => {
     );
   } else {
     res.clearCookie(stateKey);
+
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
       form: {
@@ -72,14 +73,19 @@ exports.callback = (req, res) => {
           json: true,
         };
 
-        request.get(options, (error, response, body) => {
+        request.get(options, (_, __, body) => {
           const email = body.email;
           const handle = email.split("@")[0];
+
+          let image = null;
+          if (body.images && body.images.length > 0) image = body.images[0].url;
+
           const data = {
             email,
             password: body.id,
             confirmPassword: body.id,
             handle,
+            image,
           };
 
           const userOptions = {
@@ -101,9 +107,9 @@ exports.callback = (req, res) => {
                 generateDataForMatch(access_token, handle);
               });
           });
-
+          // https://spotidate-bdd25.web.app
           res.redirect(
-            "https://spotidate-bdd25.web.app/profile#" +
+            "http://localhost:3000/profile#" +
               querystring.stringify({
                 access_token,
                 refresh_token,
@@ -114,7 +120,7 @@ exports.callback = (req, res) => {
         });
       } else {
         res.redirect(
-          "https://spotidate-bdd25.web.app/#" +
+          "http://localhost:3000/#" +
             querystring.stringify({
               error: "Invalid token",
             })

@@ -1,21 +1,29 @@
 import React, { Component } from "react";
-import { Container, withStyles } from "@material-ui/core";
+import { Container, withStyles, LinearProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import Header from "./Header";
 import Cards from "./Cards";
 import { urlBase64ToUint8Array } from "../utils/converter";
 import axios from "axios";
-import Pusher from "pusher-js";
-import store from "../redux/store";
-import { ADD_NOTIFICATION } from "../redux/types";
 import { connect } from "react-redux";
 
 const publicVapidKey =
   "BKDmx4plzOXrRtpb7CHKW4huOEkckKCkNtfu50CkXeORnGSvC2L9bCg-o3vI2sL1kux90iUOdeTmAU2-1fIsTMM";
 
-const exploreStyles = (theme) => ({});
+const exploreStyles = (theme) => ({
+  progress: {
+    marginTop: "10vh",
+  },
+});
 
 class Explore extends Component {
-  // Push Notification With SW
+  constructor(props) {
+    super(props);
+    this.state = {
+      cards: false,
+    };
+  }
+
   sendPushNotification = async () => {
     const register = await navigator.serviceWorker.register("/sw.js");
     const subscription = await register.pushManager.subscribe({
@@ -32,30 +40,33 @@ class Explore extends Component {
     });
   };
 
-  // Dead : Realtime stream using Pusher
-  pusher = () => {
-    let pusher = new Pusher("5e53d307e778b90b4668", { cluster: "eu" });
-
-    pusher.connection.bind("connected", () => {
-      axios.defaults.headers.common["X-Socket-Id"] =
-        pusher.connection.socket_id;
-    });
-
-    pusher.subscribe("notifications").bind("someone_interested", () => {
-      store.dispatch({
-        type: ADD_NOTIFICATION,
-        length: 1,
-        data: { from: "pusher", date: Date.now() },
-      });
-    });
-  };
-  // Dead_______________________________
+  componentDidMount() {
+    axios
+      .get("/match", { params: { handle: localStorage.getItem("user") } })
+      .then((response) => {
+        console.log(response.data.matchs);
+        this.setState({ cards: true });
+      })
+      .catch((err) => {});
+  }
 
   render() {
+    const { classes } = this.props;
     return (
       <Container>
         <Header />
-        <Cards />
+        {this.state.cards ? (
+          <Cards />
+        ) : (
+          <div className={classes.progress}>
+            <Alert variant="outlined" severity="info">
+              processing matches — this may take a few seconds while the
+              algorithm match your musical tastes with other users... please
+              wait!
+              <LinearProgress />
+            </Alert>
+          </div>
+        )}
       </Container>
     );
   }
