@@ -15,7 +15,6 @@ let songs = [
   "SF337-12 - Enrique Iglesias - I'm A Freak",
   "SF337-13 - Gorgon City - Ready For Your Love",
   "SF337-14 - Ellie Goulding - Goodness Gracious",
-  "SF337-15 - Wilkinson Ft Detour City - Too Close",
   "SF337-16 - Elyar Fox - Do It All Over Again",
   "SF337-17 - Macklemore & Ryan Lewis Ft Schoolboy Q & Hollis - White Walls",
   "SF337-18 - Boyzone - Light Up The Night",

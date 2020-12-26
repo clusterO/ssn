@@ -44,7 +44,7 @@ class Explore extends Component {
     axios
       .get("/match", { params: { handle: localStorage.getItem("user") } })
       .then((response) => {
-        console.log(response.data.matchs);
+        // use cards from response
         this.setState({ cards: true });
       })
       .catch((err) => {});
