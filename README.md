@@ -4,6 +4,9 @@ Social app for spotify users
 It matches spotify profile based on their musical tastes, for that matter it uses a mediocre implementation of gale shapley algorithm
 the matches then are ordered by score and presented in Tinder way, allow swiping left & right.
 
+#### live demo
+https://spotidate-bdd25.web.app/
+
 #### features
 * Match explorer
 * Music recognition (Shazam like)
