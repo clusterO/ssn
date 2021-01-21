@@ -62,9 +62,9 @@ db.mongoose
   });
 
 createSocketConnection(http);
-// https://spotidate-bdd25.web.app
+
 let corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://spotidate-bdd25.web.app",
   credentials: true,
 };
 

@@ -8,7 +8,7 @@ const User = db.user;
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
-const redirect_uri = "http://localhost:8888/callback";
+const redirect_uri = "https://spotidate.herokuapp.com/callback";
 
 const stateKey = "spotify_auth_state";
 
@@ -89,7 +89,7 @@ exports.callback = (req, res) => {
           };
 
           const userOptions = {
-            url: `http://${req.headers.host}/signup`,
+            url: `https://${req.headers.host}/signup`,
             headers: { Authorization: "Bearer " + access_token },
             json: true,
             body: data,
@@ -107,9 +107,9 @@ exports.callback = (req, res) => {
                 generateDataForMatch(access_token, handle);
               });
           });
-          // https://spotidate-bdd25.web.app
+
           res.redirect(
-            "http://localhost:3000/profile#" +
+            "https://spotidate-bdd25.web.app/profile#" +
               querystring.stringify({
                 access_token,
                 refresh_token,
@@ -120,7 +120,7 @@ exports.callback = (req, res) => {
         });
       } else {
         res.redirect(
-          "http://localhost:3000/#" +
+          "https://spotidate-bdd25.web.app/#" +
             querystring.stringify({
               error: "Invalid token",
             })
@@ -414,6 +414,9 @@ generateDataForMatch = async (token, handle) => {
     if (err) return { message: err };
     if (!user) return { message: "Handle incorrect" };
 
+    let matchs =
+      user && user.match && user.match.matchs ? user.match.matchs : [];
+
     const matchData = {
       handle: handle,
       tracks,
@@ -421,7 +424,7 @@ generateDataForMatch = async (token, handle) => {
       artists: artists.artists,
       recent,
       genres: [...new Set(genres)],
-      matchs: [...user.match.matchs],
+      matchs: [...matchs],
     };
 
     user.updateOne({ match: matchData }, (err, data) => {

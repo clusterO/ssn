@@ -101,7 +101,7 @@ export class Profile extends Component {
   };
 
   authorizeSpotify = () => {
-    window.location.href = "http://localhost:8888/login";
+    window.location.href = "https://spotidate.herokuapp.com/login";
   };
 
   logout = () => {
