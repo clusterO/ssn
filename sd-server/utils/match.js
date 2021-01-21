@@ -28,7 +28,7 @@ class Match {
   goThroughUsers = (someusers, type) => {
     const user = someusers.shift();
 
-    if (user.handle !== this.currentUser.handle) {
+    if (user && user.handle && user.handle !== this.currentUser.handle) {
       this.getLibrary(type, user.handle).then((library) => {
         this.usersLibraries.push(library);
       });
