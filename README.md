@@ -1,4 +1,4 @@
-### tinderify
+### Spotidate
 Social app for spotify users
 
 It matches spotify profile based on their musical tastes, for that matter it uses a mediocre implementation of gale shapley algorithm
